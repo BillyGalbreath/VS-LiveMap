@@ -7,6 +7,8 @@
   "website": "https://github.com/BillyGalbreath/VS-LiveMap",
   "authors": [ "BillyGalbreath" ],
   "side": "Universal",
+  "requiredOnClient": false,
+  "requiredOnServer": true,
   "dependency": {
     "game": "1.18.0"
   }
