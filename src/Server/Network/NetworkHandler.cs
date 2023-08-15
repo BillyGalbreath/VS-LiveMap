@@ -1,6 +1,5 @@
 ﻿using LiveMap.Common.Network;
 using LiveMap.Common.Util;
-using System.Collections.Generic;
 using System.Linq;
 using Vintagestory.API.Server;
 
@@ -27,10 +26,7 @@ public class NetworkHandler {
         }
 
         // receive block colors from client
-        Dictionary<string, int> colors = Colors.DeserializeColors(packet.Colors);
-
-        // todo - log it for now
-        server.Logger.Event("Colors[" + string.Join(",", colors.Select(e => e.Key + "=" + e.Value).ToArray()) + "]");
+        server.Colors = Colors.Deserialize(packet.Colors);
     }
 
     public void SendPacket<T>(T packet, IServerPlayer player) where T : Packet {
