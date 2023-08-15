@@ -13,13 +13,11 @@ public class ColorMapCommand : AbstractCommand {
 
     public override TextCommandResult Execute(Caller caller, List<string> args) {
         if (caller.Player is not IServerPlayer player) {
+            // we need a connected player to get block colors from their client
             return TextCommandResult.Success(Lang.Get("player-only-command"));
         }
 
-        // todo - verify player permissions
-        //
-
-        // ask player for their block colors
+        // ask player for their client's block colors
         handler.Server.NetworkHandler.SendPacket(new CanIHazColorsPacket(), player);
 
         return TextCommandResult.Success("colormap-asked-client");

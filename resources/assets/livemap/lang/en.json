@@ -1,0 +1,5 @@
+﻿{
+  "player-only-command": "<font color=\"#7C0A02\">Player only command.</font>",
+  "colormap-asked-client": "<font color=\"#027C0A\">Asking client for colormap.</font>",
+  "fullrender-started": "<font color=\"#027C0A\">FullRender task started.</font>"
+}

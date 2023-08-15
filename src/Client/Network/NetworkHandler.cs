@@ -12,14 +12,15 @@ public class NetworkHandler {
     public NetworkHandler(LiveMapClient client) {
         this.client = client;
 
-        channel = client.API.Network.RegisterChannel("livemap")
+        channel = client.API.Network
+            .RegisterChannel("livemap")
             .RegisterMessageType<CanIHazColorsPacket>()
             .SetMessageHandler<CanIHazColorsPacket>(ReceivePacket);
     }
 
     private void ReceivePacket(CanIHazColorsPacket packet) {
         // server wants our block colors
-        packet.Colors = Colors.SerializeColors(client.API);
+        packet.Colors = Colors.Serialize(client.API);
 
         // send back to server
         SendPacket(packet);
