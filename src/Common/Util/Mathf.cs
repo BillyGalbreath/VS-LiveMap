@@ -1,6 +1,6 @@
-﻿namespace LiveMap.src.Common.Util;
+﻿namespace LiveMap.Common.Util;
 
-public class Math {
+public static class Mathf {
     public static long AsLong(long x, long z) {
         return (x & 0xFFFFFFFFL) | (z & 0xFFFFFFFFL) << 32;
     }

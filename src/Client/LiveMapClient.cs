@@ -1,26 +1,23 @@
-﻿using LiveMap.Client.Network;
+﻿using LiveMap.Client.Command;
+using LiveMap.Client.Network;
 using Vintagestory.API.Client;
-using Vintagestory.API.Common;
 
 namespace LiveMap.Client;
 
-public class LiveMapClient {
-    private readonly LiveMapMod mod;
-    private readonly ICoreClientAPI api;
+public sealed class LiveMapClient : Common.LiveMap {
+    public override ICoreClientAPI Api { get; }
 
-    private readonly NetworkHandler networkHandler;
+    public override ClientCommandHandler CommandHandler { get; }
+    public override ClientNetworkHandler NetworkHandler { get; }
 
-    public ICoreClientAPI API { get { return api; } }
-    public ILogger Logger { get { return mod.Mod.Logger; } }
+    public LiveMapClient(LiveMapMod mod, ICoreClientAPI api) : base(mod, api) {
+        Api = api;
 
-    public LiveMapClient(LiveMapMod mod, ICoreClientAPI api) {
-        this.mod = mod;
-        this.api = api;
-
-        networkHandler = new NetworkHandler(this);
+        CommandHandler = new ClientCommandHandler(this);
+        NetworkHandler = new ClientNetworkHandler(this);
     }
 
     public void Dispose() {
-        networkHandler.Dispose();
+        NetworkHandler.Dispose();
     }
 }
