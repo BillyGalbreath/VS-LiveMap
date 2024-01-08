@@ -1,92 +1,83 @@
-﻿using LiveMap.Common.Util;
+﻿using System;
+using LiveMap.Common.Util;
 using LiveMap.Server.Command;
 using LiveMap.Server.Network;
-using LiveMap.Server.Renderer;
+using LiveMap.Server.Render;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 
 namespace LiveMap.Server;
 
-public class LiveMapServer {
-    private readonly LiveMapMod mod;
-    private readonly ICoreServerAPI api;
+public sealed class LiveMapServer : Common.LiveMap {
+    public override ICoreServerAPI Api { get; }
 
-    private readonly CommandHandler commandHandler;
-    private readonly NetworkHandler networkHandler;
+    public override ServerCommandHandler CommandHandler { get; }
+    public override ServerNetworkHandler NetworkHandler { get; }
 
-    private readonly RenderTask renderTask;
+    public RenderTask RenderTask { get; }
+    public BlockColors? BlockColors;
 
     private readonly long gameTickTaskId;
-
     private int tick;
 
-    public ICoreServerAPI API {
-        get {
-            return api;
-        }
-    }
+    public LiveMapServer(LiveMapMod mod, ICoreServerAPI api) : base(mod, api) {
+        Api = api;
 
-    public NetworkHandler NetworkHandler {
-        get {
-            return networkHandler;
-        }
-    }
+        CommandHandler = new ServerCommandHandler(this);
+        NetworkHandler = new ServerNetworkHandler(this);
+        RenderTask = new RenderTask(this);
 
-    public RenderTask RenderTask {
-        get {
-            return renderTask;
-        }
-    }
+        gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
 
-    public ILogger Logger {
-        get {
-            return mod.Mod.Logger;
-        }
-    }
+        Api.Event.ChunkDirty += OnChunkDirty;
+        Api.Event.GameWorldSave += OnGameWorldSave;
 
-    public Colors Colors;
-
-    public LiveMapServer(LiveMapMod mod, ICoreServerAPI api) {
-        this.mod = mod;
-        this.api = api;
-
-        commandHandler = new CommandHandler(this);
-        networkHandler = new NetworkHandler(this);
-
-        renderTask = new RenderTask();
-
-        gameTickTaskId = api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
-
-        api.Event.ChunkDirty += OnChunkDirty;
+        Api.Event.ServerRunPhase(EnumServerRunPhase.Shutdown, OnShutdown);
     }
 
     // this method ticks every 1000ms on the game thread
     private void OnGameTick(float delta) {
         if (tick++ > 10) {
             tick = 0;
-            // every 10 seconds run the renderer queue
-            renderTask.Run();
+
+            // todo remove this temp call
+            RenderTask.Run();
         }
 
-        // todo - update player positions, etc
-        //
+        // todo - update player positions, public waypoints, etc
+    }
+
+    private void OnGameWorldSave() {
+        throw new NotImplementedException();
     }
 
     private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
-        // todo - remove debug output
-        Logger.Event($"OnDirtyChunk: {chunkCoord}");
-        renderTask.RenderQueue.Enqueue(chunkCoord);
+        if (reason == EnumChunkDirtyReason.NewlyLoaded) {
+            return;
+        }
+
+        int regionSize = Api.WorldManager.RegionSize;
+        int chunkSize = Api.WorldManager.ChunkSize;
+
+        int regionX = chunkCoord.X * chunkSize / regionSize;
+        int regionZ = chunkCoord.Z * chunkSize / regionSize;
+
+        RenderTask.Queue(regionX, regionZ);
+    }
+
+    public void OnShutdown() {
+        RenderTask.Stop();
     }
 
     public void Dispose() {
-        api.Event.ChunkDirty -= OnChunkDirty;
+        Api.Event.ChunkDirty -= OnChunkDirty;
+        Api.Event.GameWorldSave -= OnGameWorldSave;
 
-        api.Event.UnregisterGameTickListener(gameTickTaskId);
+        Api.Event.UnregisterGameTickListener(gameTickTaskId);
 
-        renderTask.Dispose();
-
-        networkHandler.Dispose();
-        commandHandler.Dispose();
+        RenderTask.Dispose();
+        NetworkHandler.Dispose();
+        CommandHandler.Dispose();
     }
 }

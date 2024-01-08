@@ -6,18 +6,14 @@ using Vintagestory.API.Server;
 
 namespace LiveMap;
 
-public class LiveMapMod : ModSystem {
-    private LiveMapClient client;
-    private LiveMapServer server;
+public sealed class LiveMapMod : ModSystem {
+    public static string? Id { get; private set; }
 
-    public override bool AllowRuntimeReload => true;
-
-    public override bool ShouldLoad(EnumAppSide side) {
-        return true;
-    }
-
-    public override double ExecuteOrder() {
-        return 0.5;
+    private LiveMapClient? client;
+    private LiveMapServer? server;
+    
+    public override void Start(ICoreAPI api) {
+        Id = Mod.Info.ModID;
     }
 
     public override void StartClientSide(ICoreClientAPI api) {
@@ -30,6 +26,9 @@ public class LiveMapMod : ModSystem {
 
     public override void Dispose() {
         client?.Dispose();
+        client = null;
+
         server?.Dispose();
+        server = null;
     }
 }
