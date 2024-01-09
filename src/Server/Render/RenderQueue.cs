@@ -20,20 +20,20 @@ public class RenderQueue {
         }
     }
 
-    public void Enqueue(Region region) {
+    public void Enqueue(long region) {
         lock (objLock) {
-            if (queuedRegions.Contains(region.Index)) {
+            if (queuedRegions.Contains(region)) {
                 return;
             }
 
-            Logger.Info($"Added to Queue: {region.PosX},{region.PosZ}");
-            queuedRegions.Enqueue(region.Index);
+            Logger.Info($"Added to Queue: {Mathf.LongToX(region)},{Mathf.LongToZ(region)}");
+            queuedRegions.Enqueue(region);
         }
     }
 
-    public Region Dequeue() {
+    public long Dequeue() {
         lock (objLock) {
-            return new Region(queuedRegions.Dequeue());
+            return queuedRegions.Dequeue();
         }
     }
 
