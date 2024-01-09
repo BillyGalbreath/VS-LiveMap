@@ -15,7 +15,7 @@ public class RenderTask {
         Server = server;
 
         Renderer = new BasicRenderer(this);
-        RenderQueue = new RenderQueue(server);
+        RenderQueue = new RenderQueue();
     }
 
     public void Queue(int regionX, int regionZ) {
