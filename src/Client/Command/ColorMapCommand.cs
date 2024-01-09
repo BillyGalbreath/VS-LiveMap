@@ -4,7 +4,6 @@ using LiveMap.Common;
 using LiveMap.Common.Command;
 using LiveMap.Common.Network;
 using LiveMap.Common.Util;
-using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
@@ -17,51 +16,52 @@ public class ColorMapCommand : AbstractClientCommand {
         handler.RegisterSubCommand("colormap", this);
     }
 
-    public override CommandResult Execute(Caller caller, List<string> args) {
+    public override CommandResult Execute(Caller caller, IEnumerable<string> args) {
         if (_running) {
-            return Success("colormap-running");
+            return CommandResult.Success("command.colormap.running");
         }
 
         _running = true;
 
-        ICoreClientAPI capi = ClientHandler.Client.Api;
-        IClientWorldAccessor world = capi.World;
-        IClientGameCalendar calendar = world.Calendar;
+        IWorldAccessor world = caller.Entity.World;
+        IGameCalendar calendar = world.Calendar;
 
-        Send(Lang.Success("colormap-started"));
-
-        // set season override for colors
-        // todo - allow command to set month (or not?)
-        float? seasonOverride = calendar.SeasonOverride;
-        calendar.SetSeasonOverride(0.5F);
+        Handler.Client.Api.ShowChatMessage(Lang.Success("command.colormap.started"));
 
         // we need a world position to sample colors at
         // we'll just use the player's current position
-        BlockPos pos = world.Player.Entity.Pos.AsBlockPos;
+        BlockPos pos = caller.Entity.Pos.AsBlockPos;
 
         // populate block colors
-        BlockColors blockColors = new();
-        foreach (Block block in world.Blocks.Where(block => block.Code != null)) {
-            int color = ColorUtil.ReverseColorBytes(block.GetColor(capi, pos));
+        Colormap colormap = new();
+        IList<Block> blocks = world.Blocks;
+
+        // set season override for colors
+        float? seasonOverride = calendar.SeasonOverride;
+        calendar.SetSeasonOverride(0.5F);
+
+        foreach (Block block in blocks.Where(block => block.Code != null)) {
+            int color = ColorUtil.ReverseColorBytes(block.GetColor(Handler.Client.Api, pos));
 
             int[] colors = new int[30];
             for (int i = 0; i < 30; i++) {
-                colors[i] = ColorUtil.ColorOverlay(color, block.GetRandomColor(capi, pos, BlockFacing.UP, i), 0.6f);
+                colors[i] = ColorUtil.ColorOverlay(color,
+                    block.GetRandomColor(Handler.Client.Api, pos, BlockFacing.UP, i), 0.6f);
             }
 
-            blockColors.Colors.Add(block.Code.ToString()!, colors);
+            colormap.Add(block.Code.ToString()!, colors);
         }
 
         // remove season override
         calendar.SetSeasonOverride(seasonOverride);
 
         // send back to server
-        Handler.Mod.NetworkHandler.SendPacket(new BlockColorsPacket {
-            RawDataColors = blockColors.Serialize()
+        Handler.Client.NetworkHandler.SendPacket(new ColormapPacket {
+            RawColormap = colormap.Serialize()
         });
 
         _running = false;
 
-        return Success("colormap-finished");
+        return CommandResult.Success("command.colormap.finished");
     }
 }

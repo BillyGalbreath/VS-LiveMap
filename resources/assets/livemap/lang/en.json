@@ -1,15 +1,20 @@
 ﻿{
-  "command-description": "Manage LiveMap",
+  "command.livemap.description": "Command to manage the LiveMap mod.",
 
-  "unknown-sub-command": "Unknown sub-command.",
-  "player-only-command": "Player only command.",
+  "command.unknown-subcommand": "Unknown subcommand",
+  "command.player-only": "Player only command",
 
-  "success-format": "<font color=\"#19B919\">{0}</font>",
-  "error-format": "<font color=\"#B91919\">{0}</font>",
+  "command.success": "<font color=\"#19B919\">{0}</font>",
+  "command.error": "<font color=\"#B91919\">{0}</font>",
 
-  "colormap-started": "Generating colormap. Please wait...",
-  "colormap-finished": "Finished colormap and sent to server.",
-  "colormap-running": "Already generating colormap. Please wait...",
+  "command.colormap.started": "Generating colormap. Please wait...",
+  "command.colormap.finished": "Finished colormap and sent to server.",
+  "command.colormap.running": "Already generating colormap. Please wait...",
 
-  "fullrender-started": "FullRender task started. (not really.. under construction)"
+  "command.fullrender.started": "FullRender task started. (not really.. it's under construction)",
+
+  "logger.info.server-received-colormap": "Colormap packet received from {0}",
+
+  "logger.warning.packet-from-non-admin": "Ignoring livemap colormap packet from non-privileged user",
+  "logger.warning.received-null-colormap": "Received null colormap from client!"
 }

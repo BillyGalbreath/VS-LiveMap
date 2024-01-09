@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using LiveMap.Common;
 using LiveMap.Common.Network;
 using LiveMap.Common.Util;
 using Vintagestory.API.Server;
@@ -13,27 +14,29 @@ public sealed class ServerNetworkHandler : NetworkHandler {
     public ServerNetworkHandler(LiveMapServer server) {
         this.server = server;
 
-        channel = server.Api.Network.RegisterChannel("livemap")
-            .RegisterMessageType<BlockColorsPacket>()
-            .SetMessageHandler<BlockColorsPacket>(ReceivePacket);
+        channel = server.Api.Network.RegisterChannel(LiveMapMod.Id)
+            .RegisterMessageType<ColormapPacket>()
+            .SetMessageHandler<ColormapPacket>(ServerReceivePacket);
     }
 
-    protected override void ReceivePacket(IServerPlayer player, BlockColorsPacket packet) {
+    private void ServerReceivePacket(IServerPlayer player, ColormapPacket packet) {
         if (!player.Privileges.Contains("livemap.admin")) {
-            server.Logger.Warning("Ignoring livemap colormap packet from non-privileged user");
+            Logger.Warn(Lang.Get("logger.warning.packet-from-non-admin"));
             return;
         }
 
-        if (packet.RawDataColors == null) {
-            server.Logger.Warning("Received null colors from client!");
+        if (packet.RawColormap == null) {
+            Logger.Warn(Lang.Get("logger.warning.received-null-colormap"));
             return;
         }
 
-        server.BlockColors = BlockColors.Deserialize(packet.RawDataColors);
+        Logger.Info(Lang.Get("logger.info.server-received-colormap", player.PlayerName));
+
+        server.Colormap = Colormap.Deserialize(packet.RawColormap);
     }
 
-    public override void SendPacket<T>(T packet, IServerPlayer player) {
-        channel?.SendPacket(packet, player);
+    public void SendPacket<T>(T packet, IServerPlayer receiver) {
+        channel?.SendPacket(packet, receiver);
     }
 
     public override void Dispose() {

@@ -6,10 +6,10 @@ public abstract class Lang {
     }
 
     public static string Error(string key, params object[]? args) {
-        return Get("error-format", Get(key, args));
+        return Get("command.error", Get(key, args));
     }
 
     public static string Success(string key, params object[]? args) {
-        return Get("success-format", Get(key, args));
+        return Get("command.success", Get(key, args));
     }
 }

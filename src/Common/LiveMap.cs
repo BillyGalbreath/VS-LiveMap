@@ -6,15 +6,18 @@ namespace LiveMap.Common;
 
 public abstract class LiveMap {
     public virtual ICoreAPI Api { get; }
-    public LiveMapMod Mod { get; }
+    private LiveMapMod Mod { get; }
 
-    public ILogger Logger => Mod.Mod.Logger;
-    
-    public abstract CommandHandler CommandHandler { get; }
+    protected abstract CommandHandler CommandHandler { get; }
     public abstract NetworkHandler NetworkHandler { get; }
 
     protected LiveMap(LiveMapMod mod, ICoreAPI api) {
         Api = api;
         Mod = mod;
+    }
+
+    public virtual void Dispose() {
+        NetworkHandler.Dispose();
+        CommandHandler.Dispose();
     }
 }

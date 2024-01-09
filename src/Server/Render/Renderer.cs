@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using LiveMap.Common;
 using LiveMap.Common.Util;
 using SkiaSharp;
 using Vintagestory.API.Common;
@@ -20,9 +21,8 @@ public abstract class Renderer {
     private readonly Random rand;
     private readonly MethodInfo cachedBlurMethod;
 
-    private BlockColors? BlockColors => renderTask.Server.BlockColors;
+    private Colormap? Colormap => renderTask.Server.Colormap;
     private ICoreServerAPI Api => renderTask.Server.Api;
-    private ILogger Logger => renderTask.Server.Logger;
 
     protected Renderer(RenderTask renderTask) {
         this.renderTask = renderTask;
@@ -33,10 +33,10 @@ public abstract class Renderer {
     }
 
     public void ScanRegion(Region region) {
-        Logger.Event($">>> Scanning Region {region.PosX},{region.PosZ} >>>");
+        Logger.Info($">>> Scanning Region {region.PosX},{region.PosZ} >>>");
 
-        int chunkX = region.PosX << 4;
-        int chunkZ = region.PosZ << 4;
+        int chunkX = region.PosX << 5;
+        int chunkZ = region.PosZ << 5;
 
         Api.WorldManager.LoadChunkColumnPriority(chunkX, chunkZ, chunkX + 16, chunkZ + 16,
             new ChunkLoadOptions {
@@ -44,40 +44,40 @@ public abstract class Renderer {
                     if (renderTask.Stopped) {
                         return;
                     }
-                    
+
                     // Vintage Story puts us back on the main thread here
                     ThreadPool.QueueUserWorkItem(_ => {
                         // now we're back on the thread pool
                         //ScanChunk(x1 << 5, z1 << 5, x2 << 5, z2 << 5);
-                        ScanChunk(chunkX, chunkZ);
+                        ScanRegion(region.PosX, region.PosZ);
                     });
                 }
             }
         );
     }
 
-    private unsafe void ScanChunk(int chunkX, int chunkZ) {
+    private unsafe void ScanRegion(int regionX, int regionZ) {
         if (renderTask.Stopped) {
             return;
         }
-        
-        Logger.Event($"    Scanning chunk {chunkX >> 4},{chunkZ >> 4})");
+
+        Logger.Info($"    Scanning region {regionX},{regionZ})");
 
         SKBitmap png = new(512, 512);
         byte* pngPtr = (byte*)png.GetPixels().ToPointer();
         byte[] shadowMap = new byte[512 << 9].Fill((byte)128);
 
-        int startBlockX = chunkX << 5;
-        int startBlockZ = chunkZ << 5;
-        int endBlockX = startBlockX + 32;
-        int endBlockZ = startBlockZ + 32;
+        int startBlockX = regionX << 9;
+        int startBlockZ = regionZ << 9;
+        int endBlockX = startBlockX + 512;
+        int endBlockZ = startBlockZ + 512;
 
         for (int blockX = startBlockX; blockX < endBlockX; blockX++) {
             for (int blockZ = startBlockZ; blockZ < endBlockZ; blockZ++) {
                 if (renderTask.Stopped) {
                     return;
                 }
-                
+
                 if (blockX < 0 || blockX > Api.WorldManager.MapSizeX) {
                     continue;
                 }
@@ -102,7 +102,7 @@ public abstract class Renderer {
                     int imgZ = blockZ & 511;
 
                     uint* row = (uint*)(pngPtr + imgZ * png.RowBytes);
-                    row[imgX] = (uint)GetBlockColor(GetBlockFromDecor(block, pos));
+                    row[imgX] = (uint)GetBlockColor(GetBlockFromDecor(block, pos).Code.ToString());
 
                     shadowMap[(imgZ << 9) + imgX] = (byte)(shadowMap[(imgZ << 9) + imgX] * CalculateAltitudeDiff(pos));
                 } catch (Exception) {
@@ -110,7 +110,7 @@ public abstract class Renderer {
                 }
             }
         }
-        
+
         if (renderTask.Stopped) {
             return;
         }
@@ -123,7 +123,7 @@ public abstract class Renderer {
             if (renderTask.Stopped) {
                 return;
             }
-            
+
             float shadow = (int)((shadowMap[i] / 128F - 1F) * 5F) / 5F;
             shadow += (shadowMapCopy[i] / 128F - 1F) * 5F % 1F / 5F;
 
@@ -135,13 +135,13 @@ public abstract class Renderer {
                 ? 0
                 : ColorUtil.ColorMultiply3Clamped((int)row[imgX], shadow * 1.4F + 1F) | 0xFF << 24);
         }
-        
+
         if (renderTask.Stopped) {
             return;
         }
 
-        int localRegionX = (startBlockX - (Api.WorldManager.MapSizeX >> 1)) >> 9;
-        int localRegionZ = (startBlockZ - (Api.WorldManager.MapSizeZ >> 1)) >> 9;
+        int localRegionX = regionX - (Api.WorldManager.MapSizeX >> 1 >> 9);
+        int localRegionZ = regionZ - (Api.WorldManager.MapSizeZ >> 1 >> 9);
 
         string dir = Path.Combine(GamePaths.DataPath, "LiveMap");
         FileInfo fi = new(Path.Combine(dir, $"{localRegionX}_{localRegionZ}.png"));
@@ -150,7 +150,7 @@ public abstract class Renderer {
         png.Encode(SKEncodedImageFormat.Png, 100).SaveTo(fi.Create());
         png.Dispose();
 
-        Logger.Event($"    Finished chunk {chunkX},{chunkZ}");
+        Logger.Info($"    Finished region {regionX},{regionZ}");
     }
 
     private int GetYFromRainMap(int x, int z) {
@@ -168,9 +168,14 @@ public abstract class Renderer {
         return blockId == 0 ? null : Api.World.Blocks[blockId];
     }
 
-    private int GetBlockColor(Block block) {
-        int[]? data = BlockColors?.Colors!.Get(block.Code.ToString());
-        return (data == null ? 0xFF << 16 : data[rand.Next(30)]) | 0xFF << 24;
+    private int GetBlockColor(string block) {
+        int[]? colors = Colormap?.Get(block);
+        if (colors != null) {
+            return colors[rand.Next(30)] | 0xFF << 24;
+        }
+
+        Logger.Warn($"No known color for block {block}!");
+        return 0xFF0000 | 0xFF << 24;
     }
 
     [SuppressMessage("ReSharper", "TailRecursiveCall")]
@@ -202,9 +207,5 @@ public abstract class Renderer {
             < 0 => 0.92F - slopeFactor,
             _ => 1
         };
-    }
-
-    public void Dispose() {
-        //
     }
 }

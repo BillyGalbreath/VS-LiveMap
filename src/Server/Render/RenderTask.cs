@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using LiveMap.Common;
 
 namespace LiveMap.Server.Render;
 
@@ -8,7 +9,7 @@ public class RenderTask {
     private Renderer Renderer { get; }
     private RenderQueue RenderQueue { get; }
 
-    public bool Stopped { get; private set; } = true;
+    public bool Stopped { get; private set; }
 
     public RenderTask(LiveMapServer server) {
         Server = server;
@@ -23,37 +24,37 @@ public class RenderTask {
 
     public void Stop() {
         if (Stopped) {
-            Server.Logger.Warning("##### Cannot stop a stopped render task!");
+            Logger.Warn("##### Cannot stop a stopped render task!");
             return;
         }
 
-        Server.Logger.Event("##### Stop");
+        Logger.Info("##### Stop");
         Stopped = true;
     }
 
     public void Run() {
-        Server.Logger.Event("##### Run");
+        Logger.Info("##### Run");
 
         if (Stopped) {
-            Server.Logger.Warning("##### Cannot run a stopped render task!");
+            Logger.Warn("##### Cannot run a stopped render task!");
             return;
         }
 
-        if (Server.BlockColors == null) {
-            Server.Logger.Warning("##### Cannot run render task! No block colors found...");
+        if (Server.Colormap == null) {
+            Logger.Warn("##### Cannot run render task! No block colors found...");
             return;
         }
 
-        Server.Logger.Event("##### Process " + RenderQueue.Count);
+        Logger.Info("##### Process " + RenderQueue.Count);
 
         ThreadPool.GetMinThreads(out int workerThreads, out int completionPortThreads);
-        Server.Logger.Event($"MIN workerThreads: {workerThreads} completionPortThreads: {completionPortThreads}");
+        Logger.Info($"MIN workerThreads: {workerThreads} completionPortThreads: {completionPortThreads}");
         ThreadPool.GetMaxThreads(out workerThreads, out completionPortThreads);
-        Server.Logger.Event($"MAX workerThreads: {workerThreads} completionPortThreads: {completionPortThreads}");
+        Logger.Info($"MAX workerThreads: {workerThreads} completionPortThreads: {completionPortThreads}");
 
         while (RenderQueue.Count > 0) {
             Region region = RenderQueue.Dequeue();
-            Server.Logger.Event($"!!! Starting queued region {region.PosX},{region.PosZ})");
+            Logger.Info($"!!! Starting queued region {region.PosX},{region.PosZ})");
             ThreadPool.QueueUserWorkItem(_ => Renderer.ScanRegion(region));
         }
     }
@@ -63,7 +64,6 @@ public class RenderTask {
             Stop();
         }
 
-        Renderer.Dispose();
         RenderQueue.Dispose();
     }
 }

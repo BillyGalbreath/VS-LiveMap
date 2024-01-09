@@ -7,13 +7,14 @@ using Vintagestory.API.Server;
 namespace LiveMap;
 
 public sealed class LiveMapMod : ModSystem {
-    public static string? Id { get; private set; }
+    public static LiveMapMod Instance { get; private set; } = null!;
+    public static string? Id => Instance.Mod.Info.ModID;
 
     private LiveMapClient? client;
     private LiveMapServer? server;
-    
-    public override void Start(ICoreAPI api) {
-        Id = Mod.Info.ModID;
+
+    public LiveMapMod() {
+        Instance = this;
     }
 
     public override void StartClientSide(ICoreClientAPI api) {

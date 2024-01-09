@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using LiveMap.Common;
 
 namespace LiveMap.Server.Render;
 
@@ -25,7 +26,7 @@ public class RenderQueue {
                 return;
             }
 
-            server.Logger.Event($"Added to Queue: {region.PosX},{region.PosZ}");
+            Logger.Info($"Added to Queue: {region.PosX},{region.PosZ}");
             queuedRegions.Enqueue(region.Index);
         }
     }
