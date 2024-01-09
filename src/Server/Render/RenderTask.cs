@@ -19,7 +19,7 @@ public class RenderTask {
     }
 
     public void Queue(int regionX, int regionZ) {
-        RenderQueue.Enqueue(new Region(regionX, regionZ));
+        RenderQueue.Enqueue(Mathf.AsLong(regionX, regionZ));
     }
 
     public void Stop() {
@@ -53,8 +53,7 @@ public class RenderTask {
         Logger.Info($"MAX workerThreads: {workerThreads} completionPortThreads: {completionPortThreads}");
 
         while (RenderQueue.Count > 0) {
-            Region region = RenderQueue.Dequeue();
-            Logger.Info($"!!! Starting queued region {region.PosX},{region.PosZ})");
+            long region = RenderQueue.Dequeue();
             ThreadPool.QueueUserWorkItem(_ => Renderer.ScanRegion(region));
         }
     }

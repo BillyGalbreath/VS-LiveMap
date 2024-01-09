@@ -31,11 +31,14 @@ public abstract class Renderer {
             .GetMethod("Blur", BindingFlags.Public | BindingFlags.Static)!;
     }
 
-    public void ScanRegion(Region region) {
-        Logger.Info($">>> Scanning Region {region.PosX},{region.PosZ} >>>");
+    public void ScanRegion(long region) {
+        int regionX = Mathf.LongToX(region);
+        int regionZ = Mathf.LongToZ(region);
 
-        int chunkX = region.PosX << 5;
-        int chunkZ = region.PosZ << 5;
+        Logger.Info($">>> Scanning Region {regionX},{regionZ} >>>");
+
+        int chunkX = regionX << 5;
+        int chunkZ = regionZ << 5;
 
         Api.WorldManager.LoadChunkColumnPriority(chunkX, chunkZ, chunkX + 16, chunkZ + 16,
             new ChunkLoadOptions {
@@ -47,8 +50,7 @@ public abstract class Renderer {
                     // Vintage Story puts us back on the main thread here
                     ThreadPool.QueueUserWorkItem(_ => {
                         // now we're back on the thread pool
-                        //ScanChunk(x1 << 5, z1 << 5, x2 << 5, z2 << 5);
-                        ScanRegion(region.PosX, region.PosZ);
+                        ScanRegion(regionX, regionZ);
                     });
                 }
             }
