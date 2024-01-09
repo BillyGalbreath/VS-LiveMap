@@ -1,4 +1,4 @@
-namespace LiveMap.Common;
+namespace LiveMap.Common.Util;
 
 public abstract class Lang {
     public static string Get(string key, params object[]? args) {

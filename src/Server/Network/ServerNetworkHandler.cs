@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using LiveMap.Common;
 using LiveMap.Common.Network;
 using LiveMap.Common.Util;
 using Vintagestory.API.Server;

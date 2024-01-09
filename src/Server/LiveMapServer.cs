@@ -1,5 +1,4 @@
-﻿using LiveMap.Common;
-using LiveMap.Common.Util;
+﻿using LiveMap.Common.Util;
 using LiveMap.Server.Command;
 using LiveMap.Server.Network;
 using LiveMap.Server.Patches;
@@ -21,6 +20,7 @@ public sealed class LiveMapServer : Common.LiveMap {
     private readonly HarmonyPatches patches;
     private readonly RenderTask renderTask;
     private readonly long gameTickTaskId;
+
     private int tick;
 
     public LiveMapServer(LiveMapMod mod, ICoreServerAPI api) : base(mod, api) {

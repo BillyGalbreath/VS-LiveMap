@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Vintagestory.API.Common;
 using Vintagestory.Common;
 
-namespace LiveMap.Common;
+namespace LiveMap.Common.Util;
 
 public abstract class Logger {
     private static ILogger? _logger;
