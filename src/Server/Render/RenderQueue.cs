@@ -4,13 +4,8 @@ using LiveMap.Common.Util;
 namespace LiveMap.Server.Render;
 
 public class RenderQueue {
-    private readonly LiveMapServer server;
     private readonly Queue<long> queuedRegions = new();
     private readonly object objLock = new();
-
-    public RenderQueue(LiveMapServer server) {
-        this.server = server;
-    }
 
     public int Count {
         get {
