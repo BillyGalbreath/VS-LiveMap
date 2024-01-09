@@ -1,7 +1,8 @@
-﻿using System;
+﻿using LiveMap.Common;
 using LiveMap.Common.Util;
 using LiveMap.Server.Command;
 using LiveMap.Server.Network;
+using LiveMap.Server.Patches;
 using LiveMap.Server.Render;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -12,21 +13,25 @@ namespace LiveMap.Server;
 public sealed class LiveMapServer : Common.LiveMap {
     public override ICoreServerAPI Api { get; }
 
-    public override ServerCommandHandler CommandHandler { get; }
+    protected override ServerCommandHandler CommandHandler { get; }
     public override ServerNetworkHandler NetworkHandler { get; }
 
-    public RenderTask RenderTask { get; }
-    public BlockColors? BlockColors;
+    public Colormap? Colormap;
 
+    private readonly HarmonyPatches patches;
+    private readonly RenderTask renderTask;
     private readonly long gameTickTaskId;
     private int tick;
 
     public LiveMapServer(LiveMapMod mod, ICoreServerAPI api) : base(mod, api) {
         Api = api;
 
+        patches = new HarmonyPatches(mod);
+
         CommandHandler = new ServerCommandHandler(this);
         NetworkHandler = new ServerNetworkHandler(this);
-        RenderTask = new RenderTask(this);
+
+        renderTask = new RenderTask(this);
 
         gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
 
@@ -42,14 +47,15 @@ public sealed class LiveMapServer : Common.LiveMap {
             tick = 0;
 
             // todo remove this temp call
-            RenderTask.Run();
+            renderTask.Run();
         }
 
         // todo - update player positions, public waypoints, etc
+        Logger.Info("---- OnGameTick");
     }
 
     private void OnGameWorldSave() {
-        throw new NotImplementedException();
+        Logger.Info("---- OnGameWorldSave");
     }
 
     private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
@@ -63,21 +69,26 @@ public sealed class LiveMapServer : Common.LiveMap {
         int regionX = chunkCoord.X * chunkSize / regionSize;
         int regionZ = chunkCoord.Z * chunkSize / regionSize;
 
-        RenderTask.Queue(regionX, regionZ);
+        renderTask.Queue(regionX, regionZ);
     }
 
-    public void OnShutdown() {
-        RenderTask.Stop();
+    private void OnShutdown() {
+        Logger.Info("---- OnShutdown");
+        renderTask.Stop();
     }
 
-    public void Dispose() {
+    public override void Dispose() {
         Api.Event.ChunkDirty -= OnChunkDirty;
         Api.Event.GameWorldSave -= OnGameWorldSave;
 
         Api.Event.UnregisterGameTickListener(gameTickTaskId);
 
-        RenderTask.Dispose();
-        NetworkHandler.Dispose();
-        CommandHandler.Dispose();
+        renderTask.Dispose();
+
+        base.Dispose();
+
+        Colormap?.Dispose();
+
+        patches.Dispose();
     }
 }

@@ -8,18 +8,13 @@ namespace LiveMap.Common.Command;
 public abstract class CommandHandler {
     private readonly Dictionary<string, AbstractCommand> commands = new();
 
-    public LiveMap Mod { get; }
-
     protected CommandHandler(LiveMap mod) {
-        Mod = mod;
-
-        Mod.Api.ChatCommands
+        mod.Api.ChatCommands
             .Create("livemap")
-            .WithDescription(Lang.Get("command-description"))
+            .WithDescription(Lang.Get("command.livemap.description"))
             .RequiresPrivilege("livemap.admin")
             .WithArgs(new WordArgParser("command", false, commands.Keys.ToArray()))
-            .HandleWith(Execute);
-
+            .HandleWith(VanillaExecute);
 
         // ReSharper disable once VirtualMemberCallInConstructor
         // we're not using any uninitialized instanced fields in this
@@ -33,15 +28,25 @@ public abstract class CommandHandler {
         commands.Add(name, command);
     }
 
-    private TextCommandResult Execute(TextCommandCallingArgs args) {
+    private TextCommandResult VanillaExecute(TextCommandCallingArgs args) {
+        CommandResult result = InternalExecute(args);
+
+        return TextCommandResult.Success(result switch {
+            { Status: EnumCommandStatus.Error } => Lang.Error(result.Message, result.Args),
+            { Message.Length: > 0 } => Lang.Success(result.Message, result.Args),
+            _ => ""
+        });
+    }
+
+    private CommandResult InternalExecute(TextCommandCallingArgs args) {
         if (args.Parsers[0].IsMissing) {
-            return TextCommandResult.Success(Lang.Error("unknown-sub-command"));
+            return CommandResult.Error("command.unknown-subcommand");
         }
 
         string name = args[0].ToString()!.Trim().ToLower();
         AbstractCommand? command = commands!.Get(name);
         if (command == null) {
-            return TextCommandResult.Success(Lang.Error("unknown-sub-command"));
+            return CommandResult.Error("command.unknown-subcommand");
         }
 
         List<string> argsList = new();
@@ -49,13 +54,7 @@ public abstract class CommandHandler {
             argsList.Add(args[i].ToString()!);
         }
 
-        CommandResult result = command.Execute(args.Caller, argsList);
-
-        return TextCommandResult.Success(result switch {
-            { Status: EnumCommandStatus.Error } => Lang.Error(result.Message, result.Args),
-            { Message.Length: > 0 } => Lang.Success(result.Message, result.Args),
-            _ => ""
-        });
+        return command.Execute(args.Caller, argsList);
     }
 
     public void Dispose() {

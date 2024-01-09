@@ -7,16 +7,16 @@ public sealed class ClientNetworkHandler : NetworkHandler {
     private IClientNetworkChannel? channel;
 
     public ClientNetworkHandler(LiveMapClient client) {
-        channel = client.Api.Network.RegisterChannel("livemap")
-            .RegisterMessageType<BlockColorsPacket>()
-            .SetMessageHandler<BlockColorsPacket>(ReceivePacket);
+        channel = client.Api.Network.RegisterChannel(LiveMapMod.Id)
+            .RegisterMessageType<ColormapPacket>()
+            .SetMessageHandler<ColormapPacket>(ClientReceivePacket);
     }
 
-    protected override void ReceivePacket(BlockColorsPacket packet) {
+    private static void ClientReceivePacket(ColormapPacket packet) {
         // do nothing
     }
 
-    public override void SendPacket<T>(T packet) {
+    public void SendPacket<T>(T packet) {
         if (channel is { Connected: true }) {
             channel.SendPacket(packet);
         }

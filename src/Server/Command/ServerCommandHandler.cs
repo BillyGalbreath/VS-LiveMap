@@ -1,12 +1,15 @@
-﻿using LiveMap.Common.Command;
+﻿using LiveMap.Common;
+using LiveMap.Common.Command;
 
 namespace LiveMap.Server.Command;
 
 public sealed class ServerCommandHandler : CommandHandler {
-    public LiveMapServer Server { get; }
+    private LiveMapServer Server { get; }
 
     public ServerCommandHandler(LiveMapServer server) : base(server) {
         Server = server;
+
+        Server.Api.Permissions.RegisterPrivilege("livemap.admin", Lang.Get("command.livemap.description"), false);
     }
 
     protected override void RegisterSubCommands() {

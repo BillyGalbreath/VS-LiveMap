@@ -7,7 +7,7 @@ namespace LiveMap.Client;
 public sealed class LiveMapClient : Common.LiveMap {
     public override ICoreClientAPI Api { get; }
 
-    public override ClientCommandHandler CommandHandler { get; }
+    protected override ClientCommandHandler CommandHandler { get; }
     public override ClientNetworkHandler NetworkHandler { get; }
 
     public LiveMapClient(LiveMapMod mod, ICoreClientAPI api) : base(mod, api) {
@@ -15,9 +15,5 @@ public sealed class LiveMapClient : Common.LiveMap {
 
         CommandHandler = new ClientCommandHandler(this);
         NetworkHandler = new ClientNetworkHandler(this);
-    }
-
-    public void Dispose() {
-        NetworkHandler.Dispose();
     }
 }
