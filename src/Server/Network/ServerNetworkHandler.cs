@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using LiveMap.Common.Network;
 using LiveMap.Common.Util;
 using Vintagestory.API.Server;
@@ -34,6 +35,7 @@ public sealed class ServerNetworkHandler : NetworkHandler {
         server.Colormap = Colormap.Deserialize(packet.RawColormap);
     }
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public void SendPacket<T>(T packet, IServerPlayer receiver) {
         channel?.SendPacket(packet, receiver);
     }

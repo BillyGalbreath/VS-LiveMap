@@ -40,7 +40,7 @@ public abstract class Renderer {
         int chunkX = regionX << 5;
         int chunkZ = regionZ << 5;
 
-        ManualResetEvent oSignalEvent = new(false);
+        ManualResetEvent mre = new(false);
 
         Api.WorldManager.LoadChunkColumnPriority(chunkX, chunkZ, chunkX + 16, chunkZ + 16,
             new ChunkLoadOptions {
@@ -51,22 +51,18 @@ public abstract class Renderer {
                         Logger.Error(e.ToString());
                     }
 
-                    Logger.Debug("set");
-                    oSignalEvent.Set();
+                    mre.Set();
                 }
             }
         );
 
-        Logger.Debug("wait");
-        oSignalEvent.WaitOne();
+        mre.WaitOne();
     }
 
     private unsafe void ScanRegion(int regionX, int regionZ) {
         if (renderTask.Stopped) {
             return;
         }
-
-        Logger.Debug($"    Scanning region {regionX},{regionZ})");
 
         SKBitmap png = new(512, 512);
         byte* pngPtr = (byte*)png.GetPixels().ToPointer();
@@ -155,8 +151,6 @@ public abstract class Renderer {
         png.Encode(SKEncodedImageFormat.Png, 100).SaveTo(fileStream);
         png.Dispose();
         fileStream.Dispose();
-
-        Logger.Debug($"    Finished region {regionX},{regionZ}");
     }
 
     private int GetYFromRainMap(int x, int z) {
@@ -176,12 +170,8 @@ public abstract class Renderer {
 
     private int GetBlockColor(string block) {
         int[]? colors = Colormap?.Get(block);
-        if (colors != null) {
-            return colors[rand.Next(30)] | 0xFF << 24;
-        }
-
-        Logger.Warn($"No known color for block {block}!");
-        return 0xFF0000 | 0xFF << 24;
+        return (colors == null ? 0xFF << 16 : colors[rand.Next(30)]) | 0xFF << 24;
+        // todo - test all blocks for colors on start and warn only once
     }
 
     [SuppressMessage("ReSharper", "TailRecursiveCall")]

@@ -13,7 +13,12 @@
 
   "command.fullrender.started": "FullRender task started. (not really.. it's under construction)",
 
-  "logger.info.server-received-colormap": "Colormap packet received from {0}",
+  "command.reload.finished": "LiveMap config was successfully reloaded.",
+
+  "logger.info.server-received-colormap": "&dColormap packet received from &n{0}",
+
+  "logger.info.webserver-started": "&aInternal webserver started on port &e{0}",
+  "logger.info.webserver-stopped": "&cInternal webserver was stopped",
 
   "logger.warning.packet-from-non-admin": "Ignoring livemap colormap packet from non-privileged user",
   "logger.warning.received-null-colormap": "Received null colormap from client!"
