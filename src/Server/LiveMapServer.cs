@@ -1,5 +1,6 @@
 ﻿using LiveMap.Common.Util;
 using LiveMap.Server.Command;
+using LiveMap.Server.Configuration;
 using LiveMap.Server.Httpd;
 using LiveMap.Server.Network;
 using LiveMap.Server.Patches;
@@ -15,24 +16,26 @@ public sealed class LiveMapServer : Common.LiveMap {
 
     protected override ServerCommandHandler CommandHandler { get; }
     public override ServerNetworkHandler NetworkHandler { get; }
+    public WebServer WebServer { get; }
 
     private readonly HarmonyPatches patches;
     private readonly RenderTask renderTask;
-    private readonly WebServer webServer;
     private readonly long gameTickTaskId;
 
     public Colormap? Colormap;
 
-    public LiveMapServer(LiveMapMod mod, ICoreServerAPI api) : base(mod, api) {
+    public LiveMapServer(ICoreServerAPI api) : base(api) {
         Api = api;
 
-        patches = new HarmonyPatches(mod);
+        Config.Reload();
+
+        patches = new HarmonyPatches();
 
         CommandHandler = new ServerCommandHandler(this);
         NetworkHandler = new ServerNetworkHandler(this);
 
         renderTask = new RenderTask(this);
-        webServer = new WebServer();
+        WebServer = new WebServer();
 
         Api.Event.ChunkDirty += OnChunkDirty;
 
@@ -45,7 +48,7 @@ public sealed class LiveMapServer : Common.LiveMap {
         renderTask.Run();
 
         // ensure web server is still running
-        webServer.Run();
+        WebServer.Run();
 
         // todo - update player positions, public waypoints, etc
     }
@@ -62,7 +65,7 @@ public sealed class LiveMapServer : Common.LiveMap {
         Api.Event.UnregisterGameTickListener(gameTickTaskId);
 
         renderTask.Dispose();
-        webServer.Dispose();
+        WebServer.Dispose();
 
         base.Dispose();
 

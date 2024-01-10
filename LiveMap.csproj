@@ -20,11 +20,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="SkiaSharp" Version="2.88.6"/>
-        <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
-    </ItemGroup>
-
-    <ItemGroup>
         <Reference Include="Vintagestory">
             <HintPath>$(VINTAGE_STORY)/Vintagestory.dll</HintPath>
             <Private>false</Private>
@@ -63,6 +58,12 @@
         </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="SkiaSharp" Version="2.88.6"/>
+        <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
+        <PackageReference Include="YamlDotNet" Version="13.7.1"/>
+    </ItemGroup>
+
     <ItemGroup Condition="'$(Configuration)' == 'Release'">
         <None Include="LICENSE" CopyToOutputDirectory="PreserveNewest"/>
         <None Include="resources/**">
@@ -73,7 +74,7 @@
 
     <Target Name="FilterCopyLocalItems" AfterTargets="ResolvePackageDependenciesForBuild">
         <ItemGroup>
-            <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' != 'MimeTypes'"/>
+            <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' != 'MimeTypes' AND '%(Filename)' != 'YamlDotNet'"/>
         </ItemGroup>
     </Target>
 

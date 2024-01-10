@@ -1,51 +1,73 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 using Vintagestory.API.Common;
 using Vintagestory.Common;
 
 namespace LiveMap.Common.Util;
 
 public abstract class Logger {
-    private static ILogger? _logger;
-
-    private static ILogger Log() {
-        return _logger ??= new LoggerImpl();
-    }
+    private static readonly LoggerImpl Log = new();
 
     public static void Debug(string message) {
-        Log().Event($"[DEBUG] {message}");
+        Log.Event($"[&eDEBUG&r] &e{message}");
     }
 
     public static void Info(string message) {
-        Log().Event(message);
+        Log.Event(message);
     }
 
     public static void Warn(string message) {
-        Log().Warning(message);
+        Log.Warning(message);
     }
 
     public static void Error(string message) {
-        Log().Error(message);
+        Log.Error(message);
     }
 }
 
+[SuppressMessage("GeneratedRegex", "SYSLIB1045:Convert to \'GeneratedRegexAttribute\'.")]
 internal class LoggerImpl : LoggerBase {
-    private const string Cyan = "\u001b[36m";
-    private const string Red = "\u001b[91m";
-    private const string Yellow = "\u001b[33m";
-    private const string Reset = "\u001b[0m";
+    private static readonly Regex Regex = new("(?i)&([a-f0-9k-or])");
 
     private bool canUseColor = true;
 
+    private static readonly Dictionary<string, int> AnsiCodes = new() {
+        { "0", 30 }, { "1", 34 }, { "2", 32 }, { "3", 36 }, { "4", 31 }, { "5", 35 },
+        { "6", 33 }, { "7", 37 }, { "8", 90 }, { "9", 94 }, { "a", 92 }, { "b", 96 },
+        { "c", 91 }, { "d", 95 }, { "e", 93 }, { "f", 97 }, { "k", 8 }, { "l", 1 },
+        { "m", 9 }, { "n", 4 }, { "o", 3 }, { "r", 0 }
+    };
+
+    private static string Strip(string message) {
+        message = Regex.Replace(message, "(?i)\u001b\\[[\\d]{1,2}m", "");
+        return Regex.Replace(message, "(?i)&([a-f0-9k-or])", "");
+    }
+
+    private static string Parse(string message) {
+        MatchCollection results = Regex.Matches(message);
+
+        foreach (Match match in results) {
+            message = message.Replace(
+                match.Value,
+                $"\u001b[{AnsiCodes[match.Groups[1].Value]}m"
+            );
+        }
+
+        return message;
+    }
+
     protected override void LogImpl(EnumLogType logType, string format, params object[] args) {
-        string formatted = $"[{LiveMapMod.Id}] {format}";
+        string stripped = $"[{LiveMapMod.Id}] {Strip(format)}";
 
         Vintagestory.Logger parent = (Vintagestory.Logger)((ModLogger)LiveMapMod.Instance.Mod.Logger).Parent;
 
         string logFile = parent.getLogFile(logType);
         if (logFile != null) {
             try {
-                parent.LogToFile(logFile, logType, formatted, args);
+                parent.LogToFile(logFile, logType, stripped, args);
             } catch (NotSupportedException) {
                 Console.WriteLine("Unable to write to log file " + logFile);
             } catch (ObjectDisposedException) {
@@ -55,10 +77,10 @@ internal class LoggerImpl : LoggerBase {
 
         switch (logType) {
             case EnumLogType.Error or EnumLogType.Fatal:
-                parent.LogToFile(parent.getLogFile(EnumLogType.Event), logType, formatted, args);
+                parent.LogToFile(parent.getLogFile(EnumLogType.Event), logType, stripped, args);
                 break;
             case EnumLogType.Event:
-                parent.LogToFile(parent.getLogFile(EnumLogType.Notification), logType, formatted, args);
+                parent.LogToFile(parent.getLogFile(EnumLogType.Notification), logType, stripped, args);
                 break;
         }
 
@@ -67,7 +89,7 @@ internal class LoggerImpl : LoggerBase {
         }
 
         if (parent.TraceLog) {
-            Trace.WriteLine(parent.FormatLogEntry(logType, formatted, args));
+            Trace.WriteLine(parent.FormatLogEntry(logType, stripped, args));
         }
 
         if (canUseColor) {
@@ -83,15 +105,17 @@ internal class LoggerImpl : LoggerBase {
         }
 
         if (!canUseColor) {
-            Console.WriteLine(parent.FormatLogEntry(logType, formatted, args));
+            Console.WriteLine(parent.FormatLogEntry(logType, stripped, args));
             return;
         }
 
-        Console.WriteLine(parent.FormatLogEntry(logType, $"[{Cyan}{LiveMapMod.Id}{logType switch {
-            EnumLogType.Error or EnumLogType.Fatal => Red,
-            EnumLogType.Warning => Yellow,
-            _ => Reset
-        }}] {format}", args));
+        Console.WriteLine(parent.FormatLogEntry(logType, Parse(
+            $"[&3{LiveMapMod.Id}{logType switch {
+                EnumLogType.Error or EnumLogType.Fatal => "&c",
+                EnumLogType.Warning => "&e",
+                _ => "&r"
+            }}] {format}"
+        ), args));
 
 
         Console.ResetColor();

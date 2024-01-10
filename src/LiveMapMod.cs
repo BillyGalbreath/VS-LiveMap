@@ -1,4 +1,5 @@
-﻿using LiveMap.Client;
+﻿using System.Diagnostics.CodeAnalysis;
+using LiveMap.Client;
 using LiveMap.Server;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -6,6 +7,7 @@ using Vintagestory.API.Server;
 
 namespace LiveMap;
 
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public sealed class LiveMapMod : ModSystem {
     public static LiveMapMod Instance { get; private set; } = null!;
     public static string? Id => Instance.Mod.Info.ModID;
@@ -18,11 +20,11 @@ public sealed class LiveMapMod : ModSystem {
     }
 
     public override void StartClientSide(ICoreClientAPI api) {
-        client = new LiveMapClient(this, api);
+        client = new LiveMapClient(api);
     }
 
     public override void StartServerSide(ICoreServerAPI api) {
-        server = new LiveMapServer(this, api);
+        server = new LiveMapServer(api);
     }
 
     public override void Dispose() {

@@ -29,7 +29,7 @@ public abstract class CommandHandler {
         commands.Add(name, command);
     }
 
-    private TextCommandResult VanillaExecute(TextCommandCallingArgs args) {
+    protected virtual TextCommandResult VanillaExecute(TextCommandCallingArgs args) {
         CommandResult result = InternalExecute(args);
 
         return TextCommandResult.Success(result switch {
@@ -39,7 +39,7 @@ public abstract class CommandHandler {
         });
     }
 
-    private CommandResult InternalExecute(TextCommandCallingArgs args) {
+    protected CommandResult InternalExecute(TextCommandCallingArgs args) {
         if (args.Parsers[0].IsMissing) {
             return CommandResult.Error("command.unknown-subcommand");
         }
