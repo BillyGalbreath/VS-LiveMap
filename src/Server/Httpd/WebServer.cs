@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Net.Mime;
 using System.Threading;
+using LiveMap.Server.Configuration;
 using MimeTypes;
 using Vintagestory.API.Config;
 
@@ -26,41 +27,34 @@ public class WebServer {
         running = true;
 
         (thread = new Thread(_ => {
+            (listener = new HttpListener {
+                Prefixes = { $"http://*:{Config.Port}/" }
+            }).Start();
+
             while (running) {
                 try {
-                    listener = new HttpListener();
-                    listener.Prefixes.Add("http://localhost:8080/");
-                    listener.Start();
-
-                    while (listener.IsListening) {
-                        listener
-                            .BeginGetContext(Callback, listener)
-                            .AsyncWaitHandle
-                            .WaitOne();
-                    }
-                } catch (ThreadInterruptedException) {
+                    HttpListenerContext context = listener.GetContext();
+                    HandleRequest(context);
+                } catch (Exception) {
+                    running = false;
                     Thread.CurrentThread.Interrupt();
                 }
-
-                running = false;
             }
         })).Start();
     }
 
-    private void Callback(IAsyncResult result) {
-        HttpListenerContext ctx = ((HttpListener)result.AsyncState!).EndGetContext(result);
-
-        string? urlLoc = ctx.Request.Url?.LocalPath[1..];
+    private void HandleRequest(HttpListenerContext context) {
+        string? urlLoc = context.Request.Url?.LocalPath[1..];
         if (urlLoc is null or "") {
             urlLoc = "index.html";
         }
 
-        HttpListenerResponse response = ctx.Response;
+        HttpListenerResponse response = context.Response;
         string filePath = Path.Combine(liveMapPath, urlLoc);
+        FileInfo fileInfo = new(filePath);
 
         byte[] buffer;
         if (File.Exists(filePath)) {
-            FileInfo fileInfo = new(filePath);
             response.ContentType = MimeTypeMap.GetMimeType(fileInfo.Extension) ?? MediaTypeNames.Text.Plain;
             buffer = File.ReadAllBytes(filePath);
             response.StatusCode = 200;
