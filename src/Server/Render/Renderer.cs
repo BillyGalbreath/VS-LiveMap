@@ -35,26 +35,30 @@ public abstract class Renderer {
         int regionX = Mathf.LongToX(region);
         int regionZ = Mathf.LongToZ(region);
 
-        Logger.Info($">>> Scanning Region {regionX},{regionZ} >>>");
+        Logger.Debug($">>> Scanning Region {regionX},{regionZ} >>>");
 
         int chunkX = regionX << 5;
         int chunkZ = regionZ << 5;
 
+        ManualResetEvent oSignalEvent = new(false);
+
         Api.WorldManager.LoadChunkColumnPriority(chunkX, chunkZ, chunkX + 16, chunkZ + 16,
             new ChunkLoadOptions {
                 OnLoaded = () => {
-                    if (renderTask.Stopped) {
-                        return;
+                    try {
+                        ScanRegion(regionX, regionZ);
+                    } catch (Exception e) {
+                        Logger.Error(e.ToString());
                     }
 
-                    // Vintage Story puts us back on the main thread here
-                    ThreadPool.QueueUserWorkItem(_ => {
-                        // now we're back on the thread pool
-                        ScanRegion(regionX, regionZ);
-                    });
+                    Logger.Debug("set");
+                    oSignalEvent.Set();
                 }
             }
         );
+
+        Logger.Debug("wait");
+        oSignalEvent.WaitOne();
     }
 
     private unsafe void ScanRegion(int regionX, int regionZ) {
@@ -62,7 +66,7 @@ public abstract class Renderer {
             return;
         }
 
-        Logger.Info($"    Scanning region {regionX},{regionZ})");
+        Logger.Debug($"    Scanning region {regionX},{regionZ})");
 
         SKBitmap png = new(512, 512);
         byte* pngPtr = (byte*)png.GetPixels().ToPointer();
@@ -141,17 +145,18 @@ public abstract class Renderer {
             return;
         }
 
-        int localRegionX = regionX - (Api.WorldManager.MapSizeX >> 1 >> 9);
-        int localRegionZ = regionZ - (Api.WorldManager.MapSizeZ >> 1 >> 9);
+        int localRegionX = regionX;// - (Api.WorldManager.MapSizeX >> 1 >> 9);
+        int localRegionZ = regionZ;// - (Api.WorldManager.MapSizeZ >> 1 >> 9);
 
         string dir = Path.Combine(GamePaths.DataPath, "LiveMap");
-        FileInfo fi = new(Path.Combine(dir, $"{localRegionX}_{localRegionZ}.png"));
-        Directory.CreateDirectory(fi.Directory!.FullName);
-
-        png.Encode(SKEncodedImageFormat.Png, 100).SaveTo(fi.Create());
+        FileInfo fileInfo = new(Path.Combine(dir, $"{localRegionX}_{localRegionZ}.png"));
+        Directory.CreateDirectory(fileInfo.Directory!.FullName);
+        FileStream fileStream = fileInfo.Create();
+        png.Encode(SKEncodedImageFormat.Png, 100).SaveTo(fileStream);
         png.Dispose();
+        fileStream.Dispose();
 
-        Logger.Info($"    Finished region {regionX},{regionZ}");
+        Logger.Debug($"    Finished region {regionX},{regionZ}");
     }
 
     private int GetYFromRainMap(int x, int z) {
