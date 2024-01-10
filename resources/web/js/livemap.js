@@ -12,6 +12,8 @@ class LiveMap {
                 // https://stackoverflow.com/a/62320569/3530727
                 transformation: new L.Transformation(1, 0, 1, 0)
             }),
+            // always 0,0 center
+            center: [0, 0],
             // show attribution control box
             attributionControl: true,
             // canvas is more efficient than svg
@@ -38,12 +40,12 @@ class LiveMap {
         this.getJSON("tiles/settings.json", (json) => {
             // set the scale for our projection calculations
             this.scale = (1 / Math.pow(2, json.zoom?.max ?? 3));
-            
+
             // move to the center of the map at default zoom level
             this.centerOn(
                 this.getUrlParam("x", json.spawn?.x ?? 0),
                 this.getUrlParam("z", json.spawn?.z ?? 0),
-                this.getUrlParam("y", json.zoom?.def ?? 3)
+                this.getUrlParam("y", json.zoom?.def ?? 0)
             );
 
             // setup the layer controls (tile layers and layer overlays)
@@ -71,7 +73,7 @@ class LiveMap {
     }
 
     centerOn(x, z, zoom) {
-        this.map.setView(this.toLatLng(x, z), zoom);
+        this.map.setView(this.toLatLng(x, z), 3 - zoom);
         this.link?.update();
     }
 
@@ -93,21 +95,12 @@ class LiveMap {
     }
 
     getUrlParam(query, def) {
-        const url = window.location.search.substring(1);
-        const vars = url.split('&');
-        for (let i = 0; i < vars.length; i++) {
-            const param = vars[i].split('=');
-            if (param[0] === query) {
-                const value = param[1] === undefined ? '' : decodeURIComponent(param[1]);
-                return value === '' ? def : value;
-            }
-        }
-        return def;
+        return new URLSearchParams(window.location.search).get(query) ?? def;
     }
 
     getUrlFromView() {
         const center = this.toPoint(this.map.getCenter());
-        const zoom = this.map.getZoom();
+        const zoom = 3 - this.map.getZoom();
         const x = Math.floor(center.x);
         const z = Math.floor(center.y);
         return `?x=${x}&z=${z}&y=${zoom}`;
