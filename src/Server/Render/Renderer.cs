@@ -145,8 +145,8 @@ public abstract class Renderer {
             return;
         }
 
-        int localRegionX = regionX;// - (Api.WorldManager.MapSizeX >> 1 >> 9);
-        int localRegionZ = regionZ;// - (Api.WorldManager.MapSizeZ >> 1 >> 9);
+        int localRegionX = (startBlockX - (Api.WorldManager.MapSizeX >> 1)) >> 9;
+        int localRegionZ = (startBlockZ - (Api.WorldManager.MapSizeZ >> 1)) >> 9;
 
         string dir = Path.Combine(GamePaths.DataPath, "LiveMap");
         FileInfo fileInfo = new(Path.Combine(dir, $"{localRegionX}_{localRegionZ}.png"));

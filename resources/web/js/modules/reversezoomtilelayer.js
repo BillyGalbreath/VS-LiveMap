@@ -1,18 +1,37 @@
-export const LiveMapTileLayer = L.TileLayer.extend({
+export const ReverseZoomTileLayer = L.TileLayer.extend({
     options: {
         // tiles are 512x512 blocks
         tileSize: 512,
+
         // do not wrap tiles around the antimeridian
         noWrap: true,
-        // our custom attribution (link to project page)
-        attribution: "<a href='https://mods.vintagestory.at/livemap' target='_blank'>Livemap</a> &copy; 2024",
+
         // zoom stuff (this is a pita, btw)
-        //zoomReverse: false, // will this work instead of custom _getZoomForUrl below?
-        //minNativeZoom: 0,
-        //maxNativeZoom: 3,
+        // this doesnt work right, so we leave it false and override _getZoomForUrl below
+        zoomReverse: false,
+
+        // the closest zoomed in possible (without extra/stretching)
+        // this is always 0. no exceptions!
+        minNativeZoom: 0,
+
+        // the farthest rendered tiles zoom out level 
+        maxNativeZoom: 3,
+
+        // this is always 0. no exceptions!
         minZoom: 0,
-        maxZoom: 0,
-        //zoomOffset: -2
+
+        // for extra/stretching zoom in
+        // maxNativeZoom + extra zoom = maxZoom
+        maxZoom: 3 + 2,
+
+        // we need to counter effect the higher maxZoom here
+        // maxZoom + zoomOffset = maxNativeZoom
+        zoomOffset: -2
+    },
+
+    // reverse zoom controls
+    _getZoomForUrl: function () {
+        return (this.options.maxZoom - this._tileZoom) + this.options.zoomOffset;
     },
 
     // @method createTile(coords: Object, done?: Function): HTMLElement
@@ -22,12 +41,8 @@ export const LiveMapTileLayer = L.TileLayer.extend({
     createTile: function (coords, done) {
         const tile = document.createElement('img');
 
-        L.DomEvent.on(tile, 'load', () => {
-            //Once image has loaded revoke the object URL as we don't need it anymore
-            URL.revokeObjectURL(tile.src);
-            this._tileOnLoad(done, tile)
-        });
-        L.DomEvent.on(tile, 'error', L.Util.bind(this._tileOnError, this, done, tile));
+        L.DomEvent.on(tile, 'load', () => this._tileOnLoad(done, tile));
+        L.DomEvent.on(tile, 'error', (e) => this._tileOnError(done, tile, e));
 
         if (this.options.crossOrigin || this.options.crossOrigin === '') {
             tile.crossOrigin = this.options.crossOrigin === true ? '' : this.options.crossOrigin;
@@ -36,14 +51,15 @@ export const LiveMapTileLayer = L.TileLayer.extend({
         tile.alt = '';
         tile.setAttribute('role', 'presentation');
 
-        //Retrieve image via a fetch instead of just setting the src
-        //This works around the fact that browsers usually don't make a request for an image that was previously loaded,
-        //without resorting to changing the URL (which would break caching).
+        // retrieve image via a fetch instead of just setting the src
+        // this works around the fact that browsers usually don't make
+        // a request for an image that was previously loaded, without
+        // resorting to changing the URL (which would break caching).
         fetch(this.getTileUrl(coords))
             .then(res => {
                 //Call leaflet's error handler if request fails for some reason
                 if (!res.ok) {
-                    this._tileOnError(this, done, tile);
+                    this._tileOnError(done, tile, new Error(res.statusText));
                     return;
                 }
 
@@ -59,10 +75,5 @@ export const LiveMapTileLayer = L.TileLayer.extend({
             }).catch((e) => this._tileOnError(done, tile, e));
 
         return tile;
-    },
-
-    // better controls for zooming
-    _getZoomForUrl: function () {
-        return (this.options.maxZoom - this._tileZoom) + this.options.zoomOffset;
     }
 });

@@ -16,17 +16,18 @@ export class Coords {
             update: function (point) {
                 this.x = point == null ? "---" : Math.round(point.x);
                 this.z = point == null ? "---" : Math.round(point.y);
-                this._div.innerHTML = this.x + "," + this.z;
+                this._div.innerHTML = this.x + ", " + this.z;
             }
         });
         // create the coords control box
-        this.coords = new CoordsBox();
-        LM.map.addControl(this.coords).addEventListener('mousemove', (event) => {
-            this.coords.update(LM.toPoint(event.latlng));
-        });
+        this._coords = new CoordsBox();
+        LM.map.addControl(this._coords)
+            .addEventListener('mousemove', (event) => {
+                this._coords.update(LM.toPoint(event.latlng));
+            });
         if (!enabled) {
-            this.coords._div.style.display = "none";
+            this._coords._div.style.display = "none";
         }
-        this.coords.update();
+        this._coords.update();
     }
 }

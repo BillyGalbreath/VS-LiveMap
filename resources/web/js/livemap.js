@@ -15,45 +15,53 @@ class LiveMap {
             // show attribution control box
             attributionControl: true,
             // canvas is more efficient than svg
-            preferCanvas: true
+            preferCanvas: true,
+            zoomSnap: 1 / 4,
+            zoomDelta: 1 / 4,
+            wheelPxPerZoomLevel: 60 * 4
         }).on('overlayadd', (e) => {
             this.layerControls.showLayer(e.layer);
         }).on('overlayremove', (e) => {
             this.layerControls.hideLayer(e.layer);
         });
 
-        // remove leaflet's attribution. we'll add our own in the tile layer
-        this.map.attributionControl.setPrefix('');
+        // replace leaflet's attribution with our own
+        this.map.attributionControl.setPrefix(
+            `<a href="https://mods.vintagestory.at/livemap" target="_blank">Vintage Story Livemap</a>
+             &copy; 2024 <sup><a href="https://github.com/billygalbreath/vs-livemap" target="_blank">MIT</a></sup>`
+        );
 
         this.tick_count = 1;
 
-        this.layerControls = new LayerControls();
+        this.layerControls = new LayerControls(this.map);
 
-        this.init();
-    }
-
-    init() {
         this.getJSON("tiles/settings.json", (json) => {
-            this.layerControls.init();
+            // set the scale for our projection calculations
+            this.scale = (1 / Math.pow(2, json.zoom?.max ?? 3));
+            
+            // move to the center of the map at default zoom level
+            this.centerOn(
+                this.getUrlParam("x", json.spawn?.x ?? 0),
+                this.getUrlParam("z", json.spawn?.z ?? 0),
+                this.getUrlParam("y", json.zoom?.def ?? 3)
+            );
 
-            this.coords = new Coords(json.coords);
-            this.link = new Link(json.link);
+            // setup the layer controls (tile layers and layer overlays)
+            this.layerControls.setupLayers();
 
-            this.zoom = json.zoom;
-            this.spawn = json.spawn;
-            this.marker_update_interval = json.marker_update_interval;
-            this.tiles_update_interval = json.tiles_update_interval;
+            // setup other control boxes
+            this.coords = new Coords(json.coords ?? true);
+            this.link = new Link(json.link ?? true);
         });
-
-        // move to the center of the map
-        this.map.setView([512000, 512000], 0)
     }
 
     loop() {
+        this.tick_count++;
+
         if (document.visibilityState === 'visible') {
             this.tick();
-            this.tick_count++;
         }
+
         setTimeout(() => this.loop(), 1000);
     }
 
@@ -62,32 +70,17 @@ class LiveMap {
         // todo - tick tiles
     }
 
+    centerOn(x, z, zoom) {
+        this.map.setView(this.toLatLng(x, z), zoom);
+        this.link?.update();
+    }
+
     toLatLng(x, z) {
-        return L.latLng(this.pixelsToMeters(-z), this.pixelsToMeters(x));
+        return L.latLng(z * this.scale, x * this.scale);
     }
 
     toPoint(latlng) {
-        return L.point(this.metersToPixels(latlng.lng), this.metersToPixels(-latlng.lat));
-    }
-
-    pixelsToMeters(num) {
-        return num * this.scale;
-    }
-
-    metersToPixels(num) {
-        return num / this.scale;
-    }
-
-    setScale(zoom) {
-        this.scale = (1 / Math.pow(2, zoom));
-    }
-
-    getUrlFromView() {
-        const center = this.toPoint(this.map.getCenter());
-        const zoom = this.map.getZoom();
-        const x = Math.floor(center.x);
-        const z = Math.floor(center.y);
-        return `?x=${x}&z=${z}&zoom=${zoom}`;
+        return L.point(latlng.lng / this.scale, latlng.lat / this.scale);
     }
 
     getJSON(url, fn) {
@@ -98,13 +91,34 @@ class LiveMap {
                 }
             });
     }
+
+    getUrlParam(query, def) {
+        const url = window.location.search.substring(1);
+        const vars = url.split('&');
+        for (let i = 0; i < vars.length; i++) {
+            const param = vars[i].split('=');
+            if (param[0] === query) {
+                const value = param[1] === undefined ? '' : decodeURIComponent(param[1]);
+                return value === '' ? def : value;
+            }
+        }
+        return def;
+    }
+
+    getUrlFromView() {
+        const center = this.toPoint(this.map.getCenter());
+        const zoom = this.map.getZoom();
+        const x = Math.floor(center.x);
+        const z = Math.floor(center.y);
+        return `?x=${x}&z=${z}&y=${zoom}`;
+    }
 }
 
 export const LM = new LiveMap();
 
 // https://stackoverflow.com/a/3955096
 Array.prototype.remove = function () {
-    var what, a = arguments, L = a.length, ax;
+    let what, a = arguments, L = a.length, ax;
     while (L && this.length) {
         what = a[--L];
         while ((ax = this.indexOf(what)) !== -1) {
@@ -113,33 +127,3 @@ Array.prototype.remove = function () {
     }
     return this;
 };
-
-// tile layer extension
-const tileLayer = L.TileLayer.extend({
-
-    // tile layer options
-    options: {
-        // tiles are 512x512 blocks
-        tileSize: 512,
-        // do not wrap tiles around the antimeridian
-        noWrap: true,
-        // our custom attribution (link to project page)
-        attribution: "<a href='https://mods.vintagestory.at/livemap' target='_blank'>Livemap</a> &copy; 2024",
-
-        // zoom stuff (this is a pita, btw)
-        //zoomReverse: false, // will this work instead of custom _getZoomForUrl below?
-        //minNativeZoom: 0,
-        //maxNativeZoom: 3,
-        minZoom: 0,
-        maxZoom: 3,
-        //zoomOffset: -2
-    },
-
-    // better controls for zooming
-    _getZoomForUrl: function () {
-        return (this.options.maxZoom - this._tileZoom) + this.options.zoomOffset;
-    }
-});
-
-// create the tile layer and add to map
-//new tileLayer('tiles/{x}_{y}.png').addTo(map);
