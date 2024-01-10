@@ -34,22 +34,8 @@ public class RenderTask {
         bufferQueue.Enqueue(index);
     }
 
-    public void Stop() {
-        if (Stopped) {
-            return;
-        }
-
-        Logger.Debug("##### Stopping async infinite loop");
-        Stopped = true;
-    }
-
     public void Run() {
-        if (Server.Colormap == null) {
-            Logger.Debug("##### Cannot run render task! No colormap found...");
-            return;
-        }
-
-        if (Stopped) {
+        if (Stopped || Server.Colormap == null) {
             return;
         }
 
@@ -63,31 +49,24 @@ public class RenderTask {
     }
 
     private void RunAsyncInfiniteLoop() {
-        Logger.Debug("##### Starting async infinite loop");
-
         running = true;
 
         (thread = new Thread(_ => {
             while (running) {
-                Logger.Debug("START");
-
                 try {
                     long region = processQueue.Take();
                     renderer.ScanRegion(region);
                 } catch (ThreadInterruptedException) {
-                    Logger.Debug("##### Interrupted async infinite loop");
                     running = false;
                     Thread.CurrentThread.Interrupt();
                 }
-
-                Logger.Debug("END");
             }
-
-            Logger.Debug("##### Finished async infinite loop");
         })).Start();
     }
 
     public void Dispose() {
+        Stopped = true;
+
         thread?.Interrupt();
         thread = null;
     }

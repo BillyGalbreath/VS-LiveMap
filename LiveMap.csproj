@@ -7,6 +7,7 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Nullable>enable</Nullable>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -20,6 +21,7 @@
 
     <ItemGroup>
         <PackageReference Include="SkiaSharp" Version="2.88.6"/>
+        <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
     </ItemGroup>
 
     <ItemGroup>
@@ -68,6 +70,12 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
+
+    <Target Name="FilterCopyLocalItems" AfterTargets="ResolvePackageDependenciesForBuild">
+        <ItemGroup>
+            <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' != 'MimeTypes'"/>
+        </ItemGroup>
+    </Target>
 
     <Target Name="CreateModsDirectory" AfterTargets="PostBuildEvent">
         <MakeDir Directories="bin/Mods"/>
