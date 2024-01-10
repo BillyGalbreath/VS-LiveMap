@@ -1,5 +1,6 @@
 ﻿using LiveMap.Common.Util;
 using LiveMap.Server.Command;
+using LiveMap.Server.Httpd;
 using LiveMap.Server.Network;
 using LiveMap.Server.Patches;
 using LiveMap.Server.Render;
@@ -15,11 +16,12 @@ public sealed class LiveMapServer : Common.LiveMap {
     protected override ServerCommandHandler CommandHandler { get; }
     public override ServerNetworkHandler NetworkHandler { get; }
 
-    public Colormap? Colormap;
-
     private readonly HarmonyPatches patches;
     private readonly RenderTask renderTask;
+    private readonly WebServer webServer;
     private readonly long gameTickTaskId;
+
+    public Colormap? Colormap;
 
     public LiveMapServer(LiveMapMod mod, ICoreServerAPI api) : base(mod, api) {
         Api = api;
@@ -30,20 +32,20 @@ public sealed class LiveMapServer : Common.LiveMap {
         NetworkHandler = new ServerNetworkHandler(this);
 
         renderTask = new RenderTask(this);
-
-        gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
+        webServer = new WebServer();
 
         Api.Event.ChunkDirty += OnChunkDirty;
 
-        Api.Event.ServerRunPhase(EnumServerRunPhase.Shutdown, OnShutdown);
+        gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
     }
 
     // this method ticks every 1000ms on the game thread
     private void OnGameTick(float delta) {
-        Logger.Debug("---- OnGameTick");
-
         // ensure render task is running
         renderTask.Run();
+
+        // ensure web server is still running
+        webServer.Run();
 
         // todo - update player positions, public waypoints, etc
     }
@@ -54,17 +56,13 @@ public sealed class LiveMapServer : Common.LiveMap {
         }
     }
 
-    private void OnShutdown() {
-        Logger.Debug("---- OnShutdown");
-        renderTask.Stop();
-    }
-
     public override void Dispose() {
         Api.Event.ChunkDirty -= OnChunkDirty;
 
         Api.Event.UnregisterGameTickListener(gameTickTaskId);
 
         renderTask.Dispose();
+        webServer.Dispose();
 
         base.Dispose();
 
