@@ -1,12 +1,10 @@
 import {LM} from '../livemap.js';
-import {LiveMapTileLayer} from './livemaptilelayer.js';
+import {ReverseZoomTileLayer} from './reversezoomtilelayer.js';
 
 export class LayerControls {
-    constructor() {
+    constructor(map) {
         this.layers = new Map();
-    }
 
-    init() {
         this.currentLayer = 0;
         this.updateInterval = 60;
 
@@ -21,9 +19,7 @@ export class LayerControls {
             }
         });
 
-        this.controls.addTo(LM.map);
-
-        this.setupTileLayers();
+        this.controls.addTo(map);
     }
 
     addOverlay(name, layer, hide) {
@@ -46,18 +42,18 @@ export class LayerControls {
     }
 
     hideLayer(layer) {
-        if (layer != this.ignoreLayer) {
+        if (layer !== this.ignoreLayer) {
             window.localStorage.setItem(`hide_${layer.id}`, 'true');
         }
     }
 
     showLayer(layer) {
-        if (layer != this.ignoreLayer) {
+        if (layer !== this.ignoreLayer) {
             window.localStorage.setItem(`hide_${layer.id}`, 'false');
         }
     }
 
-    setupTileLayers() {
+    setupLayers() {
         // setup the map tile layers
         // we need 2 layers to swap between for seamless refreshing
         if (this.tileLayer1 != null) {
@@ -68,10 +64,16 @@ export class LayerControls {
         }
         this.tileLayer1 = this.createTileLayer();
         this.tileLayer2 = this.createTileLayer();
+
+        // refresh player's control
+        this.removeOverlay(this.playersLayer);
+        this.addOverlay("Players", this.playersLayer, false);
+        this.playersLayer.order = 2;
+        this.playersLayer.setZIndex(2);
     }
 
     createTileLayer() {
-        return new LiveMapTileLayer(`tiles/{z}/{x}_{y}.png`)
+        return new ReverseZoomTileLayer(`tiles/{z}/{x}_{y}.png`)
             .addTo(LM.map)
             .addEventListener("load", () => {
                 // when all tiles are loaded, switch to this layer
@@ -81,7 +83,7 @@ export class LayerControls {
 
     updateTileLayer() {
         // redraw background tile layer
-        if (this.currentLayer == 1) {
+        if (this.currentLayer === 1) {
             this.tileLayer2.redraw();
         } else {
             this.tileLayer1.redraw();
@@ -90,7 +92,7 @@ export class LayerControls {
 
     switchTileLayer() {
         // swap current tile layer
-        if (this.currentLayer == 1) {
+        if (this.currentLayer === 1) {
             this.tileLayer1.setZIndex(0);
             this.tileLayer2.setZIndex(1);
             this.currentLayer = 2;

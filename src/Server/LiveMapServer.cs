@@ -49,14 +49,9 @@ public sealed class LiveMapServer : Common.LiveMap {
     }
 
     private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
-        if (reason == EnumChunkDirtyReason.NewlyLoaded) {
-            return;
+        if (reason != EnumChunkDirtyReason.NewlyLoaded) {
+            renderTask.Queue(chunkCoord.X >> 4, chunkCoord.Z >> 4);
         }
-
-        int regionX = chunkCoord.X << 5 >> 9;
-        int regionZ = chunkCoord.Z << 5 >> 9;
-
-        renderTask.Queue(regionX, regionZ);
     }
 
     private void OnShutdown() {

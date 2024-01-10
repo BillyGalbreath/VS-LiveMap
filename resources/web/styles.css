@@ -3,7 +3,7 @@
   padding: 0;
 }
 body {
-  background: #000000;
+  background: #101010;
   overflow: hidden;
 }
 
@@ -16,11 +16,25 @@ ul, li {
 #map {
   width: 100vw;
   height: 100vh;
+  background: #101010;
 }
 
 img.leaflet-tile {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges
+}
+
+.leaflet-control-layers-toggle {
+  width: 30px !important;
+  height: 30px !important;
+  background-image: url(images/layers.png);
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
+
+.leaflet-control-attribution a {
+  color: #333333 !important;
 }
 
 .leaflet-bottom.leaflet-left .link,
@@ -30,11 +44,11 @@ img.leaflet-tile {
 }
 
 div.leaflet-control-layers.link img {
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   vertical-align: bottom;
   bottom: 0;
-  background-image: url("../images/link.png");
+  background-image: url("images/link.png");
   background-size: 20px 20px;
   background-repeat: no-repeat;
   background-position: 50% 50%;
@@ -42,7 +56,8 @@ div.leaflet-control-layers.link img {
 
 div.leaflet-control-layers.coordinates {
   vertical-align: bottom;
-  padding: 2px 5px;
-  line-height: 14px;
+  padding: 0 10px;
+  font-size: 15px;
+  line-height: 30px;
   height: 30px;
 }
