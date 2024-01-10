@@ -12,6 +12,10 @@ public abstract class Logger {
         return _logger ??= new LoggerImpl();
     }
 
+    public static void Debug(string message) {
+        Log().Event($"[DEBUG] {message}");
+    }
+
     public static void Info(string message) {
         Log().Event(message);
     }
@@ -35,7 +39,7 @@ internal class LoggerImpl : LoggerBase {
 
     protected override void LogImpl(EnumLogType logType, string format, params object[] args) {
         string formatted = $"[{LiveMapMod.Id}] {format}";
-        
+
         Vintagestory.Logger parent = (Vintagestory.Logger)((ModLogger)LiveMapMod.Instance.Mod.Logger).Parent;
 
         string logFile = parent.getLogFile(logType);

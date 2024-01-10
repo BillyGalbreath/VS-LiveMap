@@ -21,8 +21,6 @@ public sealed class LiveMapServer : Common.LiveMap {
     private readonly RenderTask renderTask;
     private readonly long gameTickTaskId;
 
-    private int tick;
-
     public LiveMapServer(LiveMapMod mod, ICoreServerAPI api) : base(mod, api) {
         Api = api;
 
@@ -36,26 +34,18 @@ public sealed class LiveMapServer : Common.LiveMap {
         gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
 
         Api.Event.ChunkDirty += OnChunkDirty;
-        Api.Event.GameWorldSave += OnGameWorldSave;
 
         Api.Event.ServerRunPhase(EnumServerRunPhase.Shutdown, OnShutdown);
     }
 
     // this method ticks every 1000ms on the game thread
     private void OnGameTick(float delta) {
-        if (tick++ > 10) {
-            tick = 0;
+        Logger.Debug("---- OnGameTick");
 
-            // todo remove this temp call
-            renderTask.Run();
-        }
+        // ensure render task is running
+        renderTask.Run();
 
         // todo - update player positions, public waypoints, etc
-        Logger.Info("---- OnGameTick");
-    }
-
-    private void OnGameWorldSave() {
-        Logger.Info("---- OnGameWorldSave");
     }
 
     private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
@@ -63,23 +53,19 @@ public sealed class LiveMapServer : Common.LiveMap {
             return;
         }
 
-        int regionSize = Api.WorldManager.RegionSize;
-        int chunkSize = Api.WorldManager.ChunkSize;
-
-        int regionX = chunkCoord.X * chunkSize / regionSize;
-        int regionZ = chunkCoord.Z * chunkSize / regionSize;
+        int regionX = chunkCoord.X << 5 >> 9;
+        int regionZ = chunkCoord.Z << 5 >> 9;
 
         renderTask.Queue(regionX, regionZ);
     }
 
     private void OnShutdown() {
-        Logger.Info("---- OnShutdown");
+        Logger.Debug("---- OnShutdown");
         renderTask.Stop();
     }
 
     public override void Dispose() {
         Api.Event.ChunkDirty -= OnChunkDirty;
-        Api.Event.GameWorldSave -= OnGameWorldSave;
 
         Api.Event.UnregisterGameTickListener(gameTickTaskId);
 
