@@ -119,7 +119,7 @@ internal class LoggerImpl : LoggerBase {
                 EnumLogType.Error or EnumLogType.Fatal => "&c",
                 EnumLogType.Warning => "&6",
                 _ => "&r"
-            }}] {format}"
+            }}] {format}&r"
         ), args));
 
 

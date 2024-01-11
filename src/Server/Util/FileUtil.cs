@@ -9,7 +9,7 @@ namespace LiveMap.Server.Util;
 
 public static class FileUtil {
     public static readonly string ConfigFile = Path.Combine(GamePaths.ModConfig, $"{LiveMapMod.Id}.yml");
-    public static readonly string WebDir = Path.Combine(GamePaths.DataPath, "ModData", LiveMapMod.Instance.Server!.Api.World.SavegameIdentifier, "LiveMap");
+    public static readonly string WebDir = Path.Combine(GamePaths.DataPath, "ModData", LiveMapMod.Api.World.SavegameIdentifier, "LiveMap");
     public static readonly string TilesDir = Path.Combine(WebDir, "tiles");
 
     public static void SetupFilesAndDirectories(ICoreServerAPI api) {

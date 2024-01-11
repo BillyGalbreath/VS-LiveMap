@@ -11,20 +11,25 @@ namespace LiveMap;
 public sealed class LiveMapMod : ModSystem {
     public static LiveMapMod Instance { get; private set; } = null!;
     public static string Id => Instance.Mod.Info.ModID;
+    public static ICoreAPI Api => Instance.api!;
 
     private LiveMapClient? Client { get; set; }
     public LiveMapServer? Server { get; private set; }
+
+    private ICoreAPI? api;
 
     public LiveMapMod() {
         Instance = this;
     }
 
-    public override void StartClientSide(ICoreClientAPI api) {
-        Client = new LiveMapClient(api);
+    public override void StartClientSide(ICoreClientAPI capi) {
+        api = capi;
+        Client = new LiveMapClient(capi);
     }
 
-    public override void StartServerSide(ICoreServerAPI api) {
-        Server = new LiveMapServer(api);
+    public override void StartServerSide(ICoreServerAPI sapi) {
+        api = sapi;
+        Server = new LiveMapServer(sapi);
     }
 
     public override void Dispose() {
@@ -33,5 +38,7 @@ public sealed class LiveMapMod : ModSystem {
 
         Server?.Dispose();
         Server = null;
+
+        api = null;
     }
 }
