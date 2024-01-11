@@ -2,7 +2,7 @@
 
 namespace LiveMap.Server.Patches;
 
-public class HarmonyPatches {
+public sealed class HarmonyPatches {
     private Harmony? harmony;
 
     public HarmonyPatches() {

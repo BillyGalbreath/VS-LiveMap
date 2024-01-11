@@ -21,12 +21,12 @@ public sealed class ServerNetworkHandler : NetworkHandler {
 
     private void ServerReceivePacket(IServerPlayer player, ColormapPacket packet) {
         if (!player.Privileges.Contains("livemap.admin")) {
-            Logger.Warn(Lang.Get("logger.warning.packet-from-non-admin"));
+            Logger.Warn(Lang.Get("logger.warning.packet-from-non-admin", player.PlayerName));
             return;
         }
 
         if (packet.RawColormap == null) {
-            Logger.Warn(Lang.Get("logger.warning.received-null-colormap"));
+            Logger.Warn(Lang.Get("logger.warning.received-null-colormap", player.PlayerName));
             return;
         }
 

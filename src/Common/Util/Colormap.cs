@@ -5,7 +5,7 @@ using Vintagestory.API.Util;
 namespace LiveMap.Common.Util;
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllFields)]
-public class Colormap {
+public sealed class Colormap {
     private readonly Dictionary<string, int[]> colors = new();
 
     public void Add(string block, int[] toAdd) {

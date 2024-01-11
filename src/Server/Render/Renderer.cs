@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using LiveMap.Common.Util;
+using LiveMap.Server.Util;
 using SkiaSharp;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -144,13 +145,12 @@ public abstract class Renderer {
         int localRegionX = (startBlockX - (Api.WorldManager.MapSizeX >> 1)) >> 9;
         int localRegionZ = (startBlockZ - (Api.WorldManager.MapSizeZ >> 1)) >> 9;
 
-        string dir = Path.Combine(GamePaths.DataPath, "LiveMap");
-        FileInfo fileInfo = new(Path.Combine(dir, $"{localRegionX}_{localRegionZ}.png"));
-        Directory.CreateDirectory(fileInfo.Directory!.FullName);
-        FileStream fileStream = fileInfo.Create();
+        FileInfo fileInfo = new(Path.Combine(FileUtil.TilesDir, 0.ToString(), $"{localRegionX}_{localRegionZ}.png"));
+        GamePaths.EnsurePathExists(fileInfo.Directory!.FullName);
+
+        using FileStream fileStream = fileInfo.Create();
         png.Encode(SKEncodedImageFormat.Png, 100).SaveTo(fileStream);
         png.Dispose();
-        fileStream.Dispose();
     }
 
     private int GetYFromRainMap(int x, int z) {

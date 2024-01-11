@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using LiveMap.Server.Configuration;
 using Vintagestory.API.Common;
 using Vintagestory.Common;
 
 namespace LiveMap.Common.Util;
 
-public abstract class Logger {
+public static class Logger {
     private static readonly LoggerImpl Log = new();
 
     public static void Debug(string message) {
-        Log.Event($"[&eDEBUG&r] &e{message}");
+        if (Config.Instance.DebugMode) {
+            Log.Debug(message);
+        }
     }
 
     public static void Info(string message) {
@@ -79,7 +82,7 @@ internal class LoggerImpl : LoggerBase {
             case EnumLogType.Error or EnumLogType.Fatal:
                 parent.LogToFile(parent.getLogFile(EnumLogType.Event), logType, stripped, args);
                 break;
-            case EnumLogType.Event:
+            case EnumLogType.Event or EnumLogType.Debug: // include our debug output to main file, too
                 parent.LogToFile(parent.getLogFile(EnumLogType.Notification), logType, stripped, args);
                 break;
         }
@@ -95,6 +98,7 @@ internal class LoggerImpl : LoggerBase {
         if (canUseColor) {
             try {
                 Console.ForegroundColor = logType switch {
+                    EnumLogType.Debug => ConsoleColor.Yellow,
                     EnumLogType.Warning => ConsoleColor.DarkYellow,
                     EnumLogType.Error or EnumLogType.Fatal => ConsoleColor.Red,
                     _ => Console.ForegroundColor
@@ -111,8 +115,9 @@ internal class LoggerImpl : LoggerBase {
 
         Console.WriteLine(parent.FormatLogEntry(logType, Parse(
             $"[&3{LiveMapMod.Id}{logType switch {
+                EnumLogType.Debug => "&e",
                 EnumLogType.Error or EnumLogType.Fatal => "&c",
-                EnumLogType.Warning => "&e",
+                EnumLogType.Warning => "&6",
                 _ => "&r"
             }}] {format}"
         ), args));

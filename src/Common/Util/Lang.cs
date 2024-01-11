@@ -1,6 +1,6 @@
 namespace LiveMap.Common.Util;
 
-public abstract class Lang {
+public static class Lang {
     public static string Get(string key, params object[]? args) {
         return Vintagestory.API.Config.Lang.Get($"{LiveMapMod.Id}:{key}", args);
     }

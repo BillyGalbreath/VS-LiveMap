@@ -6,7 +6,7 @@ using LiveMap.Common.Util;
 
 namespace LiveMap.Server.Render;
 
-public class RenderTask {
+public sealed class RenderTask {
     public LiveMapServer Server { get; }
 
     private readonly Renderer renderer;
@@ -69,5 +69,9 @@ public class RenderTask {
 
         thread?.Interrupt();
         thread = null;
+
+        bufferQueue.Clear();
+        while (processQueue.TryTake(out _)) {
+        }
     }
 }

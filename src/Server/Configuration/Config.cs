@@ -13,8 +13,11 @@ namespace LiveMap.Server.Configuration;
 [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-public class Config {
-    [YamlMember(Order = 0, Description = "")]
+public sealed class Config {
+    [YamlMember(Order = 0, Description = "Outputs extra debug info to the console and log files.")]
+    public bool DebugMode = false;
+
+    [YamlMember(Order = 1, Description = "")]
     public WebServerConfig WebServer = new();
 
     public class WebServerConfig {

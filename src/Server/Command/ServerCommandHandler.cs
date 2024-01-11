@@ -17,6 +17,7 @@ public sealed class ServerCommandHandler : CommandHandler {
     }
 
     protected override void RegisterSubCommands() {
+        _ = new ColormapCommand(this);
         _ = new FullRenderCommand(this);
         _ = new ReloadCommand(this);
     }

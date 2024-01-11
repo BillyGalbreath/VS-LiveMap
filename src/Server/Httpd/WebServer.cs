@@ -10,7 +10,7 @@ using MimeTypes;
 
 namespace LiveMap.Server.Httpd;
 
-public class WebServer {
+public sealed class WebServer {
     private HttpListener? listener;
     private Thread? thread;
     private bool running;
