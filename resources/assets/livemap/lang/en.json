@@ -1,25 +1,26 @@
 ﻿{
   "command.livemap.description": "Command to manage the LiveMap mod.",
 
-  "command.unknown-subcommand": "Unknown subcommand",
-  "command.player-only": "Player only command",
+  "command.unknown-subcommand": "Unknown subcommand.",
+  "command.player-only": "Player only command.",
+  "command.client-command": "This is a client command. Use a dot (.) instead of slash (/).",
 
   "command.success": "<font color=\"#19B919\">{0}</font>",
   "command.error": "<font color=\"#B91919\">{0}</font>",
 
-  "command.colormap.started": "Generating colormap. Please wait...",
-  "command.colormap.finished": "Finished colormap and sent to server.",
-  "command.colormap.running": "Already generating colormap. Please wait...",
+  "command.colormap.started": "Generating a colormap. Please wait...",
+  "command.colormap.finished": "Finished the colormap and sent it to the server.",
+  "command.colormap.already-running": "Already generating a colormap. Please wait...",
 
-  "command.fullrender.started": "FullRender task started. (not really.. it's under construction)",
+  "command.fullrender.started": "FullRender task has started. (not really.. it's under construction).",
 
-  "command.reload.finished": "LiveMap config was successfully reloaded.",
+  "command.reload.finished": "LiveMap config and services were successfully reloaded.",
 
-  "logger.info.server-received-colormap": "&dColormap packet received from &n{0}",
+  "logger.info.server-received-colormap": "&dColormap packet was received from &n{0}",
 
-  "logger.info.webserver-started": "&aInternal webserver started on port &e{0}",
-  "logger.info.webserver-stopped": "&cInternal webserver was stopped",
+  "logger.info.webserver-started": "&aInternal webserver has started on port &e{0}",
+  "logger.info.webserver-stopped": "&cInternal webserver has stopped",
 
-  "logger.warning.packet-from-non-admin": "Ignoring livemap colormap packet from non-privileged user",
-  "logger.warning.received-null-colormap": "Received null colormap from client!"
+  "logger.warning.packet-from-non-admin": "Ignoring colormap packet from non-privileged user {0}",
+  "logger.warning.received-null-colormap": "Received null colormap from {0}"
 }

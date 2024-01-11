@@ -5,6 +5,7 @@ using LiveMap.Server.Httpd;
 using LiveMap.Server.Network;
 using LiveMap.Server.Patches;
 using LiveMap.Server.Render;
+using LiveMap.Server.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
@@ -28,6 +29,8 @@ public sealed class LiveMapServer : Common.LiveMap {
         Api = api;
 
         Config.Reload();
+
+        FileUtil.SetupFilesAndDirectories(Api);
 
         patches = new HarmonyPatches();
 

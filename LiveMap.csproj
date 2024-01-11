@@ -70,6 +70,15 @@
             <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Remove="resources\web\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="resources\web\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="resources\web\**" />
     </ItemGroup>
 
     <Target Name="FilterCopyLocalItems" AfterTargets="ResolvePackageDependenciesForBuild">

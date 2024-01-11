@@ -6,12 +6,13 @@ using Vintagestory.API.Server;
 
 namespace LiveMap.Server.Command;
 
-public class FullRenderCommand : AbstractServerCommand {
+public sealed class FullRenderCommand : AbstractServerCommand {
     public FullRenderCommand(CommandHandler handler) : base(handler) {
         handler.RegisterSubCommand("fullrender", this);
     }
 
     public override CommandResult Execute(Caller caller, IEnumerable<string> args) {
+        // todo - queue up all existing regions
         ((IServerPlayer)caller.Player).SendMessage(
             GlobalConstants.GeneralChatGroup,
             $"Args: {string.Join(", ", args)}",

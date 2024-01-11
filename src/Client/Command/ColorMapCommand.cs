@@ -8,7 +8,7 @@ using Vintagestory.API.MathTools;
 
 namespace LiveMap.Client.Command;
 
-public class ColorMapCommand : AbstractClientCommand {
+public sealed class ColorMapCommand : AbstractClientCommand {
     private static bool _running;
 
     public ColorMapCommand(CommandHandler handler) : base(handler) {
@@ -17,13 +17,10 @@ public class ColorMapCommand : AbstractClientCommand {
 
     public override CommandResult Execute(Caller caller, IEnumerable<string> args) {
         if (_running) {
-            return CommandResult.Success("command.colormap.running");
+            return CommandResult.Success("command.colormap.already-running");
         }
 
         _running = true;
-
-        IWorldAccessor world = caller.Entity.World;
-        IGameCalendar calendar = world.Calendar;
 
         Handler.Client.Api.ShowChatMessage(Lang.Success("command.colormap.started"));
 
@@ -31,15 +28,13 @@ public class ColorMapCommand : AbstractClientCommand {
         // we'll just use the player's current position
         BlockPos pos = caller.Entity.Pos.AsBlockPos;
 
+        // set season override for colors
+        float? seasonOverride = caller.Entity.World.Calendar.SeasonOverride;
+        caller.Entity.World.Calendar.SetSeasonOverride(0.5F);
+
         // populate block colors
         Colormap colormap = new();
-        IList<Block> blocks = world.Blocks;
-
-        // set season override for colors
-        float? seasonOverride = calendar.SeasonOverride;
-        calendar.SetSeasonOverride(0.5F);
-
-        foreach (Block block in blocks.Where(block => block.Code != null)) {
+        foreach (Block block in caller.Entity.World.Blocks.Where(block => block.Code != null)) {
             int color = ColorUtil.ReverseColorBytes(block.GetColor(Handler.Client.Api, pos));
 
             int[] colors = new int[30];
@@ -52,7 +47,7 @@ public class ColorMapCommand : AbstractClientCommand {
         }
 
         // remove season override
-        calendar.SetSeasonOverride(seasonOverride);
+        caller.Entity.World.Calendar.SetSeasonOverride(seasonOverride);
 
         // send back to server
         Handler.Client.NetworkHandler.SendPacket(new ColormapPacket {

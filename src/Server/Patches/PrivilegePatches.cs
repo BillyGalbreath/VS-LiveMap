@@ -6,8 +6,8 @@ using Vintagestory.API.Server;
 
 namespace LiveMap.Server.Patches;
 
-public class PrivilegePatches {
-    protected internal PrivilegePatches(Harmony harmony) {
+public sealed class PrivilegePatches {
+    internal PrivilegePatches(Harmony harmony) {
         _ = new AllCodesPatch(harmony);
     }
 

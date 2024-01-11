@@ -5,7 +5,7 @@ using Vintagestory.API.Common;
 
 namespace LiveMap.Server.Command;
 
-public class ReloadCommand : AbstractServerCommand {
+public sealed class ReloadCommand : AbstractServerCommand {
     public ReloadCommand(CommandHandler handler) : base(handler) {
         handler.RegisterSubCommand("reload", this);
     }

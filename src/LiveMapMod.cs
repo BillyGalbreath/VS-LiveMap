@@ -10,28 +10,28 @@ namespace LiveMap;
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public sealed class LiveMapMod : ModSystem {
     public static LiveMapMod Instance { get; private set; } = null!;
-    public static string? Id => Instance.Mod.Info.ModID;
+    public static string Id => Instance.Mod.Info.ModID;
 
-    private LiveMapClient? client;
-    private LiveMapServer? server;
+    private LiveMapClient? Client { get; set; }
+    public LiveMapServer? Server { get; private set; }
 
     public LiveMapMod() {
         Instance = this;
     }
 
     public override void StartClientSide(ICoreClientAPI api) {
-        client = new LiveMapClient(api);
+        Client = new LiveMapClient(api);
     }
 
     public override void StartServerSide(ICoreServerAPI api) {
-        server = new LiveMapServer(api);
+        Server = new LiveMapServer(api);
     }
 
     public override void Dispose() {
-        client?.Dispose();
-        client = null;
+        Client?.Dispose();
+        Client = null;
 
-        server?.Dispose();
-        server = null;
+        Server?.Dispose();
+        Server = null;
     }
 }
