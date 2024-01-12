@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -133,9 +132,7 @@ public abstract class Renderer {
             int imgZ = i >> 9;
 
             uint* row = (uint*)(pngPtr + imgZ * png.RowBytes);
-            row[imgX] = (uint)(row[imgX] == 0
-                ? 0
-                : ColorUtil.ColorMultiply3Clamped((int)row[imgX], shadow * 1.4F + 1F) | 0xFF << 24);
+            row[imgX] = (uint)(row[imgX] == 0 ? 0 : ColorUtil.ColorMultiply3Clamped((int)row[imgX], shadow * 1.4F + 1F) | 0xFF << 24);
         }
 
         if (renderTask.Stopped) {
@@ -174,12 +171,15 @@ public abstract class Renderer {
         // todo - test all blocks for colors on start and warn only once
     }
 
-    [SuppressMessage("ReSharper", "TailRecursiveCall")]
     private Block GetBlockFromDecor(Block block, BlockPos pos) {
-        Block? decor = block.HasBehavior("Decor", Api.ClassRegistry)
-            ? null
-            : Api.World.BlockAccessor.GetDecor(pos, BlockFacing.UP.Index);
-        return decor == null || decor == block ? block : GetBlockFromDecor(decor, pos);
+        while (true) {
+            Block? decor = block.HasBehavior("Decor", Api.ClassRegistry) ? null : Api.World.BlockAccessor.GetDecor(pos, BlockFacing.UP.Index);
+            if (decor == null || decor == block) {
+                return block;
+            }
+
+            block = decor;
+        }
     }
 
     private float CalculateAltitudeDiff(BlockPos pos) {

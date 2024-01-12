@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using LiveMap.Server.Configuration;
 using Vintagestory.API.Common;
@@ -31,11 +30,12 @@ public static class Logger {
     }
 }
 
-[SuppressMessage("GeneratedRegex", "SYSLIB1045:Convert to \'GeneratedRegexAttribute\'.")]
-internal class LoggerImpl : LoggerBase {
-    private static readonly Regex Regex = new("(?i)&([a-f0-9k-or])");
+internal partial class LoggerImpl : LoggerBase {
+    [GeneratedRegex("(?i)&([a-f0-9k-or])", RegexOptions.None, "en-US")]
+    private static partial Regex ColorCodesRegex();
 
-    private bool canUseColor = true;
+    [GeneratedRegex(@"(?i)\u001b\[[\d]{1,2}m", RegexOptions.None, "en-US")]
+    private static partial Regex AnsiCodesRegex();
 
     private static readonly Dictionary<string, int> AnsiCodes = new() {
         { "0", 30 }, { "1", 34 }, { "2", 32 }, { "3", 36 }, { "4", 31 }, { "5", 35 },
@@ -44,13 +44,14 @@ internal class LoggerImpl : LoggerBase {
         { "m", 9 }, { "n", 4 }, { "o", 3 }, { "r", 0 }
     };
 
+    private bool canUseColor = true;
+
     private static string Strip(string message) {
-        message = Regex.Replace(message, "(?i)\u001b\\[[\\d]{1,2}m", "");
-        return Regex.Replace(message, "(?i)&([a-f0-9k-or])", "");
+        return ColorCodesRegex().Replace(AnsiCodesRegex().Replace(message, ""), "");
     }
 
     private static string Parse(string message) {
-        MatchCollection results = Regex.Matches(message);
+        MatchCollection results = ColorCodesRegex().Matches(message);
 
         foreach (Match match in results) {
             message = message.Replace(

@@ -30,7 +30,7 @@ public sealed class LiveMapServer : Common.LiveMap {
 
         Config.Reload();
 
-        FileUtil.SetupFilesAndDirectories(Api);
+        FileUtil.ExtractWebFiles(Api);
 
         patches = new HarmonyPatches();
 

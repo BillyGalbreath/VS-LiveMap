@@ -9,13 +9,11 @@ namespace LiveMap.Server.Util;
 
 public static class FileUtil {
     public static readonly string ConfigFile = Path.Combine(GamePaths.ModConfig, $"{LiveMapMod.Id}.yml");
-    public static readonly string WebDir = Path.Combine(GamePaths.DataPath, "ModData", LiveMapMod.Api.World.SavegameIdentifier, "LiveMap");
+    private static readonly string DataDir = Path.Combine(GamePaths.DataPath, "ModData", LiveMapMod.Api.World.SavegameIdentifier, "LiveMap");
+    public static readonly string WebDir = Path.Combine(DataDir, "web");
     public static readonly string TilesDir = Path.Combine(WebDir, "tiles");
 
-    public static void SetupFilesAndDirectories(ICoreServerAPI api) {
-        GamePaths.EnsurePathExists(GamePaths.ModConfig);
-        GamePaths.EnsurePathExists(WebDir);
-
+    public static void ExtractWebFiles(ICoreServerAPI api) {
         // load web assets to disk
         // stored in "config" to allow the game to automatically load them for us
         List<IAsset> assets = api.Assets.GetMany("config", "livemap");
