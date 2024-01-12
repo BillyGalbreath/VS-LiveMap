@@ -6,18 +6,18 @@ namespace LiveMap.Common.Util;
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllFields)]
 public sealed class Colormap {
-    private readonly Dictionary<string, int[]> colors = new();
+    private readonly Dictionary<string, int[]> _colors = new();
 
     public void Add(string block, int[] toAdd) {
-        colors.Add(block, toAdd);
+        _colors.Add(block, toAdd);
     }
 
     public int[]? Get(string block) {
-        return colors!.Get(block);
+        return _colors!.Get(block);
     }
 
     public override string ToString() {
-        return "Colormap[Colors=" + colors + "]";
+        return "Colormap[Colors=" + _colors + "]";
     }
 
     public byte[] Serialize() {
@@ -29,6 +29,6 @@ public sealed class Colormap {
     }
 
     public void Dispose() {
-        colors.Clear();
+        _colors.Clear();
     }
 }

@@ -4,10 +4,10 @@ using Vintagestory.API.Client;
 namespace LiveMap.Client.Network;
 
 public sealed class ClientNetworkHandler : NetworkHandler {
-    private IClientNetworkChannel? channel;
+    private IClientNetworkChannel? _channel;
 
     public ClientNetworkHandler(LiveMapClient client) {
-        channel = client.Api.Network.RegisterChannel(LiveMapMod.Id)
+        _channel = client.Api.Network.RegisterChannel(LiveMapMod.Id)
             .RegisterMessageType<ColormapPacket>()
             .SetMessageHandler<ColormapPacket>(ClientReceivePacket);
     }
@@ -17,12 +17,12 @@ public sealed class ClientNetworkHandler : NetworkHandler {
     }
 
     public void SendPacket<T>(T packet) {
-        if (channel is { Connected: true }) {
-            channel.SendPacket(packet);
+        if (_channel is { Connected: true }) {
+            _channel.SendPacket(packet);
         }
     }
 
     public override void Dispose() {
-        channel = null;
+        _channel = null;
     }
 }

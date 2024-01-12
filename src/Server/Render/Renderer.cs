@@ -16,17 +16,17 @@ using Vintagestory.GameContent;
 namespace LiveMap.Server.Render;
 
 public abstract class Renderer {
-    private readonly RenderTask renderTask;
-    private readonly Random rand;
-    private readonly MethodInfo cachedBlurMethod;
+    private readonly RenderTask _renderTask;
+    private readonly Random _rand;
+    private readonly MethodInfo _cachedBlurMethod;
 
-    private Colormap? Colormap => renderTask.Server.Colormap;
-    private ICoreServerAPI Api => renderTask.Server.Api;
+    private Colormap? Colormap => _renderTask.Server.Colormap;
+    private ICoreServerAPI Api => _renderTask.Server.Api;
 
     protected Renderer(RenderTask renderTask) {
-        this.renderTask = renderTask;
-        rand = new Random();
-        cachedBlurMethod = typeof(ChunkMapLayer).Assembly
+        _renderTask = renderTask;
+        _rand = new Random();
+        _cachedBlurMethod = typeof(ChunkMapLayer).Assembly
             .GetType("Vintagestory.GameContent.BlurTool")!
             .GetMethod("Blur", BindingFlags.Public | BindingFlags.Static)!;
     }
@@ -60,7 +60,7 @@ public abstract class Renderer {
     }
 
     private unsafe void ScanRegion(int regionX, int regionZ) {
-        if (renderTask.Stopped) {
+        if (_renderTask.Stopped) {
             return;
         }
 
@@ -75,7 +75,7 @@ public abstract class Renderer {
 
         for (int blockX = startBlockX; blockX < endBlockX; blockX++) {
             for (int blockZ = startBlockZ; blockZ < endBlockZ; blockZ++) {
-                if (renderTask.Stopped) {
+                if (_renderTask.Stopped) {
                     return;
                 }
 
@@ -112,16 +112,16 @@ public abstract class Renderer {
             }
         }
 
-        if (renderTask.Stopped) {
+        if (_renderTask.Stopped) {
             return;
         }
 
         byte[] shadowMapCopy = shadowMap.ToArray();
 
-        cachedBlurMethod.Invoke(null, new object[] { shadowMap, 512, 512, 2 });
+        _cachedBlurMethod.Invoke(null, new object[] { shadowMap, 512, 512, 2 });
 
         for (int i = 0; i < shadowMap.Length; i++) {
-            if (renderTask.Stopped) {
+            if (_renderTask.Stopped) {
                 return;
             }
 
@@ -135,7 +135,7 @@ public abstract class Renderer {
             row[imgX] = (uint)(row[imgX] == 0 ? 0 : ColorUtil.ColorMultiply3Clamped((int)row[imgX], shadow * 1.4F + 1F) | 0xFF << 24);
         }
 
-        if (renderTask.Stopped) {
+        if (_renderTask.Stopped) {
             return;
         }
 
@@ -167,7 +167,7 @@ public abstract class Renderer {
 
     private int GetBlockColor(string block) {
         int[]? colors = Colormap?.Get(block);
-        return (colors == null ? 0xFF << 16 : colors[rand.Next(30)]) | 0xFF << 24;
+        return (colors == null ? 0xFF << 16 : colors[_rand.Next(30)]) | 0xFF << 24;
         // todo - test all blocks for colors on start and warn only once
     }
 

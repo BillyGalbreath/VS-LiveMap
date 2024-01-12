@@ -44,7 +44,7 @@ internal partial class LoggerImpl : LoggerBase {
         { "m", 9 }, { "n", 4 }, { "o", 3 }, { "r", 0 }
     };
 
-    private bool canUseColor = true;
+    private bool _canUseColor = true;
 
     private static string Strip(string message) {
         return ColorCodesRegex().Replace(AnsiCodesRegex().Replace(message, ""), "");
@@ -54,10 +54,7 @@ internal partial class LoggerImpl : LoggerBase {
         MatchCollection results = ColorCodesRegex().Matches(message);
 
         foreach (Match match in results) {
-            message = message.Replace(
-                match.Value,
-                $"\u001b[{AnsiCodes[match.Groups[1].Value]}m"
-            );
+            message = message.Replace(match.Value, $"\u001b[{AnsiCodes[match.Groups[1].Value]}m");
         }
 
         return message;
@@ -66,9 +63,9 @@ internal partial class LoggerImpl : LoggerBase {
     protected override void LogImpl(EnumLogType logType, string format, params object[] args) {
         string stripped = $"[{LiveMapMod.Id}] {Strip(format)}";
 
-        Vintagestory.Logger parent = (Vintagestory.Logger)((ModLogger)LiveMapMod.Instance.Mod.Logger).Parent;
+        Vintagestory.Logger? parent = (Vintagestory.Logger)((ModLogger)LiveMapMod.Instance.Mod.Logger).Parent;
 
-        string logFile = parent.getLogFile(logType);
+        string? logFile = parent.getLogFile(logType);
         if (logFile != null) {
             try {
                 parent.LogToFile(logFile, logType, stripped, args);
@@ -96,7 +93,7 @@ internal partial class LoggerImpl : LoggerBase {
             Trace.WriteLine(parent.FormatLogEntry(logType, stripped, args));
         }
 
-        if (canUseColor) {
+        if (_canUseColor) {
             try {
                 Console.ForegroundColor = logType switch {
                     EnumLogType.Debug => ConsoleColor.Yellow,
@@ -105,11 +102,11 @@ internal partial class LoggerImpl : LoggerBase {
                     _ => Console.ForegroundColor
                 };
             } catch (Exception) {
-                canUseColor = false;
+                _canUseColor = false;
             }
         }
 
-        if (!canUseColor) {
+        if (!_canUseColor) {
             Console.WriteLine(parent.FormatLogEntry(logType, stripped, args));
             return;
         }

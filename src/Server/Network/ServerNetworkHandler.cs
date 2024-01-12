@@ -7,14 +7,14 @@ using Vintagestory.API.Server;
 namespace LiveMap.Server.Network;
 
 public sealed class ServerNetworkHandler : NetworkHandler {
-    private readonly LiveMapServer server;
+    private readonly LiveMapServer _server;
 
-    private IServerNetworkChannel? channel;
+    private IServerNetworkChannel? _channel;
 
     public ServerNetworkHandler(LiveMapServer server) {
-        this.server = server;
+        _server = server;
 
-        channel = server.Api.Network.RegisterChannel(LiveMapMod.Id)
+        _channel = server.Api.Network.RegisterChannel(LiveMapMod.Id)
             .RegisterMessageType<ColormapPacket>()
             .SetMessageHandler<ColormapPacket>(ServerReceivePacket);
     }
@@ -32,15 +32,15 @@ public sealed class ServerNetworkHandler : NetworkHandler {
 
         Logger.Info(Lang.Get("logger.info.server-received-colormap", player.PlayerName));
 
-        server.Colormap = Colormap.Deserialize(packet.RawColormap);
+        _server.Colormap = Colormap.Deserialize(packet.RawColormap);
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public void SendPacket<T>(T packet, IServerPlayer receiver) {
-        channel?.SendPacket(packet, receiver);
+        _channel?.SendPacket(packet, receiver);
     }
 
     public override void Dispose() {
-        channel = null;
+        _channel = null;
     }
 }

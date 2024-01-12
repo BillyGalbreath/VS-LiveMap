@@ -7,14 +7,14 @@ using Vintagestory.API.Util;
 namespace LiveMap.Common.Command;
 
 public abstract class CommandHandler {
-    private readonly Dictionary<string, AbstractCommand> commands = new();
+    private readonly Dictionary<string, AbstractCommand> _commands = new();
 
     protected CommandHandler(LiveMap mod) {
         mod.Api.ChatCommands
             .Create("livemap")
             .WithDescription(Lang.Get("command.livemap.description"))
             .RequiresPrivilege("livemap.admin")
-            .WithArgs(new WordArgParser("command", false, commands.Keys.ToArray()))
+            .WithArgs(new WordArgParser("command", false, _commands.Keys.ToArray()))
             .HandleWith(VanillaExecute);
 
         // ReSharper disable once VirtualMemberCallInConstructor
@@ -26,7 +26,7 @@ public abstract class CommandHandler {
     protected abstract void RegisterSubCommands();
 
     public void RegisterSubCommand(string name, AbstractCommand command) {
-        commands.Add(name, command);
+        _commands.Add(name, command);
     }
 
     protected virtual TextCommandResult VanillaExecute(TextCommandCallingArgs args) {
@@ -45,7 +45,7 @@ public abstract class CommandHandler {
         }
 
         string name = args[0].ToString()!.Trim().ToLower();
-        AbstractCommand? command = commands!.Get(name);
+        AbstractCommand? command = _commands!.Get(name);
         if (command == null) {
             return CommandResult.Error("command.unknown-subcommand");
         }
@@ -59,6 +59,6 @@ public abstract class CommandHandler {
     }
 
     public void Dispose() {
-        commands.Clear();
+        _commands.Clear();
     }
 }
