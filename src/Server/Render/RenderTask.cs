@@ -9,29 +9,29 @@ namespace LiveMap.Server.Render;
 public sealed class RenderTask {
     public LiveMapServer Server { get; }
 
-    private readonly Renderer renderer;
+    private readonly Renderer _renderer;
 
-    private readonly Queue<long> bufferQueue = new();
-    private readonly BlockingCollection<long> processQueue = new();
+    private readonly Queue<long> _bufferQueue = new();
+    private readonly BlockingCollection<long> _processQueue = new();
 
-    private Thread? thread;
-    private bool running;
+    private Thread? _thread;
+    private bool _running;
 
     public bool Stopped { get; private set; }
 
     public RenderTask(LiveMapServer server) {
         Server = server;
-        renderer = new BasicRenderer(this);
+        _renderer = new BasicRenderer(this);
     }
 
     public void Queue(int regionX, int regionZ) {
         long index = Mathf.AsLong(regionX, regionZ);
-        if (bufferQueue.Contains(index) || processQueue.Contains(index)) {
+        if (_bufferQueue.Contains(index) || _processQueue.Contains(index)) {
             return;
         }
 
         Logger.Debug($"##### Queueing region {regionX},{regionZ}");
-        bufferQueue.Enqueue(index);
+        _bufferQueue.Enqueue(index);
     }
 
     public void Run() {
@@ -39,25 +39,25 @@ public sealed class RenderTask {
             return;
         }
 
-        while (bufferQueue.Count > 0) {
-            processQueue.Add(bufferQueue.Dequeue());
+        while (_bufferQueue.Count > 0) {
+            _processQueue.Add(_bufferQueue.Dequeue());
         }
 
-        if (!running) {
+        if (!_running) {
             RunAsyncInfiniteLoop();
         }
     }
 
     private void RunAsyncInfiniteLoop() {
-        running = true;
+        _running = true;
 
-        (thread = new Thread(_ => {
-            while (running) {
+        (_thread = new Thread(_ => {
+            while (_running) {
                 try {
-                    long region = processQueue.Take();
-                    renderer.ScanRegion(region);
+                    long region = _processQueue.Take();
+                    _renderer.ScanRegion(region);
                 } catch (ThreadInterruptedException) {
-                    running = false;
+                    _running = false;
                     Thread.CurrentThread.Interrupt();
                 }
             }
@@ -67,11 +67,10 @@ public sealed class RenderTask {
     public void Dispose() {
         Stopped = true;
 
-        thread?.Interrupt();
-        thread = null;
+        _thread?.Interrupt();
+        _thread = null;
 
-        bufferQueue.Clear();
-        while (processQueue.TryTake(out _)) {
-        }
+        _bufferQueue.Clear();
+        while (_processQueue.TryTake(out _)) { }
     }
 }

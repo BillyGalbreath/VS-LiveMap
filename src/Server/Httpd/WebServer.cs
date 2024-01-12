@@ -11,14 +11,14 @@ using MimeTypes;
 namespace LiveMap.Server.Httpd;
 
 public sealed class WebServer {
-    private HttpListener? listener;
-    private Thread? thread;
-    private bool running;
-    private bool stopped;
-    private bool reload;
+    private HttpListener? _listener;
+    private Thread? _thread;
+    private bool _running;
+    private bool _stopped;
+    private bool _reload;
 
     public void Reload() {
-        reload = true;
+        _reload = true;
         Dispose();
     }
 
@@ -27,36 +27,36 @@ public sealed class WebServer {
             return;
         }
 
-        if (!stopped && !running) {
+        if (!_stopped && !_running) {
             RunAsyncInfiniteLoop();
         }
     }
 
     private void RunAsyncInfiniteLoop() {
-        running = true;
+        _running = true;
 
-        (thread = new Thread(_ => {
+        (_thread = new Thread(_ => {
             int port = Config.Instance.WebServer.Port;
 
             Logger.Info(Lang.Get("logger.info.webserver-started", port));
 
-            (listener = new HttpListener {
+            (_listener = new HttpListener {
                 Prefixes = { $"http://*:{port}/" }
             }).Start();
 
-            while (running) {
+            while (_running) {
                 try {
-                    HandleRequest(listener!.GetContext());
+                    HandleRequest(_listener!.GetContext());
                 } catch (Exception) {
-                    if (stopped) {
+                    if (_stopped) {
                         Logger.Info(Lang.Get("logger.info.webserver-stopped"));
-                        if (reload) {
-                            reload = false;
-                            stopped = false;
+                        if (_reload) {
+                            _reload = false;
+                            _stopped = false;
                         }
                     }
 
-                    running = false;
+                    _running = false;
                     Thread.CurrentThread.Interrupt();
                 }
             }
@@ -69,7 +69,7 @@ public sealed class WebServer {
             urlLoc = "index.html";
         }
 
-        HttpListenerResponse response = context.Response;
+        using HttpListenerResponse response = context.Response;
         string filePath = Path.Combine(FileUtil.WebDir, urlLoc);
 
         byte[] buffer;
@@ -89,7 +89,7 @@ public sealed class WebServer {
 
         try {
             TimeSpan time = File.GetLastWriteTimeUtc(filePath) - DateTime.UnixEpoch;
-            response.AddHeader("ETag", ((long) time.TotalMilliseconds).ToString());
+            response.AddHeader("ETag", ((long)time.TotalMilliseconds).ToString());
         } catch (Exception) {
             // ignore
         }
@@ -100,12 +100,12 @@ public sealed class WebServer {
     }
 
     public void Dispose() {
-        stopped = true;
+        _stopped = true;
 
-        listener?.Stop();
-        listener = null;
+        _listener?.Stop();
+        _listener = null;
 
-        thread?.Interrupt();
-        thread = null;
+        _thread?.Interrupt();
+        _thread = null;
     }
 }

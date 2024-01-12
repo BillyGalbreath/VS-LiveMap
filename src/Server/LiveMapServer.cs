@@ -19,9 +19,9 @@ public sealed class LiveMapServer : Common.LiveMap {
     public override ServerNetworkHandler NetworkHandler { get; }
     public WebServer WebServer { get; }
 
-    private readonly HarmonyPatches patches;
-    private readonly RenderTask renderTask;
-    private readonly long gameTickTaskId;
+    private readonly HarmonyPatches _patches;
+    private readonly RenderTask _renderTask;
+    private readonly long _gameTickTaskId;
 
     public Colormap? Colormap;
 
@@ -32,23 +32,23 @@ public sealed class LiveMapServer : Common.LiveMap {
 
         FileUtil.ExtractWebFiles(Api);
 
-        patches = new HarmonyPatches();
+        _patches = new HarmonyPatches();
 
         CommandHandler = new ServerCommandHandler(this);
         NetworkHandler = new ServerNetworkHandler(this);
 
-        renderTask = new RenderTask(this);
+        _renderTask = new RenderTask(this);
         WebServer = new WebServer();
 
         Api.Event.ChunkDirty += OnChunkDirty;
 
-        gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
+        _gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
     }
 
     // this method ticks every 1000ms on the game thread
     private void OnGameTick(float delta) {
         // ensure render task is running
-        renderTask.Run();
+        _renderTask.Run();
 
         // ensure web server is still running
         WebServer.Run();
@@ -58,22 +58,22 @@ public sealed class LiveMapServer : Common.LiveMap {
 
     private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
         if (reason != EnumChunkDirtyReason.NewlyLoaded) {
-            renderTask.Queue(chunkCoord.X >> 4, chunkCoord.Z >> 4);
+            _renderTask.Queue(chunkCoord.X >> 4, chunkCoord.Z >> 4);
         }
     }
 
     public override void Dispose() {
         Api.Event.ChunkDirty -= OnChunkDirty;
 
-        Api.Event.UnregisterGameTickListener(gameTickTaskId);
+        Api.Event.UnregisterGameTickListener(_gameTickTaskId);
 
-        renderTask.Dispose();
+        _renderTask.Dispose();
         WebServer.Dispose();
 
         base.Dispose();
 
         Colormap?.Dispose();
 
-        patches.Dispose();
+        _patches.Dispose();
     }
 }

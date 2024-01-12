@@ -3,16 +3,16 @@
 namespace LiveMap.Server.Patches;
 
 public sealed class HarmonyPatches {
-    private Harmony? harmony;
+    private Harmony? _harmony;
 
     public HarmonyPatches() {
-        harmony = new Harmony(LiveMapMod.Id);
+        _harmony = new Harmony(LiveMapMod.Id);
 
-        _ = new PrivilegePatches(harmony);
+        _ = new PrivilegePatches(_harmony);
     }
 
     public void Dispose() {
-        harmony?.UnpatchAll(LiveMapMod.Id);
-        harmony = null;
+        _harmony?.UnpatchAll(LiveMapMod.Id);
+        _harmony = null;
     }
 }
