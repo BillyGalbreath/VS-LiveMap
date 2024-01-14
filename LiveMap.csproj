@@ -1,20 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <PackageId>Pl3x.LiveMap</PackageId>
+        <Title>LiveMap</Title>
+        <Version>1.0.0</Version>
+        <Authors>BillyGalbreath</Authors>
+        <Company>Pl3x</Company>
+        <Description>Live map renderer for Vintage Story</Description>
+        <Copyright>Copyright © 2024 William Blake Galbreath</Copyright>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageIcon>modicon.png</PackageIcon>
+        <RepositoryUrl>https://github.com/BillyGalbreath/VS-LiveMap</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
         <TargetFramework>net7.0</TargetFramework>
         <EmbedAllSources>true</EmbedAllSources>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Nullable>enable</Nullable>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DebugType>pdbonly</DebugType>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <DebugType>pdbonly</DebugType>
         <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
@@ -52,33 +57,19 @@
             <HintPath>$(VINTAGE_STORY)/Lib/protobuf-net.dll</HintPath>
             <Private>false</Private>
         </Reference>
-        <Reference Include="System.Data.SQLite">
-            <HintPath>$(VINTAGE_STORY)/Lib/System.Data.SQLite.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="SkiaSharp" Version="2.88.6"/>
-        <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
+        <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17"/>
         <PackageReference Include="YamlDotNet" Version="13.7.1"/>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <ItemGroup>
         <None Include="LICENSE" CopyToOutputDirectory="PreserveNewest"/>
-        <None Include="resources/**">
+        <None Include="resources/**" CopyToOutputDirectory="PreserveNewest">
             <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Remove="resources\web\**" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Remove="resources\web\**" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <EmbeddedResource Remove="resources\web\**" />
     </ItemGroup>
 
     <Target Name="FilterCopyLocalItems" AfterTargets="ResolvePackageDependenciesForBuild">
@@ -87,11 +78,8 @@
         </ItemGroup>
     </Target>
 
-    <Target Name="CreateModsDirectory" AfterTargets="PostBuildEvent">
+    <Target Name="Package" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
         <MakeDir Directories="bin/Mods"/>
-    </Target>
-
-    <Target Name="Package" AfterTargets="CreateModsDirectory" Condition="'$(Configuration)' == 'Release'">
         <ZipDirectory DestinationFile="bin/Mods/$(TargetName).zip" SourceDirectory="$(TargetDir)" Overwrite="true"/>
     </Target>
 
