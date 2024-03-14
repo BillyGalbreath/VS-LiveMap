@@ -46,7 +46,7 @@ class LiveMap {
         this.getJSON("tiles/settings.json", (json) => {
             // setup the zoom levels
             this.zoomDef = json.zoom?.def ?? 0;
-            this.zoomMax = json.zoom?.max ?? 3;
+            this.zoomMax = json.zoom?.max ?? 0;//3;
 
             // set the scale for our projection calculations
             this.scale = (1 / Math.pow(2, this.zoomMax));
@@ -89,7 +89,7 @@ class LiveMap {
     }
 
     centerOn(x, z, zoom) {
-        this.map.setView(this.toLatLng(x + this.spawnX, z + this.spawnZ), 3 - zoom);
+        this.map.setView(this.toLatLng(x + this.spawnX, z + this.spawnZ), this.zoomMax - zoom);
         this.link?.update();
     }
 
