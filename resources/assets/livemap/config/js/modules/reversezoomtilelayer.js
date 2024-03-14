@@ -15,14 +15,14 @@ export const ReverseZoomTileLayer = L.TileLayer.extend({
         minNativeZoom: 0,
 
         // the farthest rendered tiles zoom out level 
-        maxNativeZoom: 3,
+        maxNativeZoom: 0,
 
         // this is always 0. no exceptions!
         minZoom: 0,
 
         // for extra/stretching zoom in
         // maxNativeZoom + extra zoom = maxZoom
-        maxZoom: 3 + 2,
+        maxZoom: 0 + 2,
 
         // we need to counter effect the higher maxZoom here
         // maxZoom + zoomOffset = maxNativeZoom
