@@ -33,7 +33,7 @@ public sealed class Colormap {
 
         Colormap colormap = new();
         foreach ((string? key, int[]? value) in data) {
-            colormap._colors.Add(key, value);
+            colormap._colors.TryAdd(key, value);
         }
 
         return colormap;

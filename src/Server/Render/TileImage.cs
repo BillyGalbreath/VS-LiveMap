@@ -9,7 +9,7 @@ using Vintagestory.GameContent;
 
 namespace LiveMap.Server.Render;
 
-public unsafe class TileImage {
+public sealed unsafe class TileImage {
     private readonly SKBitmap _png;
     private readonly byte* _pngPtr;
     private readonly byte[] _shadowMap;

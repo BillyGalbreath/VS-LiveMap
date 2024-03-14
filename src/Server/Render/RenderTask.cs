@@ -10,15 +10,14 @@ namespace LiveMap.Server.Render;
 public sealed class RenderTask {
     public LiveMapServer Server { get; }
 
-    private readonly Renderer3 _renderer;
+    private readonly Renderer _renderer;
 
     private readonly Queue<long> _bufferQueue = new();
     private readonly BlockingCollection<long> _processQueue = new();
 
     private Thread? _thread;
     private bool _running;
-
-    public bool Stopped { get; private set; }
+    private bool _stopped;
 
     public RenderTask(LiveMapServer server) {
         Server = server;
@@ -37,7 +36,7 @@ public sealed class RenderTask {
     }
 
     public void Run() {
-        if (_running) {
+        if (_running || _stopped) {
             return;
         }
 
@@ -52,38 +51,10 @@ public sealed class RenderTask {
 
             _running = false;
         })).Start();
-
-        /*if (Stopped || Server.Colormap == null) {
-            return;
-        }
-
-        while (_bufferQueue.Count > 0) {
-            _processQueue.Add(_bufferQueue.Dequeue());
-        }
-
-        if (!_running) {
-            RunAsyncInfiniteLoop();
-        }
-    }
-
-    private void RunAsyncInfiniteLoop() {
-        _running = true;
-
-        (_thread = new Thread(_ => {
-            while (_running) {
-                try {
-                    long region = _processQueue.Take();
-                    _renderer.ScanRegion(region);
-                } catch (ThreadInterruptedException) {
-                    _running = false;
-                    Thread.CurrentThread.Interrupt();
-                }
-            }
-        })).Start();*/
     }
 
     public void Dispose() {
-        Stopped = true;
+        _stopped = true;
 
         _thread?.Interrupt();
         _thread = null;
