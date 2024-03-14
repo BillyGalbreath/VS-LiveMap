@@ -27,7 +27,7 @@ public class GameCalendarPatches {
                 return true;
             }
 
-            __result = __instance.GetHemisphere(OverridePos) == EnumHemisphere.North ? 0.5f : 0.0f;
+            __result = __instance.GetHemisphere(OverridePos) == EnumHemisphere.North ? 0.6f : 0.1f;
             return false;
         }
     }

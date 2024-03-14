@@ -59,9 +59,9 @@ class LiveMap {
 
             // move to the coords or spawn point at specified or default zoom level
             this.centerOn(
-                parseInt(this.getUrlParam("x", this.spawnX)),
-                parseInt(this.getUrlParam("z", this.spawnZ)),
-                parseInt(this.getUrlParam("y", this.zoomDef))
+                parseInt(this.getUrlParam("x", 0)),
+                parseInt(this.getUrlParam("z", 0)),
+                parseInt(this.getUrlParam("y", 0))
             );
 
             // setup the layer controls (tile layers and layer overlays)
@@ -89,7 +89,7 @@ class LiveMap {
     }
 
     centerOn(x, z, zoom) {
-        this.map.setView(this.toLatLng(x, z), 3 - zoom);
+        this.map.setView(this.toLatLng(x + this.spawnX, z + this.spawnZ), 3 - zoom);
         this.link?.update();
     }
 
