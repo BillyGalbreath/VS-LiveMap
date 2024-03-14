@@ -1,12 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using HarmonyLib;
+using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 using Vintagestory.Common;
 
 namespace LiveMap.Client.Patches;
 
 public class GameCalendarPatches {
-    public static bool Override { get; set; }
+    public static BlockPos? OverridePos { get; set; }
 
     internal GameCalendarPatches(Harmony harmony) {
         _ = new YearRelPatch(harmony);
@@ -20,12 +22,12 @@ public class GameCalendarPatches {
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
-        public static bool Prefix(ref float __result) {
-            if (!Override) {
+        public static bool Prefix(IGameCalendar __instance, ref float __result) {
+            if (OverridePos == null) {
                 return true;
             }
 
-            __result = 0.5f;
+            __result = __instance.GetHemisphere(OverridePos) == EnumHemisphere.North ? 0.5f : 0.0f;
             return false;
         }
     }

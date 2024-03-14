@@ -20,19 +20,19 @@ public sealed class ColorMapCommand : AbstractClientCommand {
         BlockPos pos = caller.Entity.ServerPos.AsBlockPos;
 
         // set season override for colors
-        GameCalendarPatches.Override = true;
+        GameCalendarPatches.OverridePos = pos;
 
         // get color of every single known block
         Colormap colormap = new();
         foreach (Block block in caller.Entity.World.Blocks.Where(block => block.Code != null)) {
             // get the base color of this block
-            int color = ColorUtil.ReverseColorBytes(block.GetColor(Handler.Client.Api, pos));
+            int color = ColorUtil.ReverseColorBytes(block.GetColor(Client.Api, pos));
 
             // get 30 color samples for this block
             int[] colors = new int[30];
             for (int i = 0; i < 30; i++) {
                 // we'll add random seasonal and climate overlay (just like the vanilla minimap)
-                colors[i] = ColorUtil.ColorOverlay(color, block.GetRandomColor(Handler.Client.Api, pos, BlockFacing.UP, i), 0.6f);
+                colors[i] = ColorUtil.ColorOverlay(color, block.GetRandomColor(Client.Api, pos, BlockFacing.UP, i), 0.6f);
             }
 
             // store sample colors in the colormap
@@ -40,7 +40,7 @@ public sealed class ColorMapCommand : AbstractClientCommand {
         }
 
         // remove season override
-        GameCalendarPatches.Override = false;
+        GameCalendarPatches.OverridePos = null;
 
         // send colormap to the server
         Handler.Client.NetworkHandler.SendPacket(new ColormapPacket {
