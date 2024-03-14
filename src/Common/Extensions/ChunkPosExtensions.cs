@@ -9,8 +9,4 @@ public static class ChunkPosExtensions {
         chunkPos.Z = z;
         return chunkPos;
     }
-
-    public static string ToString(this ChunkPos pos) {
-        return $"[{pos.X},{pos.Y},{pos.Z}]";
-    }
 }

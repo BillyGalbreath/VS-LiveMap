@@ -1,19 +1,18 @@
 using System.Collections.Generic;
 using System.IO;
-using LiveMap.Common.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.API.Server;
 
-namespace LiveMap.Server.Util;
+namespace LiveMap.Common.Util;
 
 public static class FileUtil {
     public static readonly string ConfigFile = Path.Combine(GamePaths.ModConfig, $"{LiveMapMod.Id}.yml");
-    private static readonly string DataDir = Path.Combine(GamePaths.DataPath, "ModData", LiveMapMod.Api.World.SavegameIdentifier, "LiveMap");
+    public static readonly string DataDir = Path.Combine(GamePaths.DataPath, "ModData", LiveMapMod.Api.World.SavegameIdentifier, "LiveMap");
+    public static readonly string ColormapFile = Path.Combine(DataDir, "colormap.yaml");
     public static readonly string WebDir = Path.Combine(DataDir, "web");
     public static readonly string TilesDir = Path.Combine(WebDir, "tiles");
 
-    public static void ExtractWebFiles(ICoreServerAPI api) {
+    public static void ExtractWebFiles(ICoreAPI api) {
         // load web assets to disk
         // stored in "config" to allow the game to automatically load them for us
         List<IAsset> assets = api.Assets.GetMany("config", "livemap");

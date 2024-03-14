@@ -15,6 +15,8 @@ public sealed class ColorMapCommand : AbstractClientCommand {
     }
 
     public override CommandResult Execute(Caller caller, IEnumerable<string> args) {
+        caller.SendMessage(CommandResult.Success("command.colormap.started"));
+
         // we need a world position to sample colors at
         // we'll just use the player's current position
         BlockPos pos = caller.Entity.ServerPos.AsBlockPos;

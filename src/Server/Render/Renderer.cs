@@ -53,7 +53,14 @@ public abstract class Renderer {
     }
 
     public void ScanAllRegions() {
-        long startMillis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        _colormap ??= _renderTask.Server.Colormap?.ToDict(Api);
+        if (_colormap == null) {
+            Logger.Warn("Unable to scan regions. No known colormap detected.");
+            Logger.Warn("An admin needs to send the colormap from their client.");
+            return;
+        }
+
+        long then = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         Logger.Debug("&3Begin scanning all existing regions");
 
         // get all chunks that exist in the world
@@ -66,7 +73,7 @@ public abstract class Renderer {
         }
 
         // inform what we found
-        Logger.Debug($"Found {allChunks.Count} chunks in {regions.Count} regions ({DateTimeOffset.Now.ToUnixTimeMilliseconds() - startMillis}ms)");
+        Logger.Debug($"Found {allChunks.Count} chunks in {regions.Count} regions to scan");
 
         // scan one region at a time
         foreach (long region in regions) {
@@ -77,13 +84,12 @@ public abstract class Renderer {
             return;
         }
 
-        Logger.Debug($"&3Finished scanning {regions.Count} regions ({DateTimeOffset.Now.ToUnixTimeMilliseconds() - startMillis}ms)");
+        long now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        Logger.Debug($"&3Finished scanning {allChunks.Count} chunks in {regions.Count} regions ({now - then}ms)");
     }
 
     private void ScanRegion(long region, IEnumerable<ChunkPos> allChunks) {
-        long now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
-        _colormap ??= _renderTask.Server.Colormap!.ToDict(Api);
+        long then = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
         int regionX = Mathf.LongToX(region);
         int regionZ = Mathf.LongToZ(region);
@@ -119,8 +125,8 @@ public abstract class Renderer {
             return;
         }
 
-        long then = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        Logger.Debug($"Region {regionX},{regionZ} done. ({then - now}ms)");
+        long now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        Logger.Debug($"Region {regionX},{regionZ} done. ({now - then}ms)");
     }
 
     private void ScanRegion(TileImage image, IEnumerable<ChunkPos> regionChunks) {
