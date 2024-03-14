@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using LiveMap.Common.Configuration;
 using Vintagestory.API.Common;
 using Vintagestory.Common;
 
@@ -80,6 +81,7 @@ internal partial class LoggerImpl : LoggerBase {
                 parent.LogToFile(parent.getLogFile(EnumLogType.Event), logType, stripped, args);
                 break;
             case EnumLogType.Event:
+            case EnumLogType.Debug when Config.Instance.Logger.DebugToEventFile:
                 parent.LogToFile(parent.getLogFile(EnumLogType.Notification), logType, stripped, args);
                 break;
         }
@@ -88,11 +90,15 @@ internal partial class LoggerImpl : LoggerBase {
             return;
         }
 
+        if (logType == EnumLogType.Debug && !Config.Instance.Logger.DebugToConsole) {
+            return;
+        }
+
         if (parent.TraceLog) {
             Trace.WriteLine(parent.FormatLogEntry(logType, stripped, args));
         }
 
-        if (_canUseColor) {
+        if (Config.Instance.Logger.ColorConsole && _canUseColor) {
             try {
                 Console.ForegroundColor = logType switch {
                     EnumLogType.Debug => ConsoleColor.Yellow,
@@ -101,11 +107,17 @@ internal partial class LoggerImpl : LoggerBase {
                     _ => Console.ForegroundColor
                 };
             } catch (Exception) {
+                try {
+                    Console.ResetColor();
+                } catch (Exception) {
+                    // ignore
+                }
+
                 _canUseColor = false;
             }
         }
 
-        if (!_canUseColor) {
+        if (!Config.Instance.Logger.ColorConsole || !_canUseColor) {
             Console.WriteLine(parent.FormatLogEntry(logType, stripped, args));
             return;
         }
@@ -118,7 +130,6 @@ internal partial class LoggerImpl : LoggerBase {
                 _ => "&r"
             }}] {format}&r"
         ), args));
-
 
         Console.ResetColor();
     }

@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -34,16 +38,39 @@ public sealed class Colormap {
     }
 
     public static Colormap Deserialize(string yaml) {
-        Dictionary<string, int[]> data = new DeserializerBuilder().IgnoreUnmatchedProperties()
+        Dictionary<string, int[]> data = new DeserializerBuilder()
+            .IgnoreUnmatchedProperties()
             .WithNamingConvention(NullNamingConvention.Instance)
-            .Build()
-            .Deserialize<Dictionary<string, int[]>>(yaml);
+            .Build().Deserialize<Dictionary<string, int[]>>(yaml);
 
         Colormap colormap = new();
         foreach ((string? key, int[]? value) in data) {
             colormap._colors.TryAdd(key, value);
         }
 
+        return colormap;
+    }
+
+    public static Colormap? Read() {
+        try {
+            string yaml = File.ReadAllText(FileUtil.ColormapFile, Encoding.UTF8);
+            if (!string.IsNullOrEmpty(yaml)) {
+                Colormap colormap = Deserialize(yaml);
+                Logger.Info(Lang.Get("logger.info.server-loaded-colormap"));
+                return colormap;
+            }
+        } catch (Exception) {
+            // ignore
+        }
+
+        Logger.Warn("Could not load colormap from disk.");
+        Logger.Warn("An admin needs to send the colormap from their client.");
+        return null;
+    }
+
+    public static Colormap Write(Colormap colormap) {
+        GamePaths.EnsurePathExists(FileUtil.DataDir);
+        File.WriteAllText(FileUtil.ColormapFile, colormap.Serialize(), Encoding.UTF8);
         return colormap;
     }
 

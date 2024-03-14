@@ -8,12 +8,14 @@
   "command.success": "<font color=\"#19B919\">{0}</font>",
   "command.error": "<font color=\"#B91919\">{0}</font>",
 
-  "command.colormap.finished": "Sent the colormap it to the server.",
+  "command.colormap.started": "Generating a new colormap. Your game may freeze for a few seconds. Please be patient..",
+  "command.colormap.finished": "Colormap was generated and sent to the server.",
 
   "command.fullrender.started": "FullRender task has started. (not really.. it's under construction).",
 
   "command.reload.finished": "LiveMap config and services were successfully reloaded.",
 
+  "logger.info.server-loaded-colormap": "&dColormap loaded from disk.",
   "logger.info.server-received-colormap": "&dColormap packet was received from &n{0}",
 
   "logger.info.webserver-started": "&aInternal webserver has started on port &e{0}",

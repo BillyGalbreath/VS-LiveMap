@@ -1,11 +1,11 @@
-﻿using LiveMap.Common.Util;
+﻿using System.Threading;
+using LiveMap.Common.Configuration;
+using LiveMap.Common.Util;
 using LiveMap.Server.Command;
-using LiveMap.Server.Configuration;
 using LiveMap.Server.Httpd;
 using LiveMap.Server.Network;
 using LiveMap.Server.Patches;
 using LiveMap.Server.Render;
-using LiveMap.Server.Util;
 using Vintagestory.API.Server;
 
 namespace LiveMap.Server;
@@ -20,6 +20,8 @@ public sealed class LiveMapServer : Common.LiveMap {
     private readonly ServerHarmonyPatches _patches;
     private readonly RenderTask _renderTask;
     private readonly long _gameTickTaskId;
+
+    private bool _firstTick;
 
     public Colormap? Colormap;
 
@@ -42,6 +44,7 @@ public sealed class LiveMapServer : Common.LiveMap {
         //Api.Event.ChunkDirty += OnChunkDirty;
         Api.Event.GameWorldSave += OnGameWorldSave;
 
+        _firstTick = true;
         _gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
     }
 
@@ -51,6 +54,14 @@ public sealed class LiveMapServer : Common.LiveMap {
 
     // this method ticks every 1000ms on the game thread
     private void OnGameTick(float delta) {
+        // first game tick tasks
+        if (_firstTick) {
+            _firstTick = false;
+
+            // colormap file is kinda heavy. lets load it off the main thread.
+            new Thread(_ => Colormap = Colormap.Read()).Start();
+        }
+
         // ensure render task is running
         //_renderTask.Run();
 
