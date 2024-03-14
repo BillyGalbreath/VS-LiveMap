@@ -1,5 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using LiveMap.Common.Network;
 using LiveMap.Common.Util;
 using Vintagestory.API.Server;
@@ -32,7 +34,14 @@ public sealed class ServerNetworkHandler : NetworkHandler {
 
         Logger.Info(Lang.Get("logger.info.server-received-colormap", player.PlayerName));
 
-        _server.Colormap = Colormap.Deserialize(packet.RawColormap);
+        new Thread(_ => {
+            try {
+                Colormap colormap = Colormap.Deserialize(packet.RawColormap);
+                _server.Colormap = colormap;
+            } catch (Exception) {
+                // ignored
+            }
+        }).Start();
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Global")]

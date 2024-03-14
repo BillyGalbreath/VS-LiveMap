@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using LiveMap.Common.Extensions;
 using LiveMap.Common.Util;
@@ -17,15 +18,19 @@ public abstract class Renderer {
     private readonly RenderTask _renderTask;
     private readonly DataLoader _dataLoader;
 
+    private readonly int _landBlock;
     private readonly HashSet<int> _microBlocks;
     private readonly HashSet<int> _blocksToIgnore;
 
-    private Colormap? Colormap => _renderTask.Server.Colormap;
+    private Dictionary<int, int[]>? _colormap;
+
     private ICoreServerAPI Api => _renderTask.Server.Api;
 
     protected Renderer(RenderTask renderTask) {
         _renderTask = renderTask;
         _dataLoader = new DataLoader(Api);
+
+        _landBlock = Api.World.GetBlock(new AssetLocation("game", "soil-low-normal")).Id;
 
         _microBlocks = Api.World.Blocks
             .Where(block => block.Code != null)
@@ -48,27 +53,41 @@ public abstract class Renderer {
     }
 
     public void ScanAllRegions() {
-        IEnumerable<ChunkPos> allChunks = _dataLoader.GetAllMapChunkPositions();
-        HashSet<long> regionChunks = new();
+        long startMillis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        Logger.Debug("&3Begin scanning all existing regions");
+
+        // get all chunks that exist in the world
+        ImmutableList<ChunkPos> allChunks = _dataLoader.GetAllMapChunkPositions().ToImmutableList();
+
+        // sort out all the chunks per region
+        HashSet<long> regions = new();
         foreach (ChunkPos chunk in allChunks) {
-            regionChunks.Add(Mathf.AsLong(chunk.X >> 4, chunk.Z >> 4));
+            regions.Add(Mathf.AsLong(chunk.X >> 4, chunk.Z >> 4));
         }
 
-        foreach (long region in regionChunks) {
-            ScanRegion(region);
+        // inform what we found
+        Logger.Debug($"Found {allChunks.Count} chunks in {regions.Count} regions ({DateTimeOffset.Now.ToUnixTimeMilliseconds() - startMillis}ms)");
+
+        // scan one region at a time
+        foreach (long region in regions) {
+            ScanRegion(region, allChunks);
         }
+
+        if (_renderTask.Stopped) {
+            return;
+        }
+
+        Logger.Debug($"&3Finished scanning {regions.Count} regions ({DateTimeOffset.Now.ToUnixTimeMilliseconds() - startMillis}ms)");
     }
 
-    public void ScanRegion(long region) {
-        ScanRegion(region, _dataLoader.GetAllMapChunkPositions());
-    }
+    private void ScanRegion(long region, IEnumerable<ChunkPos> allChunks) {
+        long now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-    public void ScanRegion(long region, IEnumerable<ChunkPos> allChunks) {
+        _colormap ??= _renderTask.Server.Colormap!.ToDict(Api);
+
         int regionX = Mathf.LongToX(region);
         int regionZ = Mathf.LongToZ(region);
 
-        long now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        Logger.Debug($"##### 1) [{now}] &3Scanning Region {regionX},{regionZ}");
         // check for existing chunks only in this region
         int x1 = regionX << 4;
         int z1 = regionZ << 4;
@@ -82,14 +101,26 @@ public abstract class Renderer {
         // scan the region
         ScanRegion(image, regionChunks);
 
+        if (_renderTask.Stopped) {
+            return;
+        }
+
         // calculate shadows
         image.CalculateShadows();
+
+        if (_renderTask.Stopped) {
+            return;
+        }
 
         // save image
         image.Save();
 
+        if (_renderTask.Stopped) {
+            return;
+        }
+
         long then = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        Logger.Debug($"##### 2) [{then} ({then - now}ms)]");
+        Logger.Debug($"Region {regionX},{regionZ} done. ({then - now}ms)");
     }
 
     private void ScanRegion(TileImage image, IEnumerable<ChunkPos> regionChunks) {
@@ -126,13 +157,17 @@ public abstract class Renderer {
             // get topmost block
             for (int x = 0; x < 32; x++) {
                 for (int z = 0; z < 32; z++) {
+                    if (_renderTask.Stopped) {
+                        return;
+                    }
+
                     int imgX = x + (chunkPos.X << 5);
                     int imgZ = z + (chunkPos.Z << 5);
 
                     try {
                         int blockY = GetTopBlockY(mapChunk, x, z);
                         int chunkY = blockY >> 5;
-                        int isOff = 0;
+                        bool ignored = false;
 
                         ServerChunk? serverChunk = serverChunks[chunkY];
                         if (serverChunk == null) {
@@ -142,7 +177,7 @@ public abstract class Renderer {
                         int blockId = serverChunk.Data[GetChunkIndex(x, blockY, z)];
 
                         if (_blocksToIgnore.Contains(blockId)) {
-                            isOff = 1;
+                            ignored = true;
                             blockY--;
                             chunkY = blockY >> 5;
                             serverChunk = serverChunks[chunkY];
@@ -154,22 +189,19 @@ public abstract class Renderer {
                             blockId = serverChunk!.Data[GetChunkIndex(x, blockY, z)];
                         }
 
-                        string blockCode;
                         if (_microBlocks.Contains(blockId)) {
                             BlockPos blockPos = new((chunkPos.X << 5) + x, blockY, (chunkPos.Z << 5) + z, 0);
                             serverChunk.BlockEntities.TryGetValue(blockPos, out BlockEntity? blockEntity);
 
                             if (blockEntity is BlockEntityMicroBlock blockEntityMicroBlock) {
-                                blockCode = Api.World.Blocks[blockEntityMicroBlock.BlockIds[0]].Code.ToString();
+                                blockId = blockEntityMicroBlock.BlockIds[0];
                             } else {
                                 // default to land for invalid chiselblock
-                                blockCode = "game:soil-low-normal";
+                                blockId = _landBlock;
                             }
-                        } else {
-                            blockCode = Api.World.GetBlock(blockId).Code.ToString();
                         }
 
-                        int color = GetBlockColor(blockCode, x, blockY, z);
+                        int color = GetBlockColor(blockId, x, blockY, z);
 
                         int offsetX = x - 1;
                         int offsetZ = z - 1;
@@ -180,11 +212,13 @@ public abstract class Renderer {
                             _ => offsetZ < 0 ? mapChunkArray[2] : mapChunk
                         };
 
-                        blockY += isOff;
+                        if (ignored) {
+                            blockY++;
+                        }
 
-                        int northwest = blockY - (northwestChunk?.RainHeightMap[GetChunkIndex(offsetX, offsetZ)] ?? blockY);
-                        int west = blockY - ((offsetX < 0 ? mapChunkArray[1] : mapChunk)?.RainHeightMap[GetChunkIndex(offsetX, z)] ?? blockY);
-                        int north = blockY - ((offsetZ < 0 ? mapChunkArray[2] : mapChunk)?.RainHeightMap[GetChunkIndex(x, offsetZ)] ?? blockY);
+                        int northwest = blockY - GetTopBlockY(northwestChunk, offsetX, offsetZ, blockY);
+                        int west = blockY - GetTopBlockY(offsetX < 0 ? mapChunkArray[1] : mapChunk, offsetX, z, blockY);
+                        int north = blockY - GetTopBlockY(offsetZ < 0 ? mapChunkArray[2] : mapChunk, x, offsetZ, blockY);
 
                         int direction = Math.Sign(northwest) + Math.Sign(north) + Math.Sign(west);
                         int steepness = Math.Max(Math.Max(Math.Abs(northwest), Math.Abs(north)), Math.Abs(west));
@@ -204,18 +238,17 @@ public abstract class Renderer {
         }
     }
 
-    private int GetTopBlockY(ServerMapChunk mapChunk, int x, int z) {
-        return GameMath.Clamp(mapChunk.RainHeightMap[GetChunkIndex(x, z)], 0, Api.WorldManager.MapSizeY - 1);
+    private int GetTopBlockY(ServerMapChunk? mapChunk, int x, int z, int def = 0) {
+        return GameMath.Clamp(mapChunk?.RainHeightMap[GetChunkIndex(x, z)] ?? def, 0, Api.WorldManager.MapSizeY - 1);
     }
 
-    private int GetBlockColor(string block, int x, int y, int z) {
-        int[]? colors = Colormap?.Get(block);
-        if (colors == null) {
+    private int GetBlockColor(int block, int x, int y, int z) {
+        if (!_colormap!.TryGetValue(block, out int[]? colors)) {
+            // todo - test all blocks for colors on start and warn only once
             Logger.Warn($"No color for block ({block})");
         }
 
         return (colors == null ? 0xFF << 16 : colors[GameMath.MurmurHash3Mod(x, y, z, 30)]) | 0xFF << 24;
-        // todo - test all blocks for colors on start and warn only once
     }
 
     private static int GetChunkIndex(int x, int z) {

@@ -17,7 +17,8 @@ public sealed class RenderTask {
 
     private Thread? _thread;
     private bool _running;
-    private bool _stopped;
+
+    public bool Stopped { get; private set; }
 
     public RenderTask(LiveMapServer server) {
         Server = server;
@@ -36,7 +37,7 @@ public sealed class RenderTask {
     }
 
     public void Run() {
-        if (_running || _stopped) {
+        if (_running || Stopped) {
             return;
         }
 
@@ -54,12 +55,18 @@ public sealed class RenderTask {
     }
 
     public void Dispose() {
-        _stopped = true;
+        bool cancelled = !Stopped && _running;
+
+        Stopped = true;
 
         _thread?.Interrupt();
         _thread = null;
 
         _bufferQueue.Clear();
         while (_processQueue.TryTake(out _)) { }
+
+        if (cancelled) {
+            Logger.Warn("Render task cancelled!");
+        }
     }
 }

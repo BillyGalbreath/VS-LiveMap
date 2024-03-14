@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Vintagestory.API.Util;
+using Vintagestory.API.Common;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -12,8 +12,16 @@ public sealed class Colormap {
         _colors.TryAdd(block, toAdd);
     }
 
-    public int[]? Get(string block) {
-        return _colors!.Get(block);
+    public Dictionary<int, int[]> ToDict(ICoreAPI api) {
+        Dictionary<int, int[]> dict = new();
+        foreach ((string code, int[] colors) in _colors) {
+            int? id = api.World.GetBlock(new AssetLocation(code))?.Id;
+            if (id != null) {
+                dict.TryAdd((int)id, colors);
+            }
+        }
+
+        return dict;
     }
 
     public string Serialize() {
