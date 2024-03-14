@@ -12,7 +12,7 @@ public sealed class ReloadCommand : AbstractServerCommand {
 
     public override CommandResult Execute(Caller caller, IEnumerable<string> args) {
         Config.Reload();
-        Handler.Server.WebServer.Reload();
+        Server.WebServer.Reload();
         return CommandResult.Success("command.reload.finished");
     }
 }
