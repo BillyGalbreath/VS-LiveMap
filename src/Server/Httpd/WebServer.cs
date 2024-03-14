@@ -38,7 +38,9 @@ public sealed class WebServer {
         (_thread = new Thread(_ => {
             int port = Config.Instance.WebServer.Port;
 
-            Logger.Info(Lang.Get("logger.info.webserver-started", port));
+            if (_listener == null) {
+                Logger.Info(Lang.Get("logger.info.webserver-started", port));
+            }
 
             (_listener = new HttpListener {
                 Prefixes = { $"http://*:{port}/" }
@@ -54,6 +56,12 @@ public sealed class WebServer {
                             _reload = false;
                             _stopped = false;
                         }
+                    }
+
+                    try {
+                        _listener?.Stop();
+                    } catch (Exception) {
+                        // ignore
                     }
 
                     _running = false;

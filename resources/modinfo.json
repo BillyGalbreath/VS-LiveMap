@@ -2,7 +2,7 @@
   "type": "code",
   "name": "LiveMap",
   "modid": "livemap",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Live map renderer for Vintage Story",
   "website": "https://github.com/BillyGalbreath/VS-LiveMap",
   "authors": [ "BillyGalbreath" ],
@@ -10,6 +10,6 @@
   "requiredOnClient": false,
   "requiredOnServer": true,
   "dependencies": {
-    "game": "1.18.15"
+    "game": "1.19.0"
   }
 }

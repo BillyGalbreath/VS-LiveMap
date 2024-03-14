@@ -14,8 +14,8 @@ export class Coords {
                 return coords;
             },
             update: function (point) {
-                this.x = point == null ? "---" : Math.round(point.x);
-                this.z = point == null ? "---" : Math.round(point.y);
+                this.x = point == null ? "---" : Math.round(point.x - LM.spawnX);
+                this.z = point == null ? "---" : Math.round(point.y - LM.spawnZ);
                 this._div.innerHTML = this.x + ", " + this.z;
             }
         });

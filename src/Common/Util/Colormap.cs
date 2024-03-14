@@ -1,31 +1,42 @@
 ﻿using System.Collections.Generic;
-using ProtoBuf;
 using Vintagestory.API.Util;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace LiveMap.Common.Util;
 
-[ProtoContract(ImplicitFields = ImplicitFields.AllFields)]
 public sealed class Colormap {
-    private readonly Dictionary<string, int[]> _colors = new();
+    [YamlMember] private readonly Dictionary<string, int[]> _colors = new();
 
     public void Add(string block, int[] toAdd) {
-        _colors.Add(block, toAdd);
+        _colors.TryAdd(block, toAdd);
     }
 
     public int[]? Get(string block) {
         return _colors!.Get(block);
     }
 
-    public override string ToString() {
-        return "Colormap[Colors=" + _colors + "]";
+    public string Serialize() {
+        return new SerializerBuilder()
+            .WithQuotingNecessaryStrings()
+            .WithNamingConvention(NullNamingConvention.Instance)
+            .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
+            .Build()
+            .Serialize(_colors);
     }
 
-    public byte[] Serialize() {
-        return SerializerUtil.Serialize(this);
-    }
+    public static Colormap Deserialize(string yaml) {
+        Dictionary<string, int[]> data = new DeserializerBuilder().IgnoreUnmatchedProperties()
+            .WithNamingConvention(NullNamingConvention.Instance)
+            .Build()
+            .Deserialize<Dictionary<string, int[]>>(yaml);
 
-    public static Colormap Deserialize(byte[] data) {
-        return SerializerUtil.Deserialize<Colormap>(data);
+        Colormap colormap = new();
+        foreach ((string? key, int[]? value) in data) {
+            colormap._colors.Add(key, value);
+        }
+
+        return colormap;
     }
 
     public void Dispose() {

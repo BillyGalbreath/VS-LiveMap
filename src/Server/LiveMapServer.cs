@@ -6,8 +6,6 @@ using LiveMap.Server.Network;
 using LiveMap.Server.Patches;
 using LiveMap.Server.Render;
 using LiveMap.Server.Util;
-using Vintagestory.API.Common;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 
 namespace LiveMap.Server;
@@ -19,7 +17,7 @@ public sealed class LiveMapServer : Common.LiveMap {
     public override ServerNetworkHandler NetworkHandler { get; }
     public WebServer WebServer { get; }
 
-    private readonly HarmonyPatches _patches;
+    private readonly ServerHarmonyPatches _patches;
     private readonly RenderTask _renderTask;
     private readonly long _gameTickTaskId;
 
@@ -32,7 +30,8 @@ public sealed class LiveMapServer : Common.LiveMap {
 
         FileUtil.ExtractWebFiles(Api);
 
-        _patches = new HarmonyPatches();
+        _patches = new ServerHarmonyPatches();
+        _patches.Init();
 
         CommandHandler = new ServerCommandHandler(this);
         NetworkHandler = new ServerNetworkHandler(this);
@@ -40,15 +39,20 @@ public sealed class LiveMapServer : Common.LiveMap {
         _renderTask = new RenderTask(this);
         WebServer = new WebServer();
 
-        Api.Event.ChunkDirty += OnChunkDirty;
+        //Api.Event.ChunkDirty += OnChunkDirty;
+        Api.Event.GameWorldSave += OnGameWorldSave;
 
         _gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
+    }
+
+    private void OnGameWorldSave() {
+        Api.Event.RegisterCallback(_ => _renderTask.Run(), 1000);
     }
 
     // this method ticks every 1000ms on the game thread
     private void OnGameTick(float delta) {
         // ensure render task is running
-        _renderTask.Run();
+        //_renderTask.Run();
 
         // ensure web server is still running
         WebServer.Run();
@@ -56,14 +60,15 @@ public sealed class LiveMapServer : Common.LiveMap {
         // todo - update player positions, public waypoints, etc
     }
 
-    private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
+    /*private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
         if (reason != EnumChunkDirtyReason.NewlyLoaded) {
             _renderTask.Queue(chunkCoord.X >> 4, chunkCoord.Z >> 4);
         }
-    }
+    }*/
 
     public override void Dispose() {
-        Api.Event.ChunkDirty -= OnChunkDirty;
+        //Api.Event.ChunkDirty -= OnChunkDirty;
+        Api.Event.GameWorldSave -= OnGameWorldSave;
 
         Api.Event.UnregisterGameTickListener(_gameTickTaskId);
 

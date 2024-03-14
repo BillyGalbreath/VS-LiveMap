@@ -15,7 +15,7 @@ public abstract class LiveMap {
     }
 
     public virtual void Dispose() {
-        NetworkHandler.Dispose();
+            NetworkHandler.Dispose();
         CommandHandler.Dispose();
     }
 }

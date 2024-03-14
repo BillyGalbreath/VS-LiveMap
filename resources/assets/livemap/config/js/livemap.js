@@ -4,6 +4,12 @@ import {Link} from "./modules/link.js";
 
 class LiveMap {
     constructor() {
+        // defaults (will be overridden from settings.json)
+        this.mapSizeX = 1024000;
+        this.mapSizeZ = 1024000;
+        this.spawnX = 512000;
+        this.spawnZ = 512000;
+
         // create the map
         this.map = L.map('map', {
             // we need a flat and simple crs
@@ -13,7 +19,7 @@ class LiveMap {
                 transformation: new L.Transformation(1, 0, 1, 0)
             }),
             // always 0,0 center
-            center: [0, 0],
+            center: [this.mapSizeX / 2, this.mapSizeZ / 2],
             // show attribution control box
             attributionControl: true,
             // canvas is more efficient than svg
@@ -38,14 +44,24 @@ class LiveMap {
         this.layerControls = new LayerControls(this.map);
 
         this.getJSON("tiles/settings.json", (json) => {
-            // set the scale for our projection calculations
-            this.scale = (1 / Math.pow(2, json.zoom?.max ?? 3));
+            // setup the zoom levels
+            this.zoomDef = json.zoom?.def ?? 0;
+            this.zoomMax = json.zoom?.max ?? 3;
 
-            // move to the center of the map at default zoom level
+            // set the scale for our projection calculations
+            this.scale = (1 / Math.pow(2, this.zoomMax));
+
+            // set the world size and spawn point
+            this.mapSizeX = json.mapsize?.x ?? 1024000;
+            this.mapSizeZ = json.mapsize?.z ?? 1024000;
+            this.spawnX = json.spawn?.x ?? (this.mapSizeX / 2);
+            this.spawnZ = json.spawn?.z ?? (this.mapSizeZ / 2);
+
+            // move to the coords or spawn point at specified or default zoom level
             this.centerOn(
-                this.getUrlParam("x", json.spawn?.x ?? 0),
-                this.getUrlParam("z", json.spawn?.z ?? 0),
-                this.getUrlParam("y", json.zoom?.def ?? 0)
+                parseInt(this.getUrlParam("x", this.spawnX)),
+                parseInt(this.getUrlParam("z", this.spawnZ)),
+                parseInt(this.getUrlParam("y", this.zoomDef))
             );
 
             // setup the layer controls (tile layers and layer overlays)
@@ -100,9 +116,9 @@ class LiveMap {
 
     getUrlFromView() {
         const center = this.toPoint(this.map.getCenter());
-        const zoom = 3 - this.map.getZoom();
-        const x = Math.floor(center.x);
-        const z = Math.floor(center.y);
+        const zoom = this.zoomMax - this.map.getZoom();
+        const x = Math.floor(center.x) - this.spawnX;
+        const z = Math.floor(center.y) - this.spawnZ;
         return `?x=${x}&z=${z}&y=${zoom}`;
     }
 }

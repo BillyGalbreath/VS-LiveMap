@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using LiveMap.Server.Configuration;
 using Vintagestory.API.Common;
 using Vintagestory.Common;
 
@@ -12,9 +11,7 @@ public static class Logger {
     private static readonly LoggerImpl Log = new();
 
     public static void Debug(string message) {
-        if (Config.Instance.DebugMode) {
-            Log.Debug(message);
-        }
+        Log.Debug(message);
     }
 
     public static void Info(string message) {
@@ -65,6 +62,7 @@ internal partial class LoggerImpl : LoggerBase {
 
         Vintagestory.Logger? parent = (Vintagestory.Logger)((ModLogger)LiveMapMod.Instance.Mod.Logger).Parent;
 
+        // print to the correct log file
         string? logFile = parent.getLogFile(logType);
         if (logFile != null) {
             try {
@@ -76,11 +74,12 @@ internal partial class LoggerImpl : LoggerBase {
             }
         }
 
+        // also print these types to other files
         switch (logType) {
             case EnumLogType.Error or EnumLogType.Fatal:
                 parent.LogToFile(parent.getLogFile(EnumLogType.Event), logType, stripped, args);
                 break;
-            case EnumLogType.Event or EnumLogType.Debug: // include our debug output to main file, too
+            case EnumLogType.Event:
                 parent.LogToFile(parent.getLogFile(EnumLogType.Notification), logType, stripped, args);
                 break;
         }
