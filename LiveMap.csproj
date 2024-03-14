@@ -1,17 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>Pl3x.LiveMap</PackageId>
-        <Title>LiveMap</Title>
-        <Version>1.0.0</Version>
-        <Authors>BillyGalbreath</Authors>
-        <Company>Pl3x</Company>
-        <Description>Live map renderer for Vintage Story</Description>
-        <Copyright>Copyright © 2024 William Blake Galbreath</Copyright>
-        <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <PackageIcon>modicon.png</PackageIcon>
-        <RepositoryUrl>https://github.com/BillyGalbreath/VS-LiveMap</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
         <TargetFramework>net7.0</TargetFramework>
         <EmbedAllSources>true</EmbedAllSources>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -20,8 +9,9 @@
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <DebugType>pdbonly</DebugType>
+        <DebugType>embedded</DebugType>
         <DebugSymbols>true</DebugSymbols>
+        <ExcludeGeneratedDebugSymbol>false</ExcludeGeneratedDebugSymbol>
     </PropertyGroup>
 
     <ItemGroup>
@@ -37,8 +27,12 @@
             <HintPath>$(VINTAGE_STORY)/VintagestoryLib.dll</HintPath>
             <Private>false</Private>
         </Reference>
+        <Reference Include="VintagestoryServer">
+            <HintPath>$(VINTAGE_STORY)/VintagestoryServer.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
         <Reference Include="VSCreative">
-            <HintPath>$(VINTAGE_STORY)/Mods/VSCreative.dll</HintPath>
+            <HintPath>$(VINTAGE_STORY)/Mods/VSCreativeMod.dll</HintPath>
             <Private>false</Private>
         </Reference>
         <Reference Include="VSEssentials">
@@ -51,6 +45,10 @@
         </Reference>
         <Reference Include="Harmony">
             <HintPath>$(VINTAGE_STORY)/Lib/0Harmony.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Microsoft.Data.Sqlite">
+            <HintPath>$(VINTAGE_STORY)/Lib/Microsoft.Data.Sqlite.dll</HintPath>
             <Private>false</Private>
         </Reference>
         <Reference Include="protobuf-net">

@@ -8,9 +8,7 @@
   "command.success": "<font color=\"#19B919\">{0}</font>",
   "command.error": "<font color=\"#B91919\">{0}</font>",
 
-  "command.colormap.started": "Generating a colormap. Please wait...",
-  "command.colormap.finished": "Finished the colormap and sent it to the server.",
-  "command.colormap.already-running": "Already generating a colormap. Please wait...",
+  "command.colormap.finished": "Sent the colormap it to the server.",
 
   "command.fullrender.started": "FullRender task has started. (not really.. it's under construction).",
 

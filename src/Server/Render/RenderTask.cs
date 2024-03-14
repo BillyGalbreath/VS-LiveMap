@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -9,7 +10,7 @@ namespace LiveMap.Server.Render;
 public sealed class RenderTask {
     public LiveMapServer Server { get; }
 
-    private readonly Renderer _renderer;
+    private readonly Renderer3 _renderer;
 
     private readonly Queue<long> _bufferQueue = new();
     private readonly BlockingCollection<long> _processQueue = new();
@@ -30,12 +31,29 @@ public sealed class RenderTask {
             return;
         }
 
-        Logger.Debug($"##### Queueing region {regionX},{regionZ}");
         _bufferQueue.Enqueue(index);
+
+        Logger.Debug($"##### Queueing region {regionX},{regionZ} (total in queue: {_bufferQueue.Count}+{_processQueue.Count}={_bufferQueue.Count + _processQueue.Count}) {Environment.CurrentManagedThreadId}");
     }
 
     public void Run() {
-        if (Stopped || Server.Colormap == null) {
+        if (_running) {
+            return;
+        }
+
+        _running = true;
+
+        (_thread = new Thread(_ => {
+            try {
+                _renderer.ScanAllRegions();
+            } catch (Exception) {
+                // ignored
+            }
+
+            _running = false;
+        })).Start();
+
+        /*if (Stopped || Server.Colormap == null) {
             return;
         }
 
@@ -61,7 +79,7 @@ public sealed class RenderTask {
                     Thread.CurrentThread.Interrupt();
                 }
             }
-        })).Start();
+        })).Start();*/
     }
 
     public void Dispose() {

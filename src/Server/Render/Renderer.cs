@@ -35,23 +35,27 @@ public abstract class Renderer {
         int regionX = Mathf.LongToX(region);
         int regionZ = Mathf.LongToZ(region);
 
-        Logger.Debug($">>> Scanning Region {regionX},{regionZ} >>>");
+        Logger.Debug($">>>>> &3Scanning Region {regionX},{regionZ} {Environment.CurrentManagedThreadId}");
 
-        int chunkX = regionX << 5;
-        int chunkZ = regionZ << 5;
+        int chunkX = regionX << 4;
+        int chunkZ = regionZ << 4;
 
         ManualResetEvent mre = new(false);
 
         Api.WorldManager.LoadChunkColumnPriority(chunkX, chunkZ, chunkX + 16, chunkZ + 16,
             new ChunkLoadOptions {
                 OnLoaded = () => {
-                    try {
-                        ScanRegion(regionX, regionZ);
-                    } catch (Exception e) {
-                        Logger.Error(e.ToString());
-                    }
+                    new Thread(_ => {
+                        try {
+                            ScanRegion(regionX, regionZ);
+                            Logger.Debug($">>>>> &aFinished Region {regionX},{regionZ} {Environment.CurrentManagedThreadId}");
+                        } catch (Exception e) {
+                            Logger.Debug($">>>>> &cFinished Region {regionX},{regionZ} {Environment.CurrentManagedThreadId}");
+                            Logger.Error(e.ToString());
+                        }
 
-                    mre.Set();
+                        mre.Set();
+                    }).Start();
                 }
             }
         );
@@ -93,7 +97,7 @@ public abstract class Renderer {
                         continue;
                     }
 
-                    BlockPos pos = new(blockX, blockY, blockZ);
+                    BlockPos pos = new(blockX, blockY, blockZ, 0);
                     Block? block = GetBlockToRender(pos);
                     if (block == null) {
                         continue;
@@ -186,7 +190,7 @@ public abstract class Renderer {
         int offsetX = pos.X - 1;
         int offsetZ = pos.Z - 1;
 
-        BlockPos delta = new(offsetX, GetYFromRainMap(offsetX, offsetZ), offsetZ);
+        BlockPos delta = new(offsetX, GetYFromRainMap(offsetX, offsetZ), offsetZ, 0);
         int leftTop = pos.Y - (GetBlockToRender(delta) == null ? pos.Y : delta.Y);
 
         delta.Set(pos.X, GetYFromRainMap(pos.X, offsetZ), offsetZ);
