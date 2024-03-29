@@ -37,7 +37,8 @@ public sealed class ServerNetworkHandler : NetworkHandler {
         new Thread(_ => {
             try {
                 Colormap colormap = Colormap.Deserialize(packet.RawColormap);
-                Colormap.Write(colormap);
+                colormap.RefreshIds(player.Entity.World);
+                colormap.Write();
                 _server.Colormap = colormap;
             } catch (Exception) {
                 // ignored

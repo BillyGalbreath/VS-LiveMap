@@ -6,6 +6,8 @@ using LiveMap.Server.Httpd;
 using LiveMap.Server.Network;
 using LiveMap.Server.Patches;
 using LiveMap.Server.Render;
+using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 
 namespace LiveMap.Server;
@@ -18,12 +20,12 @@ public sealed class LiveMapServer : Common.LiveMap {
     public WebServer WebServer { get; }
 
     private readonly ServerHarmonyPatches _patches;
-    private readonly RenderTask _renderTask;
+    public readonly RenderTask RenderTask;
     private readonly long _gameTickTaskId;
 
     private bool _firstTick;
 
-    public Colormap? Colormap;
+    public Colormap Colormap = new();
 
     public LiveMapServer(ICoreServerAPI api) : base(api) {
         Api = api;
@@ -38,18 +40,25 @@ public sealed class LiveMapServer : Common.LiveMap {
         CommandHandler = new ServerCommandHandler(this);
         NetworkHandler = new ServerNetworkHandler(this);
 
-        _renderTask = new RenderTask(this);
+        RenderTask = new RenderTask(this);
         WebServer = new WebServer();
 
-        //Api.Event.ChunkDirty += OnChunkDirty;
+        Api.Event.ChunkDirty += OnChunkDirty;
         Api.Event.GameWorldSave += OnGameWorldSave;
 
         _firstTick = true;
         _gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
     }
 
+    private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
+        if (reason != EnumChunkDirtyReason.NewlyLoaded) {
+            RenderTask.Queue(chunkCoord.X >> 4, chunkCoord.Z >> 4);
+        }
+    }
+
     private void OnGameWorldSave() {
-        Api.Event.RegisterCallback(_ => _renderTask.Run(), 1000);
+        // delay to ensure chunks actually save to disk first
+        Api.Event.RegisterCallback(_ => RenderTask.ProcessQueue(), 1000);
     }
 
     // this method ticks every 1000ms on the game thread
@@ -59,7 +68,7 @@ public sealed class LiveMapServer : Common.LiveMap {
             _firstTick = false;
 
             // colormap file is kinda heavy. lets load it off the main thread.
-            new Thread(_ => Colormap = Colormap.Read()).Start();
+            new Thread(_ => Colormap.Reload(Api)).Start();
         }
 
         // ensure render task is running
@@ -71,19 +80,13 @@ public sealed class LiveMapServer : Common.LiveMap {
         // todo - update player positions, public waypoints, etc
     }
 
-    /*private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
-        if (reason != EnumChunkDirtyReason.NewlyLoaded) {
-            _renderTask.Queue(chunkCoord.X >> 4, chunkCoord.Z >> 4);
-        }
-    }*/
-
     public override void Dispose() {
-        //Api.Event.ChunkDirty -= OnChunkDirty;
+        Api.Event.ChunkDirty -= OnChunkDirty;
         Api.Event.GameWorldSave -= OnGameWorldSave;
 
         Api.Event.UnregisterGameTickListener(_gameTickTaskId);
 
-        _renderTask.Dispose();
+        RenderTask.Dispose();
         WebServer.Dispose();
 
         base.Dispose();

@@ -11,7 +11,7 @@
   "command.colormap.started": "Generating a new colormap. Your game may freeze for a few seconds. Please be patient..",
   "command.colormap.finished": "Colormap was generated and sent to the server.",
 
-  "command.fullrender.started": "FullRender task has started. (not really.. it's under construction).",
+  "command.fullrender.started": "FullRender task has started.",
 
   "command.reload.finished": "LiveMap config and services were successfully reloaded.",
 

@@ -9,22 +9,22 @@ using Vintagestory.Common;
 namespace LiveMap.Common.Util;
 
 public static class Logger {
-    private static readonly LoggerImpl Log = new();
+    private static readonly LoggerImpl _log = new();
 
     public static void Debug(string message) {
-        Log.Debug(message);
+        _log.Debug(message);
     }
 
     public static void Info(string message) {
-        Log.Event(message);
+        _log.Event(message);
     }
 
     public static void Warn(string message) {
-        Log.Warning(message);
+        _log.Warning(message);
     }
 
     public static void Error(string message) {
-        Log.Error(message);
+        _log.Error(message);
     }
 }
 
@@ -35,7 +35,7 @@ internal partial class LoggerImpl : LoggerBase {
     [GeneratedRegex(@"(?i)\u001b\[[\d]{1,2}m", RegexOptions.None, "en-US")]
     private static partial Regex AnsiCodesRegex();
 
-    private static readonly Dictionary<string, int> AnsiCodes = new() {
+    private static readonly Dictionary<string, int> _ansiCodes = new() {
         { "0", 30 }, { "1", 34 }, { "2", 32 }, { "3", 36 }, { "4", 31 }, { "5", 35 },
         { "6", 33 }, { "7", 37 }, { "8", 90 }, { "9", 94 }, { "a", 92 }, { "b", 96 },
         { "c", 91 }, { "d", 95 }, { "e", 93 }, { "f", 97 }, { "k", 8 }, { "l", 1 },
@@ -52,7 +52,7 @@ internal partial class LoggerImpl : LoggerBase {
         MatchCollection results = ColorCodesRegex().Matches(message);
 
         foreach (Match match in results) {
-            message = message.Replace(match.Value, $"\u001b[{AnsiCodes[match.Groups[1].Value]}m");
+            message = message.Replace(match.Value, $"\u001b[{_ansiCodes[match.Groups[1].Value]}m");
         }
 
         return message;

@@ -12,7 +12,11 @@ public sealed class FullRenderCommand : AbstractServerCommand {
     }
 
     public override CommandResult Execute(Caller caller, IEnumerable<string> args) {
-        // todo - queue up all existing regions
+        if (!Server.RenderTask.ProcessAllRegions()) {
+            return CommandResult.Success("command.fullrender.failed");
+        }
+
+
         ((IServerPlayer)caller.Player).SendMessage(CommandResult.Success("command.fullrender.started"));
         return CommandResult.Success("command.fullrender.started");
     }

@@ -2,7 +2,6 @@
 using System.Threading;
 using LiveMap.Common.Command;
 using LiveMap.Common.Configuration;
-using LiveMap.Common.Util;
 using Vintagestory.API.Common;
 
 namespace LiveMap.Server.Command;
@@ -17,7 +16,7 @@ public sealed class ReloadCommand : AbstractServerCommand {
         Config.Reload();
 
         // colormap file is kinda heavy. lets load it off the main thread.
-        new Thread(_ => Server.Colormap = Colormap.Read()).Start();
+        new Thread(_ => Server.Colormap.Reload(Server.Api)).Start();
 
         // reload the web server
         Server.WebServer.Reload();

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using LiveMap.Common.Util;
@@ -12,11 +11,12 @@ public sealed class RenderTask {
 
     private readonly Renderer _renderer;
 
-    private readonly Queue<long> _bufferQueue = new();
+    private readonly ConcurrentQueue<long> _bufferQueue = new();
     private readonly BlockingCollection<long> _processQueue = new();
 
     private Thread? _thread;
     private bool _running;
+    private bool _runningAll;
 
     public bool Stopped { get; private set; }
 
@@ -26,6 +26,10 @@ public sealed class RenderTask {
     }
 
     public void Queue(int regionX, int regionZ) {
+        if (Stopped) {
+            return;
+        }
+
         long index = Mathf.AsLong(regionX, regionZ);
         if (_bufferQueue.Contains(index) || _processQueue.Contains(index)) {
             return;
@@ -36,12 +40,12 @@ public sealed class RenderTask {
         Logger.Debug($"##### Queueing region {regionX},{regionZ} (total in queue: {_bufferQueue.Count}+{_processQueue.Count}={_bufferQueue.Count + _processQueue.Count}) {Environment.CurrentManagedThreadId}");
     }
 
-    public void Run() {
-        if (_running || Stopped) {
-            return;
+    public bool ProcessAllRegions() {
+        if (_runningAll || Stopped) {
+            return false;
         }
 
-        _running = true;
+        _runningAll = true;
 
         (_thread = new Thread(_ => {
             try {
@@ -50,16 +54,48 @@ public sealed class RenderTask {
                 // ignored
             }
 
+            _runningAll = false;
+        })).Start();
+
+        return true;
+    }
+
+    public void ProcessQueue() {
+        if (Stopped || _runningAll) {
+            return;
+        }
+
+        while (_bufferQueue.TryDequeue(out long region)) {
+            _processQueue.Add(region);
+        }
+
+        if (_running) {
+            return;
+        }
+
+        _running = true;
+        (_thread = new Thread(_ => {
+            try {
+                while (_running) {
+                    _renderer.ScanRegion(_processQueue.Take());
+                    if (_runningAll) {
+                        break;
+                    }
+                }
+            } catch (Exception) {
+                // ignore
+            }
+
             _running = false;
         })).Start();
     }
 
     public void Dispose() {
-        bool cancelled = !Stopped && _running;
+        bool cancelled = !Stopped && (_running || _runningAll);
 
         Stopped = true;
 
-        _thread?.Interrupt();
+        _thread?.Join();
         _thread = null;
 
         _bufferQueue.Clear();

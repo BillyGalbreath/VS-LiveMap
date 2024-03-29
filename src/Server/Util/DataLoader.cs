@@ -59,13 +59,19 @@ public class DataLoader {
         return mapChunk == null ? null : ServerMapChunk.FromBytes(mapChunk);
     }
 
-    public ServerChunk? GetServerChunk(ChunkPos position) {
-        return GetServerChunk(position.ToChunkIndex());
+    public ServerChunk? GetServerChunk(int x, int y, int z) {
+        return GetServerChunk(ChunkPos.ToChunkIndex(x, y, z));
     }
 
     public ServerChunk? GetServerChunk(ulong position) {
-        byte[]? chunk = GetChunk(position, "chunk");
-        return chunk == null ? null : ServerChunk.FromBytes(chunk, _chunkDataPool, _server);
+        byte[]? data = GetChunk(position, "chunk");
+        if (data == null) {
+            return null;
+        }
+
+        ServerChunk chunk = ServerChunk.FromBytes(data, _chunkDataPool, _server);
+        chunk?.Unpack_ReadOnly();
+        return chunk;
     }
 
     private byte[]? GetChunk(ulong position, string tableName) {
