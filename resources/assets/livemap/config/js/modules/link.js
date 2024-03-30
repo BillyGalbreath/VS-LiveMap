@@ -13,7 +13,7 @@ export class Link {
                 return link;
             },
             update: function () {
-                this._link.innerHTML = `<a href='${LM.getUrlFromView()}'><img src='images/clear.png' alt=''/></a>`;
+                this._link.innerHTML = `<a href='${LM.getUrlFromView()}' aria-label='Get link from view'><img src='images/link.png' alt=''/></a>`;
             }
         });
         this.link = new Link();

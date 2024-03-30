@@ -34,12 +34,7 @@ class LiveMap {
         });
 
         // replace leaflet's attribution with our own
-        this.map.attributionControl.setPrefix(
-            `<a href="https://mods.vintagestory.at/livemap" target="_blank">Vintage Story Livemap</a>
-             &copy; 2024 <sup><a href="https://github.com/billygalbreath/vs-livemap" target="_blank">MIT</a></sup>`
-        );
-
-        this.tick_count = 1;
+        this.map.attributionControl.setPrefix('<a href="https://mods.vintagestory.at/livemap" target="_blank">Vintage Story Livemap</a> &copy;2024');
 
         this.layerControls = new LayerControls(this.map);
 
@@ -74,8 +69,6 @@ class LiveMap {
     }
 
     loop() {
-        this.tick_count++;
-
         if (document.visibilityState === 'visible') {
             this.tick();
         }

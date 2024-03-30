@@ -44,14 +44,10 @@ img.leaflet-tile {
 }
 
 div.leaflet-control-layers.link img {
-  width: 30px;
-  height: 30px;
+  margin:5px;
+  width: 20px;
+  height: 20px;
   vertical-align: bottom;
-  bottom: 0;
-  background-image: url("images/link.png");
-  background-size: 20px 20px;
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
 }
 
 div.leaflet-control-layers.coordinates {
