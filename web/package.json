@@ -1,5 +1,5 @@
 {
-  "main": "livemap.ts",
+  "main": "LiveMap.ts",
   "scripts": {
     "build": "webpack --mode=production",
     "server": "webpack-dev-server"

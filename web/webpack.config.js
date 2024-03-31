@@ -11,8 +11,8 @@ module.exports = {
   },
   devtool: 'source-map',
   entry: [
-    './src/livemap.css',
-    './src/livemap.ts'
+    './src/LiveMap.css',
+    './src/LiveMap.ts'
   ],
   externals: {
     "leaflet": "L"
