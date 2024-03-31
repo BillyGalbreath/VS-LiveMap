@@ -58,13 +58,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="SkiaSharp" Version="2.88.6"/>
-        <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17"/>
-        <PackageReference Include="YamlDotNet" Version="13.7.1"/>
+        <PackageReference Include="SkiaSharp" Version="2.88.6" />
+        <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
+        <PackageReference Include="YamlDotNet" Version="13.7.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="LICENSE" CopyToOutputDirectory="PreserveNewest"/>
+        <None Include="LICENSE" CopyToOutputDirectory="PreserveNewest" />
         <None Include="resources/**" CopyToOutputDirectory="PreserveNewest">
             <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
         </None>
@@ -72,13 +72,22 @@
 
     <Target Name="FilterCopyLocalItems" AfterTargets="ResolvePackageDependenciesForBuild">
         <ItemGroup>
-            <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' != 'MimeTypes' AND '%(Filename)' != 'YamlDotNet'"/>
+            <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' != 'MimeTypes' AND '%(Filename)' != 'YamlDotNet'" />
         </ItemGroup>
     </Target>
 
-    <Target Name="Package" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
-        <MakeDir Directories="bin/Mods"/>
-        <ZipDirectory DestinationFile="bin/Mods/$(TargetName).zip" SourceDirectory="$(TargetDir)" Overwrite="true"/>
+    <Target Name="NpmInstallAndRunBuild" AfterTargets="PostBuildEvent">
+        <Exec Command="npm install" WorkingDirectory="web" />
+        <Exec Command="npm run build" WorkingDirectory="web" />
+        <ItemGroup>
+            <_CopyItems Include="web/public/**/*.*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(_CopyItems)" DestinationFolder="$(TargetDir)/assets/livemap/config/%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
+    </Target>
+
+    <Target Name="Package" AfterTargets="NpmInstallAndRunBuild" Condition="'$(Configuration)' == 'Release'">
+        <MakeDir Directories="bin/Mods" />
+        <ZipDirectory DestinationFile="bin/Mods/$(TargetName).zip" SourceDirectory="$(TargetDir)" Overwrite="true" />
     </Target>
 
 </Project>

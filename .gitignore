@@ -5,3 +5,6 @@
 /bin/
 /obj/
 /publish/
+*/node_modules/
+/web/public/livemap.js*
+/web/public/livemap.css*
