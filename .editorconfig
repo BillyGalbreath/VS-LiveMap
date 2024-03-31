@@ -8,7 +8,7 @@ indent_size = 4
 indent_style = space
 trim_trailing_whitespace = true
 
-[{*.html,*.js,*.json,*.css}]
+[{*.html,*.js,*.json,*.css,*.yml}]
 indent_size = 2
 
 # protected, internal, and private fields should be _camelCase
