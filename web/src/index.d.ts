@@ -1,7 +1,7 @@
-import {Livemap} from "./livemap";
+import {LiveMap} from "./LiveMap";
 
 declare global {
     interface Window {
-        livemap: Livemap
+        livemap: LiveMap
     }
 }
