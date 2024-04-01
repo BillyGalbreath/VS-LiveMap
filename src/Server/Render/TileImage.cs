@@ -55,15 +55,6 @@ public sealed unsafe class TileImage {
         }
     }
 
-    public void SetPixels(int[] pixels) {
-        for (int i = 0; i < pixels.Length; i++) {
-            int x = i % 512;
-            int z = i / 512;
-            uint* row = (uint*)(_pngPtr + z * _pngRowBytes);
-            row[x] = (uint)pixels[i];
-        }
-    }
-
     public void Save() {
         FileInfo fileInfo = new(Path.Combine(FileUtil.TilesDir, 0.ToString(), $"{_regionX}_{_regionZ}.png"));
         GamePaths.EnsurePathExists(fileInfo.Directory!.FullName);

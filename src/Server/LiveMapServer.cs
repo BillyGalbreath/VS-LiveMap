@@ -92,7 +92,7 @@ public sealed class LiveMapServer : Common.LiveMap {
 
         base.Dispose();
 
-        Colormap?.Dispose();
+        Colormap.Dispose();
 
         _patches.Dispose();
     }

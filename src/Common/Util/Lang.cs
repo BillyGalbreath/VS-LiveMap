@@ -34,7 +34,7 @@ public static class LangExtensions {
         player.SendMessage(result.Status == EnumCommandStatus.Error ? Lang.Error(result.Message, result.Args) : Lang.Success(result.Message, result.Args));
     }
 
-    public static void SendMessage(this IPlayer player, string message) {
+    private static void SendMessage(this IPlayer player, string message) {
         if (string.IsNullOrEmpty(message)) {
             return;
         }

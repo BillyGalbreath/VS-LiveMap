@@ -10,5 +10,5 @@ public abstract class AbstractCommand {
         Handler = handler;
     }
 
-    public abstract CommandResult Execute(Caller caller, IEnumerable<string> args);
+    public abstract CommandResult Execute(Caller caller, IEnumerable<string> _);
 }

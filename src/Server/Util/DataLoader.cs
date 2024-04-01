@@ -54,7 +54,7 @@ public class DataLoader {
         return GetServerMapChunk(ChunkPos.ToChunkIndex(position.X, position.Y, position.Z));
     }
 
-    public ServerMapChunk? GetServerMapChunk(ulong position) {
+    private ServerMapChunk? GetServerMapChunk(ulong position) {
         byte[]? mapChunk = GetChunk(position, "mapchunk");
         return mapChunk == null ? null : ServerMapChunk.FromBytes(mapChunk);
     }
@@ -63,7 +63,7 @@ public class DataLoader {
         return GetServerChunk(ChunkPos.ToChunkIndex(x, y, z));
     }
 
-    public ServerChunk? GetServerChunk(ulong position) {
+    private ServerChunk? GetServerChunk(ulong position) {
         byte[]? data = GetChunk(position, "chunk");
         if (data == null) {
             return null;
@@ -76,7 +76,8 @@ public class DataLoader {
 
     private byte[]? GetChunk(ulong position, string tableName) {
         SqliteCommand cmd = _sqliteConn.CreateCommand();
-        cmd.CommandText = $"SELECT data FROM {tableName} WHERE position=@position";
+        cmd.CommandText = "SELECT data FROM @tableName WHERE position=@position";
+        cmd.Parameters.Add(CreateParameter("tableName", DbType.String, tableName, cmd));
         cmd.Parameters.Add(CreateParameter("position", DbType.UInt64, position, cmd));
         using SqliteDataReader dataReader = cmd.ExecuteReader();
         return dataReader.Read() ? dataReader["data"] as byte[] : null;
