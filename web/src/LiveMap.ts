@@ -1,10 +1,9 @@
 import * as L from "leaflet";
+import {LayerControl} from "./layer/LayerControl";
 import {CoordsControl} from "./control/CoordsControl";
 import {LinkControl} from "./control/LinkControl";
-import {Point} from "./util/Point";
-import {Settings} from "./util/Settings";
-import {Zoom} from "./util/Zoom";
-import {LayerControl} from "./control/LayerControl";
+import {Point} from "./settings/Point";
+import {Settings} from "./settings/Settings";
 
 window.onload = function (): void {
     // todo - add initial loading screen
@@ -14,8 +13,7 @@ window.onload = function (): void {
     //
 
     LiveMap.getJson("tiles/settings.json").then((json): void => {
-        let settings: Settings = json as Settings;
-        window.livemap = new LiveMap(settings);
+        window.livemap = new LiveMap(json as Settings);
     });
 };
 
@@ -30,12 +28,17 @@ export class LiveMap extends L.Map {
 
     constructor(settings: Settings) {
         super('map', {
+            // we need a flat and simple crs
             crs: L.Util.extend(L.CRS.Simple, {
+                // we need to flip the y-axis correctly
                 // https://stackoverflow.com/a/62320569/3530727
                 transformation: new L.Transformation(1, 0, 1, 0)
             }),
-            center: [settings.size.x / 2, settings.size.z / 2],
+            // center map on spawn
+            center: [settings.spawn.x, settings.spawn.z],
+            // show attribution control box if we have an attribution
             attributionControl: LiveMap.isstr(settings.attribution),
+            // canvas is more efficient than svg
             preferCanvas: true,
             zoomSnap: 1 / 4,
             zoomDelta: 1 / 4,
@@ -43,20 +46,27 @@ export class LiveMap extends L.Map {
         });
 
         this._settings = settings;
-        this._scale = (1 / Math.pow(2, this.zoom.maxout));
+        this._scale = (1 / Math.pow(2, this.settings.zoom.maxout));
 
+        // replace leaflet's attribution with our own
         this.attributionControl?.setPrefix(settings.attribution);
 
+        // move to the coords or spawn point at specified or default zoom level
         this.centerOn(
-            parseInt(this.getUrlParam("x", 0)),
-            parseInt(this.getUrlParam("z", 0)),
-            parseInt(this.getUrlParam("y", this.zoom.def))
+            parseInt(this.getUrlParam("x", 0)) + this.settings.spawn.x,
+            parseInt(this.getUrlParam("z", 0)) + this.settings.spawn.x,
+            parseInt(this.getUrlParam("y", this.settings.zoom.def))
         );
 
+        // setup the layer controls (tile layers and layer overlays)
         this._layerControl = new LayerControl(this);
 
+        // setup other control boxes
         this._coords = new CoordsControl(this);
         this._link = new LinkControl(this);
+
+        // start the tick loop
+        this.loop(0);
     }
 
     get settings(): Settings {
@@ -67,20 +77,38 @@ export class LiveMap extends L.Map {
         return this._scale;
     }
 
-    get size(): Point {
-        return this.settings.size;
+    private loop(count: number): void {
+        try {
+            if (document.visibilityState === 'visible') {
+                this.tick(count);
+            }
+        } catch (e) {
+            console.error(`Error processing tick (${count})`, e);
+        }
+
+        setTimeout(() => this.loop(count + 1), 1000);
     }
 
-    get spawn(): Point {
-        return this.settings.spawn;
-    }
+    private tick(count: number): void {
+        // todo - tick tiles
+        if (count % this.settings.interval.tiles == 0) {
+            console.log('update tiles');
+            this._layerControl.updateTileLayer();
+        }
 
-    get zoom(): Zoom {
-        return this.settings.zoom;
+        // todo - tick player list
+        if (count % this.settings.interval.players == 0) {
+            //
+        }
+
+        // todo = tick marker layers
+        if (count % this.settings.interval.markers == 0) {
+            //
+        }
     }
 
     public centerOn(x: number, z: number, zoom: number): void {
-        this.setView(this.toLatLng(x + this.settings.spawn.x, z + this.settings.spawn.z), this.settings.zoom.maxout - zoom);
+        this.setView(this.toLatLng(x, z), this.settings.zoom.maxout - zoom);
         this._link?.update();
     }
 
@@ -98,9 +126,9 @@ export class LiveMap extends L.Map {
 
     public getUrlFromView(): string {
         const center: Point = this.toPoint(this.getCenter());
-        const zoom: number = this.zoom.maxout - this.getZoom();
-        const x: number = Math.floor(center.x) - this.spawn.x;
-        const z: number = Math.floor(center.z) - this.spawn.z;
+        const zoom: number = this.settings.zoom.maxout - this.getZoom();
+        const x: number = Math.floor(center.x) - this.settings.spawn.x;
+        const z: number = Math.floor(center.z) - this.settings.spawn.z;
         return `?x=${x}&z=${z}&y=${zoom}`;
     }
 

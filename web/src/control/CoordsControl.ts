@@ -1,7 +1,7 @@
 import * as L from 'leaflet';
 import {ControlBox} from './ControlBox';
 import {LiveMap} from '../LiveMap';
-import {Point} from "../util/Point";
+import {Point} from "../settings/Point";
 
 export class CoordsControl extends ControlBox {
     private readonly _dom: HTMLDivElement;
@@ -33,8 +33,8 @@ export class CoordsControl extends ControlBox {
         }
 
         let point: Point = this._livemap.toPoint(e!.latlng);
-        let x: number = Math.round(point.x - this._livemap.spawn.x);
-        let z: number = Math.round(point.z - this._livemap.spawn.z);
+        let x: number = Math.round(point.x - this._livemap.settings.spawn.x);
+        let z: number = Math.round(point.z - this._livemap.settings.spawn.z);
 
         this._dom.innerHTML = `${x}, ${z}`;
     }

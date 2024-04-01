@@ -12,24 +12,24 @@ namespace LiveMap.Common.Configuration;
 [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
 public sealed class Config {
     [YamlMember(Order = 0, Description = """
-                                         Settings regarding the logger for this mod.
-                                         Only deals with log messages this mod produces.
-                                         """)]
-    public LoggerConfig Logger = new();
-
-    [YamlMember(Order = 1, Description = """
                                          Settings regarding the built-in httpd web server.
                                          This is just a basic httpd web server, if you need/want
                                          something better just disable this and run your own.
                                          """)]
     public WebServerConfig WebServer = new();
-    
-    [YamlMember(Order = 2, Description = """
+
+    [YamlMember(Order = 1, Description = """
                                          Settings regarding the zoom aspect of the map.
                                          The more zoom levels you have the more tile sets to create
                                          which uses more drive space. So be cautious.
                                          """)]
     public ZoomConfig Zoom = new();
+
+    [YamlMember(Order = 2, Description = """
+                                         Settings regarding the logger for this mod.
+                                         Only deals with log messages this mod produces.
+                                         """)]
+    public LoggerConfig Logger = new();
 
     public static Config Instance { get; private set; } = null!;
 
@@ -65,20 +65,20 @@ public sealed class Config {
 [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
 public class LoggerConfig {
     [YamlMember(Order = 0, Description = """
-                                         Prints debug messages to the console.
-                                         It will still write to the log file(s).
-                                         """)]
-    public bool DebugToConsole = false;
-
-    [YamlMember(Order = 1, Description = """
                                          Prints pretty colors to the console instead of just normal boring text.
                                          Disable this if your console/terminal does not support colors.
                                          """)]
     public bool ColorConsole = true;
 
+    [YamlMember(Order = 1, Description = """
+                                         Prints debug messages to the console.
+                                         It will still write to the log file(s) regardless.
+                                         """)]
+    public bool DebugToConsole = false;
+
     [YamlMember(Order = 2, Description = """
                                          Prints debug messages to the event log file.
-                                         It will still write to the debug log file.
+                                         It will still write to the debug log file regardless.
                                          """)]
     public bool DebugToEventFile = false;
 }
