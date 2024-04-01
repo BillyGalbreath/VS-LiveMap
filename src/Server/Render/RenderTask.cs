@@ -41,7 +41,7 @@ public sealed class RenderTask {
     }
 
     public bool ProcessAllRegions() {
-        if (_runningAll || Stopped) {
+        if (Stopped || _runningAll) {
             return false;
         }
 
@@ -74,6 +74,7 @@ public sealed class RenderTask {
         }
 
         _running = true;
+
         (_thread = new Thread(_ => {
             try {
                 while (_running) {
@@ -95,7 +96,7 @@ public sealed class RenderTask {
 
         Stopped = true;
 
-        _thread?.Join();
+        _thread?.Interrupt();
         _thread = null;
 
         _bufferQueue.Clear();
