@@ -4,6 +4,7 @@ import {LinkControl} from "./control/LinkControl";
 import {Point} from "./util/Point";
 import {Settings} from "./util/Settings";
 import {Zoom} from "./util/Zoom";
+import {LayerControl} from "./control/LayerControl";
 
 window.onload = function (): void {
     // todo - add initial loading screen
@@ -22,6 +23,8 @@ export class LiveMap extends L.Map {
     private readonly _settings: Settings;
     private readonly _scale: number;
 
+    private readonly _layerControl: LayerControl;
+
     private readonly _link: LinkControl;
     private readonly _coords: CoordsControl;
 
@@ -38,12 +41,6 @@ export class LiveMap extends L.Map {
             zoomDelta: 1 / 4,
             wheelPxPerZoomLevel: 60 * 4
         });
-        this.on('overlayadd', (e: L.LayersControlEvent): void => {
-            //this.layerControls.showLayer(e.layer);
-        });
-        this.on('overlayremove', (e: L.LayersControlEvent): void => {
-            //this.layerControls.hideLayer(e.layer);
-        });
 
         this._settings = settings;
         this._scale = (1 / Math.pow(2, this.zoom.maxout));
@@ -56,7 +53,7 @@ export class LiveMap extends L.Map {
             parseInt(this.getUrlParam("y", this.zoom.def))
         );
 
-        //this.layerControls.setupLayers();
+        this._layerControl = new LayerControl(this);
 
         this._coords = new CoordsControl(this);
         this._link = new LinkControl(this);
