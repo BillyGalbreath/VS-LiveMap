@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using LiveMap.Common.Command;
-using LiveMap.Common.Configuration;
+using LiveMap.Server.Configuration;
 using Vintagestory.API.Common;
 
 namespace LiveMap.Server.Command;

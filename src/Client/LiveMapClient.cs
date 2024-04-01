@@ -1,6 +1,7 @@
 ﻿using LiveMap.Client.Command;
 using LiveMap.Client.Network;
 using LiveMap.Client.Patches;
+using LiveMap.Client.Util;
 using Vintagestory.API.Client;
 
 namespace LiveMap.Client;
@@ -13,7 +14,7 @@ public sealed class LiveMapClient : Common.LiveMap {
     protected override ClientCommandHandler CommandHandler { get; }
     public override ClientNetworkHandler NetworkHandler { get; }
 
-    public LiveMapClient(ICoreClientAPI api) : base(api) {
+    public LiveMapClient(ICoreClientAPI api) : base(api, new ClientLoggerImpl()) {
         Api = api;
 
         _patches = new ClientHarmonyPatches();

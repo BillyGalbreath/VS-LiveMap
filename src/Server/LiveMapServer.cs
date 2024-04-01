@@ -1,11 +1,12 @@
 ﻿using System.Threading;
-using LiveMap.Common.Configuration;
 using LiveMap.Common.Util;
 using LiveMap.Server.Command;
+using LiveMap.Server.Configuration;
 using LiveMap.Server.Httpd;
 using LiveMap.Server.Network;
 using LiveMap.Server.Patches;
 using LiveMap.Server.Render;
+using LiveMap.Server.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
@@ -27,7 +28,7 @@ public sealed class LiveMapServer : Common.LiveMap {
 
     public Colormap Colormap = new();
 
-    public LiveMapServer(ICoreServerAPI api) : base(api) {
+    public LiveMapServer(ICoreServerAPI api) : base(api, new ServerLoggerImpl()) {
         Api = api;
 
         Config.Reload();

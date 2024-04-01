@@ -3,8 +3,8 @@ using System.IO;
 using System.Net;
 using System.Net.Mime;
 using System.Threading;
-using LiveMap.Common.Configuration;
 using LiveMap.Common.Util;
+using LiveMap.Server.Configuration;
 using MimeTypes;
 
 namespace LiveMap.Server.Httpd;

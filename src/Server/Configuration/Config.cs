@@ -7,7 +7,7 @@ using Vintagestory.API.Config;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace LiveMap.Common.Configuration;
+namespace LiveMap.Server.Configuration;
 
 [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
 public sealed class Config {
