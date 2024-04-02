@@ -209,7 +209,7 @@ public abstract class Renderer {
                         blockId = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _landBlock;
                     }
 
-                    int color = _renderTask.Server.Colormap.TryGet(blockId, out int[]? colors) ? colors[GameMath.MurmurHash3Mod(x, blockY, z, colors.Length)] : 0;
+                    uint color = _renderTask.Server.Colormap.TryGet(blockId, out uint[]? colors) ? colors[GameMath.MurmurHash3Mod(x, blockY, z, colors.Length)] : 0;
 
                     int offsetX = x - 1;
                     int offsetZ = z - 1;
@@ -237,7 +237,7 @@ public abstract class Renderer {
                         _ => 1
                     };
 
-                    _image?.SetBlockColor(imgX, imgZ, color | 0xFF << 24, yDiff);
+                    _image?.SetBlockColor(imgX, imgZ, color, yDiff);
                 } catch (Exception) {
                     _image?.SetBlockColor(imgX, imgZ, 0, 0);
                 }

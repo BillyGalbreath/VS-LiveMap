@@ -12,18 +12,16 @@ using YamlDotNet.Serialization.NamingConventions;
 namespace LiveMap.Common.Util;
 
 public sealed class Colormap {
-    [YamlMember] private readonly Dictionary<string, int[]> _colorsByName = new();
+    [YamlMember] private readonly Dictionary<string, uint[]> _colorsByName = new();
 
-    private readonly Dictionary<int, int[]> _colorsById = new();
+    private readonly Dictionary<int, uint[]> _colorsById = new();
 
-    public void Add(string block, int[] toAdd) {
+    public void Add(string block, uint[] toAdd) {
         _colorsByName.TryAdd(block, toAdd);
     }
 
-    public bool TryGet(int id, [MaybeNullWhen(false)] out int[] colors) {
+    public bool TryGet(int id, [MaybeNullWhen(false)] out uint[] colors) {
         return _colorsById.TryGetValue(id, out colors);
-        //Logger.Warn("Unable to scan regions. No known colormap detected.");
-        //Logger.Warn("An admin needs to send the colormap from their client.");
     }
 
     public string Serialize() {
@@ -36,14 +34,14 @@ public sealed class Colormap {
     }
 
     public static Colormap Deserialize(string yaml) {
-        Dictionary<string, int[]> data = new DeserializerBuilder()
+        Dictionary<string, uint[]> data = new DeserializerBuilder()
             .IgnoreUnmatchedProperties()
             .WithNamingConvention(NullNamingConvention.Instance)
-            .Build().Deserialize<Dictionary<string, int[]>>(yaml);
+            .Build().Deserialize<Dictionary<string, uint[]>>(yaml);
 
         Colormap colormap = new();
-        foreach ((string? key, int[]? value) in data) {
-            colormap._colorsByName.TryAdd(key, value);
+        foreach ((string? key, uint[]? colors) in data) {
+            colormap._colorsByName.TryAdd(key, colors);
         }
 
         return colormap;
@@ -77,11 +75,21 @@ public sealed class Colormap {
     public void RefreshIds(IWorldAccessor world) {
         _colorsById.Clear();
 
-        foreach ((string code, int[] colors) in _colorsByName) {
-            int? id = world.GetBlock(new AssetLocation(code))?.Id;
-            if (id != null) {
-                _colorsById.TryAdd((int)id, colors);
+        foreach ((string code, uint[] colors) in _colorsByName) {
+            Block block = world.GetBlock(new AssetLocation(code));
+            if (block == null) {
+                Logger.Warn($"Invalid block id in colormap ({code})");
+                continue;
             }
+
+            // fix alpha channel here
+            for (int i = 0; i < colors.Length; i++) {
+                if (colors[i] > 0) {
+                    colors[i] |= (uint)0xFF << 24;
+                }
+            }
+
+            _colorsById.TryAdd(block.Id, colors);
         }
     }
 

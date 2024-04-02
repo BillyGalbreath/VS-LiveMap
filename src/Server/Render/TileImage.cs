@@ -32,11 +32,11 @@ public sealed unsafe class TileImage {
         _regionZ = regionZ;
     }
 
-    public void SetBlockColor(int blockX, int blockZ, int color, float yDiff) {
+    public void SetBlockColor(int blockX, int blockZ, uint argb, float yDiff) {
         int imgX = blockX & 511;
         int imgZ = blockZ & 511;
 
-        ((uint*)(_pngPtr + imgZ * _pngRowBytes))[imgX] = (uint)color;
+        ((uint*)(_pngPtr + imgZ * _pngRowBytes))[imgX] = argb;
 
         _shadowMap[(imgZ << 9) + imgX] = (byte)(_shadowMap[(imgZ << 9) + imgX] * yDiff);
     }
@@ -52,7 +52,7 @@ public sealed unsafe class TileImage {
             int imgZ = i >> 9;
 
             uint* row = (uint*)(_pngPtr + imgZ * _pngRowBytes);
-            row[imgX] = (uint)(row[imgX] == 0 ? 0 : ColorUtil.ColorMultiply3Clamped((int)row[imgX], shadow * 1.4F + 1F) | 0xFF << 24);
+            row[imgX] = (uint)(row[imgX] == 0 ? 0 : ColorUtil.ColorMultiply3Clamped((int)row[imgX], shadow * 1.4F + 1F));
         }
     }
 
