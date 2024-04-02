@@ -69,11 +69,11 @@ public sealed unsafe class TileImage {
                     WritePixels(png, zoom);
 
                     using FileStream fileStream2 = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                    png.Encode(SKEncodedImageFormat.Png, 100).SaveTo(fileStream2);
+                    png.Encode(SKEncodedImageFormat.Png, 0).SaveTo(fileStream2);
                     png.Dispose();
                 } else {
                     using FileStream fileStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                    _png.Encode(SKEncodedImageFormat.Png, 100).SaveTo(fileStream);
+                    _png.Encode(SKEncodedImageFormat.Png, 0).SaveTo(fileStream);
                 }
             }
 
