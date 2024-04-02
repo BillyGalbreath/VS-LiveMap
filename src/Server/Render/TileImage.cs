@@ -63,17 +63,17 @@ public sealed unsafe class TileImage {
                 GamePaths.EnsurePathExists(fileInfo.Directory!.FullName);
 
                 if (zoom > 0) {
-                    using FileStream fileStream1 = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                    SKBitmap png = SKBitmap.Decode(fileStream1) ?? new SKBitmap(512, 512);
+                    using FileStream inStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+                    SKBitmap png = SKBitmap.Decode(inStream) ?? new SKBitmap(512, 512);
 
                     WritePixels(png, zoom);
 
-                    using FileStream fileStream2 = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                    png.Encode(SKEncodedImageFormat.Png, 0).SaveTo(fileStream2);
+                    using FileStream outStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+                    png.Encode(SKEncodedImageFormat.Png, 0).SaveTo(outStream);
                     png.Dispose();
                 } else {
-                    using FileStream fileStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                    _png.Encode(SKEncodedImageFormat.Png, 0).SaveTo(fileStream);
+                    using FileStream outStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+                    _png.Encode(SKEncodedImageFormat.Png, 0).SaveTo(outStream);
                 }
             }
 
