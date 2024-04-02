@@ -94,6 +94,8 @@ public sealed class LiveMapServer : Common.LiveMap {
 
         Colormap.Dispose();
 
+        Config.Dispose();
+
         _patches.Dispose();
     }
 }

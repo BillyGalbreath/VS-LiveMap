@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
-using LiveMap.Common.Util;
 using Vintagestory.API.Config;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -31,21 +30,32 @@ public sealed class Config {
                                          """)]
     public LoggerConfig Logger = new();
 
+    private static string ConfigFile => Path.Combine(GamePaths.ModConfig, $"{LiveMapMod.Id}.yml");
+
     public static Config Instance { get; private set; } = null!;
 
+    private static FileWatcher? _watcher;
+
     public static void Reload() {
-        Instance = Write(Read<Config>());
+        Instance = Write(Read());
+
+        _watcher ??= new FileWatcher();
+
+        // todo - reset whatever needs to be reset
+        // write new settings.json file in tiles dir
+
+        Common.Util.Logger.Info($"Loaded config from {ConfigFile}");
     }
 
-    private static T Read<T>() where T : new() {
+    private static Config Read() {
         try {
-            string yaml = File.ReadAllText(FileUtil.ConfigFile, Encoding.UTF8);
+            string yaml = File.ReadAllText(ConfigFile, Encoding.UTF8);
             return new DeserializerBuilder()
                 .IgnoreUnmatchedProperties()
                 .WithNamingConvention(NullNamingConvention.Instance)
-                .Build().Deserialize<T>(yaml);
+                .Build().Deserialize<Config>(yaml);
         } catch (Exception) {
-            return new T();
+            return new Config();
         }
     }
 
@@ -56,8 +66,13 @@ public sealed class Config {
             .WithNamingConvention(NullNamingConvention.Instance)
             .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
             .Build().Serialize(config);
-        File.WriteAllText(FileUtil.ConfigFile, yaml, Encoding.UTF8);
+        File.WriteAllText(ConfigFile, yaml, Encoding.UTF8);
         return config;
+    }
+
+    public static void Dispose() {
+        _watcher?.Dispose();
+        _watcher = null;
     }
 }
 
@@ -89,18 +104,18 @@ public class ZoomConfig {
     public int Default = 0;
 
     [YamlMember(Order = 1, Description = """
-                                         The maximum zoom out you can do on the map.
-                                         Each additional level requires a new set of tiles
-                                         to be rendered, so don't go too wild here.
-                                         """)]
-    public int MaxOut = 8;
-
-    [YamlMember(Order = 2, Description = """
                                          Extra zoom in layers will stretch the original
                                          tile images so you can zoom in further without
                                          the extra cost of rendering more tiles.
                                          """)]
     public int MaxIn = 3;
+
+    [YamlMember(Order = 2, Description = """
+                                         The maximum zoom out you can do on the map.
+                                         Each additional level requires a new set of tiles
+                                         to be rendered, so don't go too wild here.
+                                         """)]
+    public int MaxOut = 8;
 }
 
 [SuppressMessage("ReSharper", "ConvertToConstant.Global")]

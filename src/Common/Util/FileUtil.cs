@@ -6,7 +6,6 @@ using Vintagestory.API.Config;
 namespace LiveMap.Common.Util;
 
 public static class FileUtil {
-    public static readonly string ConfigFile = Path.Combine(GamePaths.ModConfig, $"{LiveMapMod.Id}.yml");
     public static readonly string DataDir = Path.Combine(GamePaths.DataPath, "ModData", LiveMapMod.Api.World.SavegameIdentifier, "LiveMap");
     public static readonly string ColormapFile = Path.Combine(DataDir, "colormap.yaml");
     public static readonly string WebDir = Path.Combine(DataDir, "web");
