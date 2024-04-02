@@ -76,8 +76,7 @@ public class DataLoader {
 
     private byte[]? GetChunk(ulong position, string tableName) {
         SqliteCommand cmd = _sqliteConn.CreateCommand();
-        cmd.CommandText = "SELECT data FROM @tableName WHERE position=@position";
-        cmd.Parameters.Add(CreateParameter("tableName", DbType.String, tableName, cmd));
+        cmd.CommandText = $"SELECT data FROM {tableName} WHERE position=@position";
         cmd.Parameters.Add(CreateParameter("position", DbType.UInt64, position, cmd));
         using SqliteDataReader dataReader = cmd.ExecuteReader();
         return dataReader.Read() ? dataReader["data"] as byte[] : null;
