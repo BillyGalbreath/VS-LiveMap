@@ -80,7 +80,7 @@
         <Exec Command="npm install" WorkingDirectory="web" />
         <Exec Command="npm run build" WorkingDirectory="web" />
         <ItemGroup>
-            <_CopyItems Include="web/public/**/*.*" />
+            <_CopyItems Include="web/public/**/*.*" Exclude="web/public/tiles/**/*.png" />
         </ItemGroup>
         <Copy SourceFiles="@(_CopyItems)" DestinationFolder="$(TargetDir)/assets/livemap/config/%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
     </Target>
