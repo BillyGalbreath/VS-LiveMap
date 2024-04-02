@@ -40,9 +40,9 @@ export class LiveMap extends L.Map {
             attributionControl: LiveMap.isstr(settings.attribution),
             // canvas is more efficient than svg
             preferCanvas: true,
-            zoomSnap: 1 / 4,
-            zoomDelta: 1 / 4,
-            wheelPxPerZoomLevel: 60 * 4
+            zoomSnap: 1,
+            zoomDelta: 1,
+            wheelPxPerZoomLevel: 60
         });
 
         this._settings = settings;
@@ -90,9 +90,8 @@ export class LiveMap extends L.Map {
     }
 
     private tick(count: number): void {
-        // todo - tick tiles
+        // tick tiles
         if (count % this.settings.interval.tiles == 0) {
-            console.log('update tiles');
             this._layerControl.updateTileLayer();
         }
 

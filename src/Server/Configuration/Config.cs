@@ -63,28 +63,6 @@ public sealed class Config {
 
 [SuppressMessage("ReSharper", "ConvertToConstant.Global")]
 [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
-public class LoggerConfig {
-    [YamlMember(Order = 0, Description = """
-                                         Prints pretty colors to the console instead of just normal boring text.
-                                         Disable this if your console/terminal does not support colors.
-                                         """)]
-    public bool ColorConsole = true;
-
-    [YamlMember(Order = 1, Description = """
-                                         Prints debug messages to the console.
-                                         It will still write to the log file(s) regardless.
-                                         """)]
-    public bool DebugToConsole = false;
-
-    [YamlMember(Order = 2, Description = """
-                                         Prints debug messages to the event log file.
-                                         It will still write to the debug log file regardless.
-                                         """)]
-    public bool DebugToEventFile = false;
-}
-
-[SuppressMessage("ReSharper", "ConvertToConstant.Global")]
-[SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
 public class WebServerConfig {
     [YamlMember(Order = 0, Description = """
                                          Enable the built-in http web server.
@@ -115,34 +93,34 @@ public class ZoomConfig {
                                          Each additional level requires a new set of tiles
                                          to be rendered, so don't go too wild here.
                                          """)]
-    public int MaxOut = 3;
+    public int MaxOut = 8;
 
     [YamlMember(Order = 2, Description = """
                                          Extra zoom in layers will stretch the original
                                          tile images so you can zoom in further without
                                          the extra cost of rendering more tiles.
                                          """)]
-    public int MaxIn = 2;
+    public int MaxIn = 3;
+}
 
-    [YamlMember(Order = 3, Description = """
-                                         Forces the map's zoom level to always be a multiple of this.
-                                         By default, the zoom level snaps to the nearest integer; lower
-                                         values (e.g. 0.5 or 0.1) allow for greater granularity. A
-                                         value of 0 means the zoom level will not be snapped.
+[SuppressMessage("ReSharper", "ConvertToConstant.Global")]
+[SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
+public class LoggerConfig {
+    [YamlMember(Order = 0, Description = """
+                                         Prints pretty colors to the console instead of just normal boring text.
+                                         Disable this if your console/terminal does not support colors.
                                          """)]
-    public double Snap = 0.25D;
+    public bool ColorConsole = true;
 
-    [YamlMember(Order = 4, Description = """
-                                         Controls how much the map's zoom level will change after a zoom in,
-                                         zoom out, pressing + or - on the keyboard, or using the zoom controls.
-                                         Values smaller than 1 (e.g. 0.5) allow for greater granularity.
+    [YamlMember(Order = 1, Description = """
+                                         Prints debug messages to the console.
+                                         It will still write to the log file(s) regardless.
                                          """)]
-    public double Delta = 0.25D;
+    public bool DebugToConsole = false;
 
-    [YamlMember(Order = 5, Description = """
-                                         How many scroll pixels (as reported by L.DomEvent.getWheelDelta) mean
-                                         a change of one full zoom level. Smaller values will make wheel-zooming
-                                         faster (and vice versa).
+    [YamlMember(Order = 2, Description = """
+                                         Prints debug messages to the event log file.
+                                         It will still write to the debug log file regardless.
                                          """)]
-    public int Wheel = 240;
+    public bool DebugToEventFile = false;
 }
