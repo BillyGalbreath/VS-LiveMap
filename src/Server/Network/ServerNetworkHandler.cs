@@ -22,7 +22,7 @@ public sealed class ServerNetworkHandler : NetworkHandler {
     }
 
     private void ServerReceivePacket(IServerPlayer player, ColormapPacket packet) {
-        if (!player.Privileges.Contains("livemap.admin")) {
+        if (!player.Privileges.Contains("root")) {
             Logger.Warn(Lang.Get("logger.warning.packet-from-non-admin", player.PlayerName));
             return;
         }

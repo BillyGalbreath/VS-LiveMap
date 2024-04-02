@@ -4,7 +4,6 @@ using LiveMap.Server.Command;
 using LiveMap.Server.Configuration;
 using LiveMap.Server.Httpd;
 using LiveMap.Server.Network;
-using LiveMap.Server.Patches;
 using LiveMap.Server.Render;
 using LiveMap.Server.Util;
 using Vintagestory.API.Common;
@@ -20,7 +19,6 @@ public sealed class LiveMapServer : Common.LiveMap {
     public override ServerNetworkHandler NetworkHandler { get; }
     public WebServer WebServer { get; }
 
-    private readonly ServerHarmonyPatches _patches;
     public readonly RenderTask RenderTask;
     private readonly long _gameTickTaskId;
 
@@ -34,9 +32,6 @@ public sealed class LiveMapServer : Common.LiveMap {
         Config.Reload();
 
         FileUtil.ExtractWebFiles(Api);
-
-        _patches = new ServerHarmonyPatches();
-        _patches.Init();
 
         CommandHandler = new ServerCommandHandler(this);
         NetworkHandler = new ServerNetworkHandler(this);
@@ -95,7 +90,5 @@ public sealed class LiveMapServer : Common.LiveMap {
         Colormap.Dispose();
 
         Config.Dispose();
-
-        _patches.Dispose();
     }
 }

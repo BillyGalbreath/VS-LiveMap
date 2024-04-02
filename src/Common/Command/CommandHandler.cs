@@ -13,7 +13,7 @@ public abstract class CommandHandler {
         mod.Api.ChatCommands
             .Create("livemap")
             .WithDescription(Lang.Get("command.livemap.description"))
-            .RequiresPrivilege("livemap.admin")
+            .RequiresPrivilege("root")
             .WithArgs(new WordArgParser("command", false, _commands.Keys.ToArray()))
             .HandleWith(VanillaExecute);
 

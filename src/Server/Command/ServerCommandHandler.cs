@@ -11,7 +11,7 @@ public sealed class ServerCommandHandler : CommandHandler {
     public ServerCommandHandler(LiveMapServer server) : base(server) {
         Server = server;
 
-        Server.Api.Permissions.RegisterPrivilege("livemap.admin", Lang.Get("command.livemap.description"), false);
+        Server.Api.Permissions.RegisterPrivilege("root", Lang.Get("command.livemap.description"), false);
     }
 
     protected override void RegisterSubCommands() {
