@@ -1,6 +1,8 @@
+using System;
 using System.IO;
 using System.Linq;
 using LiveMap.Common.Util;
+using LiveMap.Server.Configuration;
 using SkiaSharp;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
@@ -34,8 +36,7 @@ public sealed unsafe class TileImage {
         int imgX = blockX & 511;
         int imgZ = blockZ & 511;
 
-        uint* row = (uint*)(_pngPtr + imgZ * _pngRowBytes);
-        row[imgX] = (uint)color;
+        ((uint*)(_pngPtr + imgZ * _pngRowBytes))[imgX] = (uint)color;
 
         _shadowMap[(imgZ << 9) + imgX] = (byte)(_shadowMap[(imgZ << 9) + imgX] * yDiff);
     }
@@ -56,11 +57,73 @@ public sealed unsafe class TileImage {
     }
 
     public void Save() {
-        FileInfo fileInfo = new(Path.Combine(FileUtil.TilesDir, 0.ToString(), $"{_regionX}_{_regionZ}.png"));
-        GamePaths.EnsurePathExists(fileInfo.Directory!.FullName);
+        try {
+            for (int zoom = 0; zoom <= Config.Instance.Zoom.MaxOut; zoom++) {
+                FileInfo fileInfo = new(Path.Combine(FileUtil.TilesDir, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.png"));
+                GamePaths.EnsurePathExists(fileInfo.Directory!.FullName);
 
-        using FileStream fileStream = fileInfo.Create();
-        _png.Encode(SKEncodedImageFormat.Png, 100).SaveTo(fileStream);
-        _png.Dispose();
+                if (zoom > 0) {
+                    using FileStream fileStream1 = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+                    SKBitmap png = SKBitmap.Decode(fileStream1) ?? new SKBitmap(512, 512);
+
+                    WritePixels(png, zoom);
+
+                    using FileStream fileStream2 = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+                    png.Encode(SKEncodedImageFormat.Png, 100).SaveTo(fileStream2);
+                    png.Dispose();
+                } else {
+                    using FileStream fileStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+                    _png.Encode(SKEncodedImageFormat.Png, 100).SaveTo(fileStream);
+                }
+            }
+
+            _png.Dispose();
+        } catch (Exception e) {
+            Logger.Error(e.ToString());
+        }
+    }
+
+    private void WritePixels(SKBitmap png, int zoom) {
+        int step = 1 << zoom;
+        int baseX = (_regionX * 512 >> zoom) & 511;
+        int baseZ = (_regionZ * 512 >> zoom) & 511;
+        byte* pngPtr = (byte*)png.GetPixels().ToPointer();
+        int pngRowBytes = png.RowBytes;
+        for (int x = 0; x < 512; x += step) {
+            for (int z = 0; z < 512; z += step) {
+                uint argb = ((uint*)(_pngPtr + z * _pngRowBytes))[x];
+                if (argb == 0) {
+                    // skipping 0 prevents overwrite existing
+                    // parts of the buffer of existing images
+                    continue;
+                }
+
+                if (step > 1) {
+                    // merge pixel colors instead of skipping them
+                    argb = DownSample(x, z, argb, step);
+                }
+
+                ((uint*)(pngPtr + (baseZ + (z >> zoom)) * pngRowBytes))[baseX + (x >> zoom)] = argb;
+            }
+        }
+    }
+
+    private uint DownSample(int x, int z, uint argb, int step) {
+        uint a = 0, r = 0, g = 0, b = 0, c = 0;
+        for (int i = 0; i < step; i++) {
+            for (int j = 0; j < step; j++) {
+                if (i != 0 && j != 0) {
+                    argb = ((uint*)(_pngPtr + (z + j) * _pngRowBytes))[x + i];
+                }
+
+                a += argb >> 24 & 0xFF;
+                r += argb >> 16 & 0xFF;
+                g += argb >> 8 & 0xFF;
+                b += argb >> 0 & 0xFF;
+                c++;
+            }
+        }
+
+        return c == 0 ? 0 : (a / c) << 24 | (r / c) << 16 | (g / c) << 8 | (b / c);
     }
 }
