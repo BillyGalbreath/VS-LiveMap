@@ -1,5 +1,4 @@
 ﻿using LiveMap.Common.Command;
-using LiveMap.Common.Extensions;
 using LiveMap.Common.Network;
 using LiveMap.Common.Util;
 using Vintagestory.API.Common;
@@ -15,7 +14,7 @@ public abstract class LiveMap {
     protected LiveMap(ICoreAPI api, LoggerImpl loggerImpl) {
         Api = api;
 
-        ((Logger)null!).SetField("_loggerImpl", loggerImpl);
+        Logger.LoggerImpl = loggerImpl;
     }
 
     public virtual void Dispose() {

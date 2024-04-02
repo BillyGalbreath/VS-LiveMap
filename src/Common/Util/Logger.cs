@@ -1,21 +1,21 @@
 namespace LiveMap.Common.Util;
 
 public abstract class Logger {
-    private static readonly LoggerImpl _loggerImpl = null!;
+    internal static LoggerImpl LoggerImpl { get; set; } = null!;
 
     public static void Debug(string message) {
-        _loggerImpl.Debug(message);
+        LoggerImpl.Debug(message);
     }
 
     public static void Info(string message) {
-        _loggerImpl.Event(message);
+        LoggerImpl.Event(message);
     }
 
     public static void Warn(string message) {
-        _loggerImpl.Warning(message);
+        LoggerImpl.Warning(message);
     }
 
     public static void Error(string message) {
-        _loggerImpl.Error(message);
+        LoggerImpl.Error(message);
     }
 }
