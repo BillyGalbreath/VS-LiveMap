@@ -2,7 +2,7 @@
   "type": "code",
   "name": "LiveMap",
   "modid": "livemap",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Live map renderer for Vintage Story",
   "website": "https://github.com/BillyGalbreath/VS-LiveMap",
   "authors": [ "BillyGalbreath" ],
