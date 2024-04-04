@@ -1,6 +1,6 @@
 import * as L from "leaflet";
 import {TileLayerControl} from "./layer/TileLayerControl";
-import {MarkersLayer} from "./layer/MarkersLayer";
+import {MarkersControl} from "./control/MarkersControl";
 import {CoordsControl} from "./control/CoordsControl";
 import {LinkControl} from "./control/LinkControl";
 import {Settings} from "./settings/Settings";
@@ -24,7 +24,7 @@ export class LiveMap extends L.Map {
     private readonly _scale: number;
 
     private _tileLayerControl?: TileLayerControl;
-    private _markerControl?: MarkersLayer;
+    private _markersControl?: MarkersControl;
     private _linkControl?: LinkControl;
     private _coordsControl?: CoordsControl;
 
@@ -60,26 +60,16 @@ export class LiveMap extends L.Map {
 
         // move to the coords or spawn point at specified or default zoom level
         this.centerOn(
-            this.getUrlParam("x", 0) + this.settings.spawn.x,
-            this.getUrlParam("z", 0) + this.settings.spawn.y,
+            this.getUrlParam("x", 0),
+            this.getUrlParam("z", 0),
             this.getUrlParam("zoom", this.settings.zoom.def)
         );
 
         // setup the controllers
         this._tileLayerControl = new TileLayerControl(this);
-        this._markerControl = new MarkersLayer(this, "test layer");
+        this._markersControl = new MarkersControl(this);
         this._coordsControl = new CoordsControl(this);
         this._linkControl = new LinkControl(this);
-
-        // #################################################################
-
-        const layers: L.Control.Layers = L.control.layers({}, {}, {
-            position: 'topleft'
-        })
-            .addTo(this)
-            .addOverlay(this._markerControl, this._markerControl.label);
-
-        // #################################################################
 
         // start the tick loop
         this.loop(0);
@@ -97,7 +87,7 @@ export class LiveMap extends L.Map {
         try {
             if (document.visibilityState === 'visible') {
                 this._tileLayerControl!.tick(count);
-                this._markerControl!.tick(count);
+                this._markersControl!.tick(count);
             }
         } catch (e) {
             console.error(`Error processing tick (${count})`, e);

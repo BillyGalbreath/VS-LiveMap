@@ -2,41 +2,43 @@ import * as L from "leaflet";
 import {LiveMap} from "../LiveMap";
 import {Util} from "../util/Util";
 
-interface Json {
+export interface Marker {
     type: string,
     point: L.PointExpression,
     options: L.MarkerOptions;
 }
 
+export interface IconOptions extends L.MarkerOptions, L.IconOptions {
+    // this lets us combine marker and icon options into one set
+}
+
 export class MarkersLayer extends L.LayerGroup {
     private readonly _types: {
-        circle: (json: Json) => L.Circle,
-        ellipse: (json: Json) => L.Ellipse,
-        icon: (json: Json) => L.Marker,
-        polygon: (json: Json) => L.Polygon,
-        polyline: (json: Json) => L.Polyline,
+        circle: (json: Marker) => L.Circle,
+        ellipse: (json: Marker) => L.Ellipse,
+        icon: (json: Marker) => L.Marker,
+        polygon: (json: Marker) => L.Polygon,
+        polyline: (json: Marker) => L.Polyline,
         //rectangle: (json: Type) => L.Rectangle
     } = {
-        "circle": (json: Json) => L.circle(Util.toLatLng(json.point), {
+        "circle": (json: Marker) => L.circle(Util.toLatLng(json.point), {
             ...json.options,
             radius: Util.pixelsToMeters((json.options as L.CircleOptions).radius!)
-        } as L.CircleOptions),
-        "ellipse": (json: Json) => L.ellipse(Util.toLatLng(json.point), json.options as L.EllipseOptions),
-        "icon": (json: Json) => L.marker(Util.toLatLng(json.point), {
+        }),
+        "ellipse": (json: Marker) => L.ellipse(Util.toLatLng(json.point), json.options as L.EllipseOptions),
+        "icon": (json: Marker) => L.marker(Util.toLatLng(json.point), {
             ...json.options,
-            "icon": L.icon({...(json.options as any).icon as L.IconOptions})
-        } as L.MarkerOptions),
-        "polygon": (json: Json) => L.polygon([Util.toLatLng(json.point)], json.options as L.PolylineOptions),
-        "polyline": (json: Json) => L.polyline([Util.toLatLng(json.point)], json.options as L.PolylineOptions),
+            "icon": L.icon({...json.options as IconOptions})
+        }),
+        "polygon": (json: Marker) => L.polygon([Util.toLatLng(json.point)], json.options as L.PolylineOptions),
+        "polyline": (json: Marker) => L.polyline([Util.toLatLng(json.point)], json.options as L.PolylineOptions),
         //"rectangle": (json: Type) => L.rectangle([window.toLatLng(json.point)], json.options as L.PolylineOptions)
     }
 
-    private readonly _label: string;
     private readonly _interval: number;
 
-    constructor(livemap: LiveMap, label: string, interval?: number, options?: L.LayerOptions) {
+    constructor(livemap: LiveMap, markers: Marker[], interval?: number, options?: L.LayerOptions) {
         super([], options);
-        this._label = label;
         this._interval = interval ?? 60;
 
         // todo - add if default show
@@ -44,24 +46,16 @@ export class MarkersLayer extends L.LayerGroup {
         this.addTo(livemap);
         //}
 
-        // todo - fetch list of json files to process
-        // each json file is its own layer full of markers
-        Util.fetchJson("markers/spawn.json").then((json): void => {
-            json.forEach((data: Json): void => {
-                try {
-                    const type = this._types[data.type as keyof typeof this._types];
-                    if (type) {
-                        type(data)?.addTo(this);
-                    }
-                } catch (e) {
-                    console.error("ERRoR", e);
+        markers.forEach((marker: Marker): void => {
+            try {
+                const type = this._types[marker.type as keyof typeof this._types];
+                if (type) {
+                    type(marker)?.addTo(this);
                 }
-            });
+            } catch (e) {
+                console.error(e);
+            }
         });
-    }
-
-    get label(): string {
-        return this._label;
     }
 
     public tick(count: number): void {

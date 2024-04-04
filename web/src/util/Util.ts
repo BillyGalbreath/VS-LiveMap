@@ -21,7 +21,7 @@ export class Util {
     }
 
     public static toLatLng(point: L.PointExpression): L.LatLng {
-        point = Util.pointToPoint(point);
+        point = Util.pointToPoint(point).add(window.livemap.settings.spawn);
         return L.latLng(point.y * window.livemap.scale, point.x * window.livemap.scale);
     }
 
