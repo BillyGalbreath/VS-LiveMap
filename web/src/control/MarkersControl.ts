@@ -6,6 +6,7 @@ import {Util} from "../util/Util";
 export interface Layer {
     label: string,
     interval: number,
+    options: L.LayerOptions,
     markers: Marker[];
 }
 
@@ -22,7 +23,7 @@ export class MarkersControl {
         // each json file is its own layer full of markers
         Util.fetchJson("markers/spawn.json").then((layer: Layer): void => {
             try {
-                const l: MarkersLayer = new MarkersLayer(livemap, layer.markers, layer.interval);
+                const l: MarkersLayer = new MarkersLayer(livemap, layer.markers, layer.interval, layer.options);
                 this._layers.push(l);
                 this._control.addOverlay(l, layer.label);
             } catch (e) {
