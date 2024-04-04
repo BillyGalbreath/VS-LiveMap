@@ -217,36 +217,40 @@ public abstract class Renderer {
 
             uint color = _renderTask.Server.Colormap.TryGet(blockId, out uint[]? colors) ? colors[GameMath.MurmurHash3Mod(x, blockY, z, colors.Length)] : 0;
 
-            int offsetX = x - 1;
-            int offsetZ = z - 1;
-
-            ServerMapChunk? northwestChunk = offsetX switch {
-                < 0 when offsetZ < 0 => mapChunkArray[0],
-                < 0 => mapChunkArray[1],
-                _ => offsetZ < 0 ? mapChunkArray[2] : mapChunk
-            };
-
-            if (ignored) {
-                blockY++;
-            }
-
-            int northwest = blockY - GetTopBlockY(northwestChunk, offsetX, offsetZ, blockY);
-            int west = blockY - GetTopBlockY(offsetX < 0 ? mapChunkArray[1] : mapChunk, offsetX, z, blockY);
-            int north = blockY - GetTopBlockY(offsetZ < 0 ? mapChunkArray[2] : mapChunk, x, offsetZ, blockY);
-
-            int direction = Math.Sign(northwest) + Math.Sign(north) + Math.Sign(west);
-            int steepness = Math.Max(Math.Max(Math.Abs(northwest), Math.Abs(north)), Math.Abs(west));
-            float slopeFactor = Math.Min(0.5F, steepness / 10F) / 1.25F;
-            float yDiff = direction switch {
-                > 0 => 1.08F + slopeFactor,
-                < 0 => 0.92F - slopeFactor,
-                _ => 1
-            };
+            float yDiff = ProcessShadow(x, blockY, z, ignored, mapChunk, mapChunkArray);
 
             _image?.SetBlockColor(imgX, imgZ, color, yDiff);
         } catch (Exception) {
             _image?.SetBlockColor(imgX, imgZ, 0, 0);
         }
+    }
+
+    private float ProcessShadow(int x, int y, int z, bool ignored, ServerMapChunk mapChunk, IReadOnlyList<ServerMapChunk?> mapChunkArray) {
+        int offsetX = x - 1;
+        int offsetZ = z - 1;
+
+        ServerMapChunk? northwestChunk = offsetX switch {
+            < 0 when offsetZ < 0 => mapChunkArray[0],
+            < 0 => mapChunkArray[1],
+            _ => offsetZ < 0 ? mapChunkArray[2] : mapChunk
+        };
+
+        if (ignored) {
+            y++;
+        }
+
+        int northwest = y - GetTopBlockY(northwestChunk, offsetX, offsetZ, y);
+        int west = y - GetTopBlockY(offsetX < 0 ? mapChunkArray[1] : mapChunk, offsetX, z, y);
+        int north = y - GetTopBlockY(offsetZ < 0 ? mapChunkArray[2] : mapChunk, x, offsetZ, y);
+
+        int direction = Math.Sign(northwest) + Math.Sign(north) + Math.Sign(west);
+        int steepness = Math.Max(Math.Max(Math.Abs(northwest), Math.Abs(north)), Math.Abs(west));
+        float slopeFactor = Math.Min(0.5F, steepness / 10F) / 1.25F;
+        return direction switch {
+            > 0 => 1.08F + slopeFactor,
+            < 0 => 0.92F - slopeFactor,
+            _ => 1
+        };
     }
 
     protected int GetTopBlockY(ServerMapChunk? mapChunk, int x, int z, int def = 0) {
