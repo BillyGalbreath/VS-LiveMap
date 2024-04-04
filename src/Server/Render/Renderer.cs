@@ -178,70 +178,74 @@ public abstract class Renderer {
         BlockPos tmpPos = new(0);
         for (int x = 0; x < 32; x++) {
             for (int z = 0; z < 32; z++) {
-                if (_renderTask.Stopped) {
-                    return;
-                }
-
-                int imgX = x + (chunkPos.X << 5);
-                int imgZ = z + (chunkPos.Z << 5);
-
-                try {
-                    int blockY = GetTopBlockY(mapChunk, x, z);
-                    bool ignored = false;
-
-                    ServerChunk? serverChunk = serverChunks[blockY >> 5];
-                    if (serverChunk == null) {
-                        continue;
-                    }
-
-                    int blockId = serverChunk.Data[Mathf.AsIndex(x, blockY, z)];
-
-                    if (_blocksToIgnore.Contains(blockId)) {
-                        ignored = true;
-                        blockY--;
-                        serverChunk = serverChunks[blockY >> 5] ?? _dataLoader.GetServerChunk(chunkPos.X, blockY >> 5, chunkPos.Z);
-                        blockId = serverChunk!.Data[Mathf.AsIndex(x, blockY, z)];
-                    }
-
-                    if (_microBlocks.Contains(blockId)) {
-                        tmpPos.Set((chunkPos.X << 5) + x, blockY, (chunkPos.Z << 5) + z);
-                        serverChunk.BlockEntities.TryGetValue(tmpPos, out BlockEntity? be);
-                        blockId = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _landBlock;
-                    }
-
-                    uint color = _renderTask.Server.Colormap.TryGet(blockId, out uint[]? colors) ? colors[GameMath.MurmurHash3Mod(x, blockY, z, colors.Length)] : 0;
-
-                    int offsetX = x - 1;
-                    int offsetZ = z - 1;
-
-                    ServerMapChunk? northwestChunk = offsetX switch {
-                        < 0 when offsetZ < 0 => mapChunkArray[0],
-                        < 0 => mapChunkArray[1],
-                        _ => offsetZ < 0 ? mapChunkArray[2] : mapChunk
-                    };
-
-                    if (ignored) {
-                        blockY++;
-                    }
-
-                    int northwest = blockY - GetTopBlockY(northwestChunk, offsetX, offsetZ, blockY);
-                    int west = blockY - GetTopBlockY(offsetX < 0 ? mapChunkArray[1] : mapChunk, offsetX, z, blockY);
-                    int north = blockY - GetTopBlockY(offsetZ < 0 ? mapChunkArray[2] : mapChunk, x, offsetZ, blockY);
-
-                    int direction = Math.Sign(northwest) + Math.Sign(north) + Math.Sign(west);
-                    int steepness = Math.Max(Math.Max(Math.Abs(northwest), Math.Abs(north)), Math.Abs(west));
-                    float slopeFactor = Math.Min(0.5F, steepness / 10F) / 1.25F;
-                    float yDiff = direction switch {
-                        > 0 => 1.08F + slopeFactor,
-                        < 0 => 0.92F - slopeFactor,
-                        _ => 1
-                    };
-
-                    _image?.SetBlockColor(imgX, imgZ, color, yDiff);
-                } catch (Exception) {
-                    _image?.SetBlockColor(imgX, imgZ, 0, 0);
-                }
+                ScanBlock(x, z, chunkPos, tmpPos, mapChunk, serverChunks, mapChunkArray);
             }
+        }
+    }
+
+    private void ScanBlock(int x, int z, ChunkPos chunkPos, BlockPos tmpPos, ServerMapChunk mapChunk, IReadOnlyList<ServerChunk?> serverChunks, IReadOnlyList<ServerMapChunk?> mapChunkArray) {
+        if (_renderTask.Stopped) {
+            return;
+        }
+
+        int imgX = x + (chunkPos.X << 5);
+        int imgZ = z + (chunkPos.Z << 5);
+
+        try {
+            int blockY = GetTopBlockY(mapChunk, x, z);
+            bool ignored = false;
+
+            ServerChunk? serverChunk = serverChunks[blockY >> 5];
+            if (serverChunk == null) {
+                return;
+            }
+
+            int blockId = serverChunk.Data[Mathf.AsIndex(x, blockY, z)];
+
+            if (_blocksToIgnore.Contains(blockId)) {
+                ignored = true;
+                blockY--;
+                serverChunk = serverChunks[blockY >> 5] ?? _dataLoader.GetServerChunk(chunkPos.X, blockY >> 5, chunkPos.Z);
+                blockId = serverChunk!.Data[Mathf.AsIndex(x, blockY, z)];
+            }
+
+            if (_microBlocks.Contains(blockId)) {
+                tmpPos.Set((chunkPos.X << 5) + x, blockY, (chunkPos.Z << 5) + z);
+                serverChunk.BlockEntities.TryGetValue(tmpPos, out BlockEntity? be);
+                blockId = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _landBlock;
+            }
+
+            uint color = _renderTask.Server.Colormap.TryGet(blockId, out uint[]? colors) ? colors[GameMath.MurmurHash3Mod(x, blockY, z, colors.Length)] : 0;
+
+            int offsetX = x - 1;
+            int offsetZ = z - 1;
+
+            ServerMapChunk? northwestChunk = offsetX switch {
+                < 0 when offsetZ < 0 => mapChunkArray[0],
+                < 0 => mapChunkArray[1],
+                _ => offsetZ < 0 ? mapChunkArray[2] : mapChunk
+            };
+
+            if (ignored) {
+                blockY++;
+            }
+
+            int northwest = blockY - GetTopBlockY(northwestChunk, offsetX, offsetZ, blockY);
+            int west = blockY - GetTopBlockY(offsetX < 0 ? mapChunkArray[1] : mapChunk, offsetX, z, blockY);
+            int north = blockY - GetTopBlockY(offsetZ < 0 ? mapChunkArray[2] : mapChunk, x, offsetZ, blockY);
+
+            int direction = Math.Sign(northwest) + Math.Sign(north) + Math.Sign(west);
+            int steepness = Math.Max(Math.Max(Math.Abs(northwest), Math.Abs(north)), Math.Abs(west));
+            float slopeFactor = Math.Min(0.5F, steepness / 10F) / 1.25F;
+            float yDiff = direction switch {
+                > 0 => 1.08F + slopeFactor,
+                < 0 => 0.92F - slopeFactor,
+                _ => 1
+            };
+
+            _image?.SetBlockColor(imgX, imgZ, color, yDiff);
+        } catch (Exception) {
+            _image?.SetBlockColor(imgX, imgZ, 0, 0);
         }
     }
 
