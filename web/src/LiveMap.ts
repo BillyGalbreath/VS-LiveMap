@@ -60,9 +60,9 @@ export class LiveMap extends L.Map {
 
         // move to the coords or spawn point at specified or default zoom level
         this.centerOn(
-            parseInt(this.getUrlParam("x", 0)) + this.settings.spawn.x,
-            parseInt(this.getUrlParam("z", 0)) + this.settings.spawn.y,
-            parseInt(this.getUrlParam("zoom", this.settings.zoom.def))
+            this.getUrlParam("x", 0) + this.settings.spawn.x,
+            this.getUrlParam("z", 0) + this.settings.spawn.y,
+            this.getUrlParam("zoom", this.settings.zoom.def)
         );
 
         // setup the controllers
@@ -112,8 +112,9 @@ export class LiveMap extends L.Map {
         this._linkControl?.update();
     }
 
-    public getUrlParam(query: string, def: any): any {
-        return new URLSearchParams(window.location.search).get(query) ?? def;
+    public getUrlParam(query: string, def: number): number {
+        const params: string | null = new URLSearchParams(window.location.search).get(query);
+        return params ? parseInt(params) : def;
     }
 
     public getUrlFromView(): string {

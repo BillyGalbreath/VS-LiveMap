@@ -3,6 +3,7 @@ import {LiveMap} from "../LiveMap";
 import {Util} from "../util/Util";
 
 interface Json {
+    type: string,
     point: L.PointExpression,
     options: L.MarkerOptions;
 }
@@ -39,16 +40,16 @@ export class MarkersLayer extends L.LayerGroup {
         this._interval = interval ?? 60;
 
         // todo - add if default show
-        if (true) {
-            this.addTo(livemap);
-        }
+        //if (true) {
+        this.addTo(livemap);
+        //}
 
         // todo - fetch list of json files to process
         // each json file is its own layer full of markers
         Util.fetchJson("markers/spawn.json").then((json): void => {
-            json.forEach((data: any): void => {
+            json.forEach((data: Json): void => {
                 try {
-                    const type: any = this._types[data.type as keyof typeof this._types];
+                    const type = this._types[data.type as keyof typeof this._types];
                     if (type) {
                         type(data)?.addTo(this);
                     }

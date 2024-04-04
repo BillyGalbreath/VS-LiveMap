@@ -1,7 +1,7 @@
 import * as L from "leaflet";
 
 export class Util {
-    public static isset(obj: any): boolean {
+    public static isset(obj: string | number | null | undefined): boolean {
         return ![null, undefined, NaN, ''].includes(obj);
     }
 
@@ -14,23 +14,10 @@ export class Util {
     }
 
     public static pointToPoint(point: L.PointExpression): L.Point {
-        let x, y;
-        if (point instanceof L.Point) {
-            x = point.x;
-            y = point.y;
-        }
         if (Array.isArray(point)) {
-            x = (point as any)[0];
-            y = (point as any)[1];
+            return L.point(point[0], point[1]);
         }
-        if (point === undefined || point === null) {
-            return point;
-        }
-        if (typeof point === 'object' && 'x' in point && 'y' in point) {
-            x = point.x;
-            y = point.y;
-        }
-        return L.point(x, y);
+        return point;
     }
 
     public static toLatLng(point: L.PointExpression): L.LatLng {
@@ -42,7 +29,7 @@ export class Util {
         return L.point(latlng.lng / window.livemap.scale, latlng.lat / window.livemap.scale);
     }
 
-    public static async fetchJson(url: string): Promise<any> {
+    public static async fetchJson(url: string) {
         const res: Response = await fetch(url, {
             headers: {
                 "Content-Disposition": "inline"

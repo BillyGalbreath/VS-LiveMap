@@ -27,7 +27,7 @@ export class CoordsControl extends ControlBox {
     }
 
     public update = (e?: L.LeafletMouseEvent): void => {
-        if (!Util.isset(e)) {
+        if (!e) {
             this._dom.innerHTML = '0, 0';
             return;
         }
