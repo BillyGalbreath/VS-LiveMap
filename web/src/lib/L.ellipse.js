@@ -149,8 +149,6 @@ L.Ellipse = L.Path.extend({
     this._radiusX = Util.pixelsToMeters(Math.abs(this._point.x - pointLeft.x));
     this._radiusY = Util.pixelsToMeters(Math.abs(pointBelow.y - this._point.y));
 
-    console.log("point", latlng, this._point, pointLeft, pointBelow, this._radiusX, this._radiusY);
-
     this._tilt = Math.PI * this._tiltDeg / 180;
     this._endPointParams = this._centerPointToEndPoint();
     this._updateBounds();
