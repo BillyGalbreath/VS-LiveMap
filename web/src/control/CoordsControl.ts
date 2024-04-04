@@ -32,9 +32,9 @@ export class CoordsControl extends ControlBox {
             return;
         }
 
-        let point: L.Point = Util.toPoint(e!.latlng);
-        let x: number = Math.round(point.x - this._livemap.settings.spawn.x);
-        let y: number = Math.round(point.y - this._livemap.settings.spawn.y);
+        const point: L.Point = Util.toPoint(e!.latlng);
+        const x: number = Math.round(point.x - this._livemap.settings.spawn.x);
+        const y: number = Math.round(point.y - this._livemap.settings.spawn.y);
 
         this._dom.innerHTML = `${x}, ${y}`;
     }

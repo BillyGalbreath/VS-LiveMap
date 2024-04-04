@@ -43,7 +43,7 @@ export class Util {
     }
 
     public static async fetchJson(url: string): Promise<any> {
-        let res: Response = await fetch(url, {
+        const res: Response = await fetch(url, {
             headers: {
                 "Content-Disposition": "inline"
             }

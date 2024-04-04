@@ -2,28 +2,31 @@ import * as L from "leaflet";
 import {LiveMap} from "../LiveMap";
 import {Util} from "../util/Util";
 
-interface Type {
+interface Json {
     point: L.PointExpression,
-    options: L.PathOptions | L.IconOptions;
+    options: L.MarkerOptions;
 }
 
 export class MarkersLayer extends L.LayerGroup {
     private readonly _types: {
-        circle: (json: Type) => L.Circle,
-        ellipse: (json: Type) => L.Ellipse,
-        icon: (json: Type) => L.Marker,
-        polygon: (json: Type) => L.Polygon,
-        polyline: (json: Type) => L.Polyline,
+        circle: (json: Json) => L.Circle,
+        ellipse: (json: Json) => L.Ellipse,
+        icon: (json: Json) => L.Marker,
+        polygon: (json: Json) => L.Polygon,
+        polyline: (json: Json) => L.Polyline,
         //rectangle: (json: Type) => L.Rectangle
     } = {
-        "circle": (json: Type) => L.circle(Util.toLatLng(json.point), json.options as L.CircleOptions),
-        "ellipse": (json: Type) => L.ellipse(Util.toLatLng(json.point), json.options as L.EllipseOptions),
-        "icon": (json: Type) => L.marker(Util.toLatLng(json.point), {
+        "circle": (json: Json) => L.circle(Util.toLatLng(json.point), {
+            ...json.options,
+            radius: Util.pixelsToMeters((json.options as L.CircleOptions).radius!)
+        } as L.CircleOptions),
+        "ellipse": (json: Json) => L.ellipse(Util.toLatLng(json.point), json.options as L.EllipseOptions),
+        "icon": (json: Json) => L.marker(Util.toLatLng(json.point), {
             ...json.options,
             "icon": L.icon({...(json.options as any).icon as L.IconOptions})
         } as L.MarkerOptions),
-        "polygon": (json: Type) => L.polygon([Util.toLatLng(json.point)], json.options as L.PolylineOptions),
-        "polyline": (json: Type) => L.polyline([Util.toLatLng(json.point)], json.options as L.PolylineOptions),
+        "polygon": (json: Json) => L.polygon([Util.toLatLng(json.point)], json.options as L.PolylineOptions),
+        "polyline": (json: Json) => L.polyline([Util.toLatLng(json.point)], json.options as L.PolylineOptions),
         //"rectangle": (json: Type) => L.rectangle([window.toLatLng(json.point)], json.options as L.PolylineOptions)
     }
 
