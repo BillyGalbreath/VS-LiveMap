@@ -39,7 +39,7 @@ export class MarkersLayer extends L.LayerGroup {
 
     constructor(livemap: LiveMap, markers: Marker[], interval?: number, options?: L.LayerOptions) {
         super([], options);
-        this._interval = interval ?? 60;
+        this._interval = interval ?? 300;
 
         // todo - add if default show
         //if (true) {
