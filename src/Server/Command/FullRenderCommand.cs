@@ -16,7 +16,6 @@ public sealed class FullRenderCommand : AbstractServerCommand {
             return CommandResult.Success("command.fullrender.failed");
         }
 
-
         ((IServerPlayer)caller.Player).SendMessage(CommandResult.Success("command.fullrender.started"));
         return CommandResult.Success("command.fullrender.started");
     }

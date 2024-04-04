@@ -48,7 +48,7 @@ export class MarkersLayer extends L.LayerGroup {
         Util.fetchJson("markers/spawn.json").then((json): void => {
             json.forEach((data: any): void => {
                 try {
-                    let type: any = this._types[data.type as keyof typeof this._types];
+                    const type: any = this._types[data.type as keyof typeof this._types];
                     if (type) {
                         type(data)?.addTo(this);
                     }

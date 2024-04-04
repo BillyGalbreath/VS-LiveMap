@@ -18,20 +18,18 @@ public static class Lang {
     public static string Success(string key, params object[]? args) {
         return Get("command.success", Get(key, args));
     }
-}
 
-public static class LangExtensions {
     public static void SendMessage(this Caller caller, CommandResult result) {
         if (caller.Player != null) {
             caller.Player.SendMessage(result);
             return;
         }
 
-        Logger.Info($"{(result.Status == EnumCommandStatus.Error ? "&c" : "&a")}{Lang.Get(result.Message, result.Args)}&r");
+        Logger.Info($"{(result.Status == EnumCommandStatus.Error ? "&c" : "&a")}{Get(result.Message, result.Args)}&r");
     }
 
     public static void SendMessage(this IPlayer player, CommandResult result) {
-        player.SendMessage(result.Status == EnumCommandStatus.Error ? Lang.Error(result.Message, result.Args) : Lang.Success(result.Message, result.Args));
+        player.SendMessage(result.Status == EnumCommandStatus.Error ? Error(result.Message, result.Args) : Success(result.Message, result.Args));
     }
 
     private static void SendMessage(this IPlayer player, string message) {
