@@ -1,13 +1,13 @@
 import * as L from "leaflet";
-import {LiveMap} from "../../LiveMap";
-import {Util} from "../../util/Util";
+import {LiveMap} from "../LiveMap";
+import {Util} from "../util/Util";
 
 interface Type {
     point: L.PointExpression,
     options: L.PathOptions | L.IconOptions;
 }
 
-export class MarkerControl extends L.LayerGroup {
+export class MarkersLayer extends L.LayerGroup {
     private readonly _types: {
         circle: (json: Type) => L.Circle,
         ellipse: (json: Type) => L.Ellipse,

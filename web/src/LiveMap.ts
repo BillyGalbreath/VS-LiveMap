@@ -1,6 +1,6 @@
 import * as L from "leaflet";
 import {TileLayerControl} from "./layer/TileLayerControl";
-import {MarkerControl} from "./layer/markers/MarkerControl";
+import {MarkersLayer} from "./layer/MarkersLayer";
 import {CoordsControl} from "./control/CoordsControl";
 import {LinkControl} from "./control/LinkControl";
 import {Settings} from "./settings/Settings";
@@ -24,7 +24,7 @@ export class LiveMap extends L.Map {
     private readonly _scale: number;
 
     private _tileLayerControl?: TileLayerControl;
-    private _markerControl?: MarkerControl;
+    private _markerControl?: MarkersLayer;
     private _linkControl?: LinkControl;
     private _coordsControl?: CoordsControl;
 
@@ -67,7 +67,7 @@ export class LiveMap extends L.Map {
 
         // setup the controllers
         this._tileLayerControl = new TileLayerControl(this);
-        this._markerControl = new MarkerControl(this, "test layer");
+        this._markerControl = new MarkersLayer(this, "test layer");
         this._coordsControl = new CoordsControl(this);
         this._linkControl = new LinkControl(this);
 
