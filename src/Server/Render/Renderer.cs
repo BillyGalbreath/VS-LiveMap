@@ -194,35 +194,37 @@ public abstract class Renderer {
         try {
             int blockY = GetTopBlockY(mapChunk, x, z);
             bool ignored = false;
-
-            ServerChunk? serverChunk = serverChunks[blockY >> 5];
-            if (serverChunk == null) {
-                return;
-            }
-
-            int blockId = serverChunk.Data[Mathf.AsIndex(x, blockY, z)];
-
-            if (_blocksToIgnore.Contains(blockId)) {
-                ignored = true;
-                blockY--;
-                serverChunk = serverChunks[blockY >> 5] ?? _dataLoader.GetServerChunk(chunkPos.X, blockY >> 5, chunkPos.Z);
-                blockId = serverChunk!.Data[Mathf.AsIndex(x, blockY, z)];
-            }
-
-            if (_microBlocks.Contains(blockId)) {
-                tmpPos.Set((chunkPos.X << 5) + x, blockY, (chunkPos.Z << 5) + z);
-                serverChunk.BlockEntities.TryGetValue(tmpPos, out BlockEntity? be);
-                blockId = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _landBlock;
-            }
-
-            uint color = _renderTask.Server.Colormap.TryGet(blockId, out uint[]? colors) ? colors[GameMath.MurmurHash3Mod(x, blockY, z, colors.Length)] : 0;
-
+            uint color = ProcessColor(x, blockY, z, ref ignored, chunkPos, tmpPos, serverChunks);
             float yDiff = ProcessShadow(x, blockY, z, ignored, mapChunk, mapChunkArray);
-
             _image?.SetBlockColor(imgX, imgZ, color, yDiff);
         } catch (Exception) {
             _image?.SetBlockColor(imgX, imgZ, 0, 0);
         }
+    }
+
+    private uint ProcessColor(int x, int y, int z, ref bool ignored, ChunkPos chunkPos, BlockPos tmpPos, IReadOnlyList<ServerChunk?> serverChunks) {
+        ServerChunk? serverChunk = serverChunks[y >> 5];
+        if (serverChunk == null) {
+            return 0;
+        }
+
+        int blockId = serverChunk.Data[Mathf.AsIndex(x, y, z)];
+
+        if (_blocksToIgnore.Contains(blockId)) {
+            ignored = true;
+            y--;
+            serverChunk = serverChunks[y >> 5] ?? _dataLoader.GetServerChunk(chunkPos.X, y >> 5, chunkPos.Z);
+            blockId = serverChunk!.Data[Mathf.AsIndex(x, y, z)];
+        }
+
+        // ReSharper disable once InvertIf
+        if (_microBlocks.Contains(blockId)) {
+            tmpPos.Set((chunkPos.X << 5) + x, y, (chunkPos.Z << 5) + z);
+            serverChunk.BlockEntities.TryGetValue(tmpPos, out BlockEntity? be);
+            blockId = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _landBlock;
+        }
+
+        return _renderTask.Server.Colormap.TryGet(blockId, out uint[]? colors) ? colors[GameMath.MurmurHash3Mod(x, y, z, colors.Length)] : 0;
     }
 
     private float ProcessShadow(int x, int y, int z, bool ignored, ServerMapChunk mapChunk, IReadOnlyList<ServerMapChunk?> mapChunkArray) {
