@@ -45,27 +45,13 @@ public sealed class ColorMapCommand : AbstractClientCommand {
 
     private void ProcessBlock(Block block, BlockPos pos, Colormap colormap) {
         // get the base color of this block - game stores these in reverse byte order for some reason
-        int abgr = block.GetColor(Client.Api, pos);
-
-        // reverse abgr to argb
-        int argb = abgr & 0xFF << 24 |
-                   (abgr >> 16 & 0xFF) << 0 |
-                   (abgr >> 8 & 0xFF) << 8 |
-                   (abgr >> 0 & 0xFF) << 16;
+        int argb = Color.Reverse(block.GetColor(Client.Api, pos));
 
         // get 30 color samples for this block
         uint[] colors = new uint[30];
         for (int i = 0; i < 30; i++) {
-            // get a random color from the block's texture
-            int rndCol = block.GetRandomColor(Client.Api, pos, BlockFacing.UP, i);
-
-            // blend the base color with the random color
-            colors[i] = (uint)(
-                ((argb >> 24 & 0xFF) << 24) |
-                (int)((argb >> 16 & 0xFF) * 0.4 + (rndCol >> 16 & 0xFF) * 0.6) << 16 |
-                (int)((argb >> 8 & 0xFF) * 0.4 + (rndCol >> 8 & 0xFF) * 0.6) << 8 |
-                (int)((argb >> 0 & 0xFF) * 0.4 + (rndCol >> 0 & 0xFF) * 0.6)
-            );
+            // blend the base color with a random color
+            colors[i] = (uint)Color.Blend(argb, block.GetRandomColor(Client.Api, pos, BlockFacing.UP, i));
         }
 
         // store sample colors in the colormap
