@@ -1,5 +1,5 @@
 import * as L from "leaflet";
-import {TileLayerControl} from "./layer/TileLayerControl";
+import {TileLayerControl} from "./control/TileLayerControl";
 import {MarkersControl} from "./control/MarkersControl";
 import {CoordsControl} from "./control/CoordsControl";
 import {LinkControl} from "./control/LinkControl";
@@ -73,6 +73,10 @@ export class LiveMap extends L.Map {
 
         // start the tick loop
         this.loop(0);
+    }
+
+    get markersControl(): MarkersControl | undefined {
+        return this._markersControl;
     }
 
     get settings(): Settings {

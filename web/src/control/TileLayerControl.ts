@@ -1,5 +1,5 @@
 import {LiveMap} from "../LiveMap";
-import {LiveTileLayer} from "./LiveTileLayer";
+import {LiveTileLayer} from "../layer/LiveTileLayer";
 
 export class TileLayerControl {
     private readonly _livemap: LiveMap;

@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License (MIT)
  *
  * Copyright (c) 2015 Benjamin Becquet
@@ -24,16 +24,18 @@
 
 // https://github.com/bbecquet/Leaflet.RotatedMarker
 
+import * as L from "leaflet";
+
 (function () {
   // save these original methods before they are overwritten
-  var proto_initIcon = L.Marker.prototype._initIcon;
-  var proto_setPos = L.Marker.prototype._setPos;
+  const proto_initIcon = L.Marker.prototype._initIcon;
+  const proto_setPos = L.Marker.prototype._setPos;
 
-  var oldIE = (L.DomUtil.TRANSFORM === 'msTransform');
+  const oldIE = (L.DomUtil.TRANSFORM === 'msTransform');
 
   L.Marker.addInitHook(function () {
-    var iconOptions = this.options.icon && this.options.icon.options;
-    var iconAnchor = iconOptions && this.options.icon.options.iconAnchor;
+    const iconOptions = this.options.icon && this.options.icon.options;
+    let iconAnchor = iconOptions && this.options.icon.options.iconAnchor;
     if (iconAnchor) {
       iconAnchor = (iconAnchor[0] + 'px ' + iconAnchor[1] + 'px');
     }
