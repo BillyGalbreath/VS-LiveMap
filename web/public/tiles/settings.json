@@ -1,21 +1,17 @@
 {
-  "attribution": "<a href=\"https://mods.vintagestory.at/livemap\" target=\"_blank\">Vintage Story Livemap</a> &copy;2024",
+  "attribution": "<a href=\"https://mods.vintagestory.at/livemap\" target=\"_blank\">Livemap</a> &copy;2024",
   "size": {
     "x": 1024000,
-    "z": 1024000
+    "y": 1024000
   },
   "spawn": {
     "x": 512000,
-    "z": 512000
+    "y": 512000
   },
   "zoom": {
     "def": 0,
     "maxin": 3,
     "maxout": 8
   },
-  "interval": {
-    "tiles": 30,
-    "players": 1,
-    "markers": 60
-  }
+  "interval": 30
 }

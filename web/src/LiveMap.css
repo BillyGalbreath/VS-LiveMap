@@ -4,7 +4,7 @@
   user-select: none;
 }
 body {
-  background: #101010;
+  background: #121212;
   overflow: hidden;
 }
 
@@ -17,7 +17,6 @@ ul, li {
 #map {
   width: 100vw;
   height: 100vh;
-  background: #101010;
 }
 
 img.leaflet-tile {

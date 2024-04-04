@@ -1,7 +1,7 @@
 import * as L from 'leaflet';
 import {ControlBox} from './ControlBox';
 import {LiveMap} from '../LiveMap';
-import {Point} from "../settings/Point";
+import {Util} from "../util/Util";
 
 export class CoordsControl extends ControlBox {
     private readonly _dom: HTMLDivElement;
@@ -27,15 +27,15 @@ export class CoordsControl extends ControlBox {
     }
 
     public update = (e?: L.LeafletMouseEvent): void => {
-        if (!LiveMap.isset(e)) {
+        if (!Util.isset(e)) {
             this._dom.innerHTML = '0, 0';
             return;
         }
 
-        let point: Point = this._livemap.toPoint(e!.latlng);
+        let point: L.Point = Util.toPoint(e!.latlng);
         let x: number = Math.round(point.x - this._livemap.settings.spawn.x);
-        let z: number = Math.round(point.z - this._livemap.settings.spawn.z);
+        let y: number = Math.round(point.y - this._livemap.settings.spawn.y);
 
-        this._dom.innerHTML = `${x}, ${z}`;
+        this._dom.innerHTML = `${x}, ${y}`;
     }
 }

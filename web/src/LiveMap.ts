@@ -1,9 +1,10 @@
 import * as L from "leaflet";
-import {LayerControl} from "./layer/LayerControl";
+import {TileLayerControl} from "./layer/TileLayerControl";
+import {MarkerControl} from "./layer/markers/MarkerControl";
 import {CoordsControl} from "./control/CoordsControl";
 import {LinkControl} from "./control/LinkControl";
-import {Point} from "./settings/Point";
 import {Settings} from "./settings/Settings";
+import {Util} from "./util/Util";
 
 window.onload = function (): void {
     // todo - add initial loading screen
@@ -12,8 +13,9 @@ window.onload = function (): void {
     // todo - add timeout error getting settings
     //
 
-    LiveMap.getJson("tiles/settings.json").then((json): void => {
+    Util.fetchJson("tiles/settings.json").then((json): void => {
         window.livemap = new LiveMap(json as Settings);
+        window.livemap.init();
     });
 };
 
@@ -21,10 +23,10 @@ export class LiveMap extends L.Map {
     private readonly _settings: Settings;
     private readonly _scale: number;
 
-    private readonly _layerControl: LayerControl;
-
-    private readonly _link: LinkControl;
-    private readonly _coords: CoordsControl;
+    private _tileLayerControl?: TileLayerControl;
+    private _markerControl?: MarkerControl;
+    private _linkControl?: LinkControl;
+    private _coordsControl?: CoordsControl;
 
     constructor(settings: Settings) {
         super('map', {
@@ -35,11 +37,12 @@ export class LiveMap extends L.Map {
                 transformation: new L.Transformation(1, 0, 1, 0)
             }),
             // center map on spawn
-            center: [settings.spawn.x, settings.spawn.z],
+            center: [settings.spawn.x, settings.spawn.y],
             // show attribution control box if we have an attribution
-            attributionControl: LiveMap.isstr(settings.attribution),
+            attributionControl: Util.isset(settings.attribution),
             // canvas is more efficient than svg
             preferCanvas: true,
+            // these get weird when changed
             zoomSnap: 1,
             zoomDelta: 1,
             wheelPxPerZoomLevel: 60
@@ -47,23 +50,36 @@ export class LiveMap extends L.Map {
 
         this._settings = settings;
         this._scale = (1 / Math.pow(2, this.settings.zoom.maxout));
+    }
+
+    init(): void {
+        this.getContainer().style.background = 'url("images/sky.png")';
 
         // replace leaflet's attribution with our own
-        this.attributionControl?.setPrefix(settings.attribution);
+        this.attributionControl?.setPrefix(this._settings.attribution);
 
         // move to the coords or spawn point at specified or default zoom level
         this.centerOn(
             parseInt(this.getUrlParam("x", 0)) + this.settings.spawn.x,
-            parseInt(this.getUrlParam("z", 0)) + this.settings.spawn.x,
-            parseInt(this.getUrlParam("y", this.settings.zoom.def))
+            parseInt(this.getUrlParam("z", 0)) + this.settings.spawn.y,
+            parseInt(this.getUrlParam("zoom", this.settings.zoom.def))
         );
 
-        // setup the layer controls (tile layers and layer overlays)
-        this._layerControl = new LayerControl(this);
+        // setup the controllers
+        this._tileLayerControl = new TileLayerControl(this);
+        this._markerControl = new MarkerControl(this, "test layer");
+        this._coordsControl = new CoordsControl(this);
+        this._linkControl = new LinkControl(this);
 
-        // setup other control boxes
-        this._coords = new CoordsControl(this);
-        this._link = new LinkControl(this);
+        // #################################################################
+
+        const layers: L.Control.Layers = L.control.layers({}, {}, {
+            position: 'topleft'
+        })
+            .addTo(this)
+            .addOverlay(this._markerControl, this._markerControl.label);
+
+        // #################################################################
 
         // start the tick loop
         this.loop(0);
@@ -80,7 +96,8 @@ export class LiveMap extends L.Map {
     private loop(count: number): void {
         try {
             if (document.visibilityState === 'visible') {
-                this.tick(count);
+                this._tileLayerControl!.tick(count);
+                this._markerControl!.tick(count);
             }
         } catch (e) {
             console.error(`Error processing tick (${count})`, e);
@@ -89,34 +106,10 @@ export class LiveMap extends L.Map {
         setTimeout(() => this.loop(count + 1), 1000);
     }
 
-    private tick(count: number): void {
-        // tick tiles
-        if (count % this.settings.interval.tiles == 0) {
-            this._layerControl.updateTileLayer();
-        }
-
-        // todo - tick player list
-        if (count % this.settings.interval.players == 0) {
-            //
-        }
-
-        // todo = tick marker layers
-        if (count % this.settings.interval.markers == 0) {
-            //
-        }
-    }
-
     public centerOn(x: number, z: number, zoom: number): void {
-        this.setView(this.toLatLng(x, z), this.settings.zoom.maxout - zoom);
-        this._link?.update();
-    }
-
-    public toLatLng(x: number, z: number): L.LatLng {
-        return L.latLng(z * this.scale, x * this.scale);
-    }
-
-    public toPoint(latlng: L.LatLng): Point {
-        return new Point(latlng.lng / this.scale, latlng.lat / this.scale);
+        this.setZoom(this.settings.zoom.maxout - zoom);
+        this.setView(Util.toLatLng([x, z]));
+        this._linkControl?.update();
     }
 
     public getUrlParam(query: string, def: any): any {
@@ -124,29 +117,10 @@ export class LiveMap extends L.Map {
     }
 
     public getUrlFromView(): string {
-        const center: Point = this.toPoint(this.getCenter());
+        const center: L.Point = Util.toPoint(this.getCenter());
         const zoom: number = this.settings.zoom.maxout - this.getZoom();
         const x: number = Math.floor(center.x) - this.settings.spawn.x;
-        const z: number = Math.floor(center.z) - this.settings.spawn.z;
-        return `?x=${x}&z=${z}&y=${zoom}`;
-    }
-
-    public static async getJson(url: string): Promise<any> {
-        let res: Response = await fetch(url, {
-            headers: {
-                "Content-Disposition": "inline"
-            }
-        });
-        if (res.ok) {
-            return await res.json();
-        }
-    }
-
-    public static isset(obj: any): boolean {
-        return ![null, undefined].includes(obj);
-    }
-
-    public static isstr(obj: any): boolean {
-        return ![null, undefined, ''].includes(obj);
+        const y: number = Math.floor(center.y) - this.settings.spawn.y;
+        return `?x=${x}&z=${y}&zoom=${zoom}`;
     }
 }
