@@ -44,7 +44,7 @@ export class Util {
 
     public static toLngLatArray(tuples: MagicTuples): LngLat[] {
         for (let i: number = 0; i < tuples.length; i++) {
-            let tuple: Voodoo = tuples[i];
+            const tuple: Voodoo = tuples[i];
             if (!Array.isArray(tuple)) {
                 continue;
             }
