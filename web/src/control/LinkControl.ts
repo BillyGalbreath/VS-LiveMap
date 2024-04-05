@@ -10,6 +10,13 @@ export class LinkControl extends ControlBox {
 
         this._dom = L.DomUtil.create('a', 'leaflet-control-layers link');
         this._dom.title = 'Get link from view';
+        this._dom.onclick = (e: MouseEvent): void => {
+            e.preventDefault();
+            window.history.replaceState({}, 'LiveMap', this._dom.href);
+            navigator.clipboard.writeText(this._dom.href).then((): void => {
+                // todo feedback popup
+            });
+        }
 
         L.DomEvent.disableClickPropagation(this._dom);
 
@@ -34,7 +41,7 @@ export class LinkControl extends ControlBox {
         map.removeEventListener('zoomend', this.update);
     }
 
-    public update = (): void => {
+    update = (): void => {
         this._dom.href = this._livemap.getUrlFromView();
     }
 }
