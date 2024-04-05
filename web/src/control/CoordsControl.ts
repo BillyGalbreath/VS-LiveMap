@@ -11,6 +11,8 @@ export class CoordsControl extends ControlBox {
 
         this._dom = L.DomUtil.create('div', 'leaflet-control-layers coordinates');
 
+        L.DomEvent.disableClickPropagation(this._dom);
+
         this.addTo(livemap);
     }
 

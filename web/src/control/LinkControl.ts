@@ -11,6 +11,8 @@ export class LinkControl extends ControlBox {
         this._dom = L.DomUtil.create('a', 'leaflet-control-layers link');
         this._dom.title = 'Get link from view';
 
+        L.DomEvent.disableClickPropagation(this._dom);
+
         const img: HTMLImageElement = L.DomUtil.create('img', '', this._dom);
         img.src = 'images/link.png';
         img.alt = '';
