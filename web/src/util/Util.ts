@@ -1,4 +1,5 @@
 import * as L from "leaflet";
+import {LngLat} from "./LngLat";
 
 export class Util {
     public static isset(obj: string | number | null | undefined): boolean {
@@ -13,20 +14,47 @@ export class Util {
         return num / window.livemap.scale;
     }
 
-    public static pointToPoint(point: L.PointExpression): L.Point {
-        if (Array.isArray(point)) {
-            return L.point(point[0], point[1]);
-        }
-        return point;
-    }
-
-    public static toLatLng(point: L.PointExpression): L.LatLng {
-        point = Util.pointToPoint(point).add(window.livemap.settings.spawn);
-        return L.latLng(point.y * window.livemap.scale, point.x * window.livemap.scale);
+    public static tupleToPoint(point: L.PointTuple | L.LatLngTuple): L.Point {
+        return L.point(point[1], point[0]);
     }
 
     public static toPoint(latlng: L.LatLng): L.Point {
-        return L.point(latlng.lng / window.livemap.scale, latlng.lat / window.livemap.scale);
+        if (latlng instanceof LngLat) {
+            return L.point(Util.metersToPixels(latlng.lng), Util.metersToPixels(latlng.lat));
+        } else {
+            return L.point(Util.metersToPixels(latlng.lat), Util.metersToPixels(latlng.lng));
+        }
+    }
+
+    public static tupleToLngLat(point: L.PointTuple | L.LatLngTuple): LngLat {
+        return this.toLngLat([point[0], point[1]]);
+    }
+
+    public static toLngLat(point: L.PointTuple): LngLat {
+        return new LngLat(Util.pixelsToMeters(point[0]), Util.pixelsToMeters(point[1]));
+    }
+
+    public static tupleToLatLng(point: L.PointTuple | L.LatLngTuple): L.LatLng {
+        return this.toLatLng([point[0], point[1]]);
+    }
+
+    public static toLatLng(point: L.PointTuple): L.LatLng {
+        return L.latLng(Util.pixelsToMeters(point[0]), Util.pixelsToMeters(point[1]));
+    }
+
+    public static toLngLatArray(tuples: MagicTuples): LngLat[] {
+        for (let i: number = 0; i < tuples.length; i++) {
+            let tuple: Voodoo = tuples[i];
+            if (!Array.isArray(tuple)) {
+                continue;
+            }
+            if (Array.isArray(tuple[0])) {
+                tuples[i] = this.toLngLatArray(tuple);
+            } else {
+                tuples[i] = this.tupleToLngLat(tuple as L.LatLngTuple);
+            }
+        }
+        return tuples as LngLat[];
     }
 
     public static async fetchJson(url: string) {

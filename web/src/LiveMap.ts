@@ -61,7 +61,7 @@ export class LiveMap extends L.Map {
         // move to the coords or spawn point at specified or default zoom level
         this.centerOn(
             this.getUrlParam("x", 0),
-            this.getUrlParam("z", 0),
+            this.getUrlParam("y", 0),
             this.getUrlParam("zoom", this.settings.zoom.def)
         );
 
@@ -94,15 +94,18 @@ export class LiveMap extends L.Map {
                 this._markersControl!.tick(count);
             }
         } catch (e) {
-            console.error(`Error processing tick (${count})`, e);
+            console.error(`Error processing tick (${count})\n`, e);
         }
 
-        setTimeout(() => this.loop(count + 1), 1000);
+        setTimeout(() => this.loop(++count), 1000);
     }
 
-    public centerOn(x: number, z: number, zoom: number): void {
+    public centerOn(x: number, y: number, zoom: number): void {
         this.setZoom(this.settings.zoom.maxout - zoom);
-        this.setView(Util.toLatLng([x, z]));
+        this.setView(Util.tupleToLatLng([
+            x + this.settings.spawn.x,
+            y + this.settings.spawn.y
+        ]));
         this._linkControl?.update();
     }
 
@@ -116,6 +119,6 @@ export class LiveMap extends L.Map {
         const zoom: number = this.settings.zoom.maxout - this.getZoom();
         const x: number = Math.floor(center.x) - this.settings.spawn.x;
         const y: number = Math.floor(center.y) - this.settings.spawn.y;
-        return `?x=${x}&z=${y}&zoom=${zoom}`;
+        return `?x=${x}&y=${y}&zoom=${zoom}`;
     }
 }

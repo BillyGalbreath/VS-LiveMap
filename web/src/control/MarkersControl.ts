@@ -18,7 +18,7 @@ export class MarkersControl {
             //this._layers.push(new MarkersLayer(livemap, this, "markers/players.json"));
             this._layers.push(new MarkersLayer(livemap, "markers/test.json"));
         } catch (e) {
-            console.error("ERRoR", e);
+            console.error("Error loading marker layers\n", e);
         }
     }
 

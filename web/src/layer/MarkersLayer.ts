@@ -12,7 +12,8 @@ interface Layer {
 
 interface Marker {
     type: string,
-    point: L.PointExpression,
+    point: L.PointTuple,
+    points: L.PointTuple[],
     options: L.MarkerOptions,
     tooltip: L.TooltipOptions,
     popup: L.PopupOptions;
@@ -27,18 +28,27 @@ export class MarkersLayer extends L.LayerGroup {
         polyline: (json: Marker) => L.Layer,
         rectangle: (json: Marker) => L.Layer
     } = {
-        "circle": (json: Marker) => L.circle(Util.toLatLng(json.point), {
-            ...json.options,
-            radius: Util.pixelsToMeters((json.options as L.CircleOptions)?.radius ?? 0)
-        }),
-        "ellipse": (json: Marker) => L.ellipse(Util.toLatLng(json.point), json.options as L.EllipseOptions),
-        "icon": (json: Marker) => L.marker(Util.toLatLng(json.point), {
+        "circle": (json: Marker) => {
+            const radius: number = (json.options as L.CircleOptions)?.radius ?? 10;
+            return L.circle(Util.tupleToLngLat(json.point), {
+                ...json.options,
+                radius: Util.pixelsToMeters(radius)
+            })
+        },
+        "ellipse": (json: Marker) => {
+            const radii: L.PointTuple = (json.options as L.EllipseOptions).radii ?? [10, 10];
+            return L.ellipse(Util.tupleToLngLat(json.point), {
+                ...json.options,
+                radii: [radii[1], radii[0]]
+            });
+        },
+        "icon": (json: Marker) => L.marker(Util.tupleToLngLat(json.point), {
             ...json.options,
             "icon": L.icon({...json.options as L.IconOptions})
         }),
-        "polygon": (json: Marker) => L.polygon([[0, 0], [0, 0]], json.options as L.PolylineOptions),
-        "polyline": (json: Marker) => L.polyline([[0, 0], [0, 0]], json.options as L.PolylineOptions),
-        "rectangle": (json: Marker) => L.rectangle([[0, 0], [0, 0]], json.options as L.PolylineOptions)
+        "polygon": (json: Marker) => L.polygon(Util.toLngLatArray(json.points), json.options),
+        "polyline": (json: Marker) => L.polyline(Util.toLngLatArray(json.points), json.options),
+        "rectangle": (json: Marker) => L.rectangle(L.latLngBounds(Util.toLngLatArray(json.points)), json.options)
     }
 
     private readonly _livemap: LiveMap;
@@ -83,7 +93,7 @@ export class MarkersLayer extends L.LayerGroup {
         Util.fetchJson(this._url).then((layer: Layer): void => {
             try {
                 // update refresh interval
-                this._interval = layer.interval;
+                this._interval = layer.interval ?? 300;
 
                 // update the layer options by merging them in with the defaults
                 this.options = {
@@ -98,7 +108,7 @@ export class MarkersLayer extends L.LayerGroup {
                 // refresh markers
                 this.refresh(layer);
             } catch (e) {
-                console.error("ERRoR", e);
+                console.error(`Error updating marker layer (${this.label})\n`, e);
             }
         });
     }
@@ -113,6 +123,7 @@ export class MarkersLayer extends L.LayerGroup {
                 const toAdd: L.Layer | undefined = type ? type(marker) : undefined;
 
                 if (!toAdd) {
+                    // unknown type?
                     return;
                 }
 
@@ -126,7 +137,7 @@ export class MarkersLayer extends L.LayerGroup {
 
                 queue.push(toAdd);
             } catch (e) {
-                console.error(e);
+                console.error(`Error refreshing markers in layer (${this.label})\n`, e);
             }
         });
 
