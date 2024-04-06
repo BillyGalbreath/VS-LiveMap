@@ -1,4 +1,4 @@
-import * as L from "leaflet";
+import * as L from 'leaflet';
 
 export class LngLat extends L.LatLng {
     constructor(longitude: number, latitude: number, altitude?: number) {

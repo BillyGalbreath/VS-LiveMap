@@ -1,7 +1,13 @@
-import * as L from "leaflet";
-import {LngLat} from "./LngLat";
+import * as L from 'leaflet';
+import {LngLat} from './LngLat';
 
 export class Util {
+    public static createSVGIcon(icon: string): DocumentFragment {
+        const template: HTMLTemplateElement = L.DomUtil.create('template');
+        template.innerHTML = `<svg class="svg-icon"><use href="#icon-${icon}"></use></svg>`;
+        return template.content;
+    }
+
     public static isset(obj: string | number | null | undefined): boolean {
         return ![null, undefined, NaN, ''].includes(obj);
     }
@@ -60,7 +66,7 @@ export class Util {
     public static async fetchJson(url: string) {
         const res: Response = await fetch(url, {
             headers: {
-                "Content-Disposition": "inline"
+                'Content-Disposition': 'inline'
             }
         });
         if (res.ok) {

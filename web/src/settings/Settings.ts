@@ -1,5 +1,5 @@
-import * as L from "leaflet";
-import {Zoom} from "./Zoom";
+import * as L from 'leaflet';
+import {Zoom} from './Zoom';
 
 export class Settings {
     private readonly _attribution: string;

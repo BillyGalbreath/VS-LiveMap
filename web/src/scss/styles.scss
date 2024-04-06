@@ -3,6 +3,7 @@
   padding: 0;
   user-select: none;
 }
+
 body {
   background: #121212;
   overflow: hidden;
@@ -14,9 +15,15 @@ ul, li {
   vertical-align: middle;
 }
 
+.svg-icon {
+  fill: currentColor;
+  stroke: none;
+}
+
 #map {
   width: 100vw;
   height: 100vh;
+  cursor: crosshair;
 }
 
 img.leaflet-tile {
@@ -27,14 +34,14 @@ img.leaflet-tile {
 .leaflet-control-layers-toggle {
   width: 30px !important;
   height: 30px !important;
-  background-image: url("images/layers.png");
+  background-image: url('images/layers.png');
   background-size: 20px 20px;
   background-repeat: no-repeat;
   background-position: 50% 50%;
 }
 
 .leaflet-control-attribution a {
-  color: #333333 !important;
+  color: #333333;
 }
 
 .leaflet-bottom.leaflet-left .link,
@@ -43,11 +50,12 @@ img.leaflet-tile {
   float: none;
 }
 
-a.leaflet-control-layers.link img {
-  margin:5px;
-  width: 20px;
-  height: 20px;
+a.leaflet-control-layers.link svg {
+  margin: 2px;
+  width: 26px;
+  height: 26px;
   vertical-align: bottom;
+  color: #000;
 }
 
 div.leaflet-control-layers.coordinates {
@@ -57,3 +65,7 @@ div.leaflet-control-layers.coordinates {
   line-height: 30px;
   height: 30px;
 }
+
+@import 'contextmenu';
+@import 'font';
+@import 'leaflet';

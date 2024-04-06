@@ -10,6 +10,7 @@
     "css-minimizer-webpack-plugin": "^6.0.0",
     "leaflet": "^1.9.4",
     "mini-css-extract-plugin": "^2.8.1",
+    "svg-sprite-loader": "^6.0.11",
     "terser-webpack-plugin": "^5.3.10",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.3",

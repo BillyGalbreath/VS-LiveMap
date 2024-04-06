@@ -1,10 +1,12 @@
-import * as L from "leaflet";
-import {TileLayerControl} from "./control/TileLayerControl";
-import {MarkersControl} from "./control/MarkersControl";
-import {CoordsControl} from "./control/CoordsControl";
-import {LinkControl} from "./control/LinkControl";
-import {Settings} from "./settings/Settings";
-import {Util} from "./util/Util";
+import * as L from 'leaflet';
+import {TileLayerControl} from './control/TileLayerControl';
+import {MarkersControl} from './control/MarkersControl';
+import {CoordsControl} from './control/CoordsControl';
+import {LinkControl} from './control/LinkControl';
+import {Settings} from './settings/Settings';
+import {Util} from './util/Util';
+import {ContextMenu} from './util/ContextMenu';
+import './scss/styles';
 
 window.onload = function (): void {
     // todo - add initial loading screen
@@ -13,7 +15,7 @@ window.onload = function (): void {
     // todo - add timeout error getting settings
     //
 
-    Util.fetchJson("tiles/settings.json").then((json): void => {
+    Util.fetchJson('tiles/settings.json').then((json): void => {
         window.livemap = new LiveMap(json as Settings);
         window.livemap.init();
     });
@@ -21,12 +23,13 @@ window.onload = function (): void {
 
 export class LiveMap extends L.Map {
     private readonly _settings: Settings;
-    private readonly _scale: number;
 
-    private _tileLayerControl?: TileLayerControl;
-    private _markersControl?: MarkersControl;
-    private _linkControl?: LinkControl;
-    private _coordsControl?: CoordsControl;
+    private readonly _tileLayerControl: TileLayerControl;
+    private readonly _markersControl: MarkersControl;
+    private readonly _linkControl: LinkControl;
+    private readonly _coordsControl: CoordsControl;
+
+    private readonly _scale: number;
 
     constructor(settings: Settings) {
         super('map', {
@@ -38,8 +41,8 @@ export class LiveMap extends L.Map {
             }),
             // center map on spawn
             center: [settings.spawn.x, settings.spawn.y],
-            // show attribution control box if we have an attribution
-            attributionControl: Util.isset(settings.attribution),
+            // always allow attribution in case a layer needs it
+            attributionControl: true,
             // canvas is more efficient than svg
             preferCanvas: true,
             // these get weird when changed
@@ -49,21 +52,6 @@ export class LiveMap extends L.Map {
         });
 
         this._settings = settings;
-        this._scale = (1 / Math.pow(2, this.settings.zoom.maxout));
-    }
-
-    init(): void {
-        this.getContainer().style.background = 'url("images/sky.png")';
-
-        // replace leaflet's attribution with our own
-        this.attributionControl?.setPrefix(this._settings.attribution);
-
-        // move to the coords or spawn point at specified or default zoom level
-        this.centerOn(
-            this.getUrlParam("x", 0),
-            this.getUrlParam("y", 0),
-            this.getUrlParam("zoom", this.settings.zoom.def)
-        );
 
         // setup the controllers
         this._tileLayerControl = new TileLayerControl(this);
@@ -71,11 +59,67 @@ export class LiveMap extends L.Map {
         this._coordsControl = new CoordsControl(this);
         this._linkControl = new LinkControl(this);
 
+        this._scale ??= (1 / Math.pow(2, this.settings.zoom.maxout));
+
+        const contextmenu: ContextMenu = new ContextMenu(this);
+
+        this.on('load', (): void => contextmenu.close());
+        this.on('unload', (): void => contextmenu.close());
+        this.on('resize', (): void => contextmenu.close());
+        this.on('viewreset', (): void => contextmenu.close());
+
+        this.on('move', (): void => contextmenu.close());
+        this.on('movestart', (): void => contextmenu.close());
+        this.on('moveend', (): void => contextmenu.close());
+
+        this.on('zoom', (): void => contextmenu.close());
+        this.on('zoomstart', (): void => contextmenu.close());
+        this.on('zoomend', (): void => contextmenu.close());
+        this.on('zoomlevelschange', (): void => contextmenu.close());
+
+        this.on('popupopen', (): void => contextmenu.close());
+        this.on('popupclose', (): void => contextmenu.close());
+        this.on('tooltipopen', (): void => contextmenu.close());
+        this.on('tooltipclose', (): void => contextmenu.close());
+
+        this.on('click', (): void => contextmenu.close());
+        this.on('dblclick', (): void => contextmenu.close());
+        this.on('mousedown', (): void => contextmenu.close());
+        this.on('mouseup', (): void => contextmenu.close());
+        this.on('preclick', (): void => contextmenu.close());
+
+        this.on('keydown', (e: L.LeafletKeyboardEvent): void => {
+            if (e.originalEvent.key === 'Escape') {
+                contextmenu.close();
+            }
+        });
+
+        this.on('contextmenu', (e: L.LeafletMouseEvent): void => contextmenu.open(e));
+    }
+
+    init(): void {
+        // pretty background
+        this.getContainer().style.background = 'url(images/sky.png)';
+
+        // replace leaflet's attribution with our own
+        this.attributionControl.setPrefix(this._settings.attribution);
+
+        // move to the coords or spawn point at specified or default zoom level
+        this.centerOn(
+            this.getUrlParam('x', 0),
+            this.getUrlParam('y', 0),
+            this.getUrlParam('zoom', this.settings.zoom.def)
+        );
+
         // start the tick loop
         this.loop(0);
     }
 
-    get markersControl(): MarkersControl | undefined {
+    get coordsControl(): CoordsControl {
+        return this._coordsControl;
+    }
+
+    get markersControl(): MarkersControl {
         return this._markersControl;
     }
 
@@ -90,8 +134,8 @@ export class LiveMap extends L.Map {
     private loop(count: number): void {
         try {
             if (document.visibilityState === 'visible') {
-                this._tileLayerControl!.tick(count);
-                this._markersControl!.tick(count);
+                this._tileLayerControl.tick(count);
+                this._markersControl.tick(count);
             }
         } catch (e) {
             console.error(`Error processing tick (${count})\n`, e);
@@ -106,12 +150,11 @@ export class LiveMap extends L.Map {
             x + this.settings.spawn.x,
             y + this.settings.spawn.y
         ]));
-        this._linkControl?.update();
+        this._linkControl.update();
     }
 
     public getUrlParam(query: string, def: number): number {
-        const params: string | null = new URLSearchParams(window.location.search).get(query);
-        return params ? parseInt(params) : def;
+        return parseInt(new URLSearchParams(window.location.search).get(query) ?? `${def}`);
     }
 
     public getUrlFromView(): string {
@@ -122,3 +165,10 @@ export class LiveMap extends L.Map {
         return `?x=${x}&y=${y}&zoom=${zoom}`;
     }
 }
+
+// https://stackoverflow.com/a/3955096
+Array.prototype.remove = function <T>(obj: T, ax?: number): void {
+    while ((ax = this.indexOf(obj)) !== -1) {
+        this.splice(ax, 1);
+    }
+};

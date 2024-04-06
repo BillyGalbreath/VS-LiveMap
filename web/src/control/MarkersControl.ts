@@ -1,6 +1,6 @@
-import * as L from "leaflet";
-import {LiveMap} from "../LiveMap";
-import {MarkersLayer} from "../layer/MarkersLayer";
+import * as L from 'leaflet';
+import {LiveMap} from '../LiveMap';
+import {MarkersLayer} from '../layer/MarkersLayer';
 
 export class MarkersControl {
     private readonly _control: L.Control.Layers;
@@ -14,11 +14,11 @@ export class MarkersControl {
         // todo - fetch list of json files to process
         // each json file is its own layer full of markers
         try {
-            this._layers.push(new MarkersLayer(livemap, "markers/spawn.json"));
-            //this._layers.push(new MarkersLayer(livemap, this, "markers/players.json"));
-            this._layers.push(new MarkersLayer(livemap, "markers/test.json"));
+            this._layers.push(new MarkersLayer(livemap, 'markers/spawn.json'));
+            //this._layers.push(new MarkersLayer(livemap, this, 'markers/players.json'));
+            this._layers.push(new MarkersLayer(livemap, 'markers/test.json'));
         } catch (e) {
-            console.error("Error loading marker layers\n", e);
+            console.error('Error loading marker layers\n', e);
         }
     }
 

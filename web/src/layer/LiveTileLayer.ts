@@ -1,5 +1,5 @@
-import * as L from "leaflet";
-import {LiveMap} from "../LiveMap";
+import * as L from 'leaflet';
+import {LiveMap} from '../LiveMap';
 
 export class LiveTileLayer extends L.TileLayer {
     constructor(livemap: LiveMap) {
@@ -58,7 +58,7 @@ export class LiveTileLayer extends L.TileLayer {
         // URL and for compliance reasons http://www.w3.org/TR/WCAG20-TECHS/H67
         tile.alt = '';
 
-        // Set role="presentation" to force screen readers to ignore this
+        // Set role='presentation' to force screen readers to ignore this
         // https://www.w3.org/TR/wai-aria/roles#textalternativecomputation
         tile.setAttribute('role', 'presentation');
 

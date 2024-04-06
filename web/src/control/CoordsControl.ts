@@ -1,10 +1,13 @@
 import * as L from 'leaflet';
 import {ControlBox} from './ControlBox';
 import {LiveMap} from '../LiveMap';
-import {Util} from "../util/Util";
+import {Util} from '../util/Util';
 
 export class CoordsControl extends ControlBox {
     private readonly _dom: HTMLDivElement;
+
+    private _x: number = 0;
+    private _y: number = 0;
 
     constructor(livemap: LiveMap) {
         super(livemap, 'bottomleft');
@@ -35,9 +38,13 @@ export class CoordsControl extends ControlBox {
         }
 
         const point: L.Point = Util.toPoint(e!.latlng);
-        const x: number = Math.round(point.x - this._livemap.settings.spawn.x);
-        const y: number = Math.round(point.y - this._livemap.settings.spawn.y);
+        this._x = Math.round(point.x - this._livemap.settings.spawn.x);
+        this._y = Math.round(point.y - this._livemap.settings.spawn.y);
 
-        this._dom.innerHTML = `${x}, ${y}`;
+        this._dom.innerHTML = `${this._x}, ${this._y}`;
+    }
+
+    public getCoordinates(): L.PointTuple {
+        return [this._x, this._y];
     }
 }

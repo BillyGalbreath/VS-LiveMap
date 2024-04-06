@@ -1,6 +1,6 @@
-import * as L from "leaflet";
-import {LiveMap} from "../LiveMap";
-import {Util} from "../util/Util";
+import * as L from 'leaflet';
+import {LiveMap} from '../LiveMap';
+import {Util} from '../util/Util';
 
 interface Layer {
     label: string,
@@ -28,27 +28,27 @@ export class MarkersLayer extends L.LayerGroup {
         polyline: (json: Marker) => L.Layer,
         rectangle: (json: Marker) => L.Layer
     } = {
-        "circle": (json: Marker) => {
+        'circle': (json: Marker) => {
             const radius: number = (json.options as L.CircleOptions)?.radius ?? 10;
             return L.circle(Util.tupleToLngLat(json.point), {
                 ...json.options,
                 radius: Util.pixelsToMeters(radius)
             })
         },
-        "ellipse": (json: Marker) => {
+        'ellipse': (json: Marker) => {
             const radii: L.PointTuple = (json.options as L.EllipseOptions).radii ?? [10, 10];
             return L.ellipse(Util.tupleToLngLat(json.point), {
                 ...json.options,
                 radii: [radii[1], radii[0]]
             });
         },
-        "icon": (json: Marker) => L.marker(Util.tupleToLngLat(json.point), {
+        'icon': (json: Marker) => L.marker(Util.tupleToLngLat(json.point), {
             ...json.options,
-            "icon": L.icon({...json.options as L.IconOptions})
+            'icon': L.icon({...json.options as L.IconOptions})
         }),
-        "polygon": (json: Marker) => L.polygon(Util.toLngLatArray(json.points), json.options),
-        "polyline": (json: Marker) => L.polyline(Util.toLngLatArray(json.points), json.options),
-        "rectangle": (json: Marker) => L.rectangle(L.latLngBounds(Util.toLngLatArray(json.points)), json.options)
+        'polygon': (json: Marker) => L.polygon(Util.toLngLatArray(json.points), json.options),
+        'polyline': (json: Marker) => L.polyline(Util.toLngLatArray(json.points), json.options),
+        'rectangle': (json: Marker) => L.rectangle(L.latLngBounds(Util.toLngLatArray(json.points)), json.options)
     }
 
     private readonly _livemap: LiveMap;
@@ -68,7 +68,7 @@ export class MarkersLayer extends L.LayerGroup {
     }
 
     get label(): string {
-        return this._label ?? "";
+        return this._label ?? '';
     }
 
     public tick(count: number): void {
@@ -79,7 +79,7 @@ export class MarkersLayer extends L.LayerGroup {
 
     private initial(layer: Layer): void {
         this._label = layer.label;
-        this._livemap.markersControl?.addOverlay(this);
+        this._livemap.markersControl.addOverlay(this);
 
         if (!layer.hidden) {
             // only add to the map if we

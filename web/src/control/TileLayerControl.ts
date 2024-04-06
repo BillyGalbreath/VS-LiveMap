@@ -1,5 +1,5 @@
-import {LiveMap} from "../LiveMap";
-import {LiveTileLayer} from "../layer/LiveTileLayer";
+import {LiveMap} from '../LiveMap';
+import {LiveTileLayer} from '../layer/LiveTileLayer';
 
 export class TileLayerControl {
     private readonly _livemap: LiveMap;
@@ -24,7 +24,7 @@ export class TileLayerControl {
 
     private createTileLayer(livemap: LiveMap): LiveTileLayer {
         return new LiveTileLayer(livemap)
-            .addEventListener("load", (): void => {
+            .addEventListener('load', (): void => {
                 // switch layers when all tiles are loaded
                 this.switchTileLayer();
             });

@@ -1,6 +1,8 @@
 import * as L from 'leaflet';
 import {ControlBox} from './ControlBox';
 import {LiveMap} from '../LiveMap';
+import {Util} from "../util/Util";
+import '../svg/link.svg';
 
 export class LinkControl extends ControlBox {
     private readonly _dom: HTMLAnchorElement;
@@ -20,9 +22,10 @@ export class LinkControl extends ControlBox {
 
         L.DomEvent.disableClickPropagation(this._dom);
 
-        const img: HTMLImageElement = L.DomUtil.create('img', '', this._dom);
-        img.src = 'images/link.png';
-        img.alt = '';
+        this._dom.appendChild(Util.createSVGIcon('link'));
+        //const img: HTMLImageElement = L.DomUtil.create('img', '', this._dom);
+        //img.src = 'images/icon/link.svg';
+        //img.alt = '';
 
         this.addTo(livemap);
     }
@@ -30,9 +33,6 @@ export class LinkControl extends ControlBox {
     onAdd(map: L.Map): HTMLAnchorElement {
         map.addEventListener('moveend', this.update);
         map.addEventListener('zoomend', this.update);
-
-        this.update();
-
         return this._dom;
     }
 

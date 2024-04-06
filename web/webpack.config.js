@@ -1,7 +1,7 @@
 const path = require('path');
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   devServer: {
@@ -11,14 +11,10 @@ module.exports = {
   },
   devtool: 'source-map',
   entry: [
-    './src/LiveMap.css',
     './src/LiveMap.ts',
     './src/lib/L.ellipse.js',
     './src/lib/L.rotated.js'
   ],
-  externals: {
-    "leaflet": "L"
-  },
   mode: 'development',
   module: {
     rules: [
@@ -32,13 +28,20 @@ module.exports = {
         use: [
           MiniCssExtractPlugin.loader,
           {
-            loader: "css-loader",
+            loader: 'css-loader',
             options: {
               sourceMap: true,
               url: false,
             }
           }
         ],
+      },
+      {
+        test: /\.svg$/,
+        loader: 'svg-sprite-loader',
+        options: {
+          symbolId: (filePath) => `icon-${path.basename(filePath, '.svg')}`,
+        },
       }
     ]
   },
