@@ -15,15 +15,14 @@ ul, li {
   vertical-align: middle;
 }
 
-.svg-icon {
-  fill: currentColor;
-  stroke: none;
-}
-
-#map {
+body #map {
   width: 100vw;
   height: 100vh;
   cursor: crosshair;
+}
+
+body.leaflet-dragging #map {
+  cursor: grabbing;
 }
 
 img.leaflet-tile {
@@ -48,6 +47,10 @@ img.leaflet-tile {
 .leaflet-bottom.leaflet-left .coordinates {
   display: inline-block;
   float: none;
+}
+
+.leaflet-bottom.leaflet-left .link {
+  cursor: pointer;
 }
 
 a.leaflet-control-layers.link svg {

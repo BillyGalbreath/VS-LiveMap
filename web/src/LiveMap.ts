@@ -5,8 +5,9 @@ import {CoordsControl} from './control/CoordsControl';
 import {LinkControl} from './control/LinkControl';
 import {Settings} from './settings/Settings';
 import {Util} from './util/Util';
-import {ContextMenu} from './util/ContextMenu';
+import {LiveMapContextMenu} from "./util/LiveMapContextMenu";
 import './scss/styles';
+import './svg/svgs'
 
 window.onload = function (): void {
     // todo - add initial loading screen
@@ -14,6 +15,8 @@ window.onload = function (): void {
 
     // todo - add timeout error getting settings
     //
+
+    L.DomUtil.create('div', undefined, document.body).id = 'map';
 
     Util.fetchJson('tiles/settings.json').then((json): void => {
         window.livemap = new LiveMap(json as Settings);
@@ -59,42 +62,11 @@ export class LiveMap extends L.Map {
         this._coordsControl = new CoordsControl(this);
         this._linkControl = new LinkControl(this);
 
+        // the fancy context menu
+        new LiveMapContextMenu(this);
+
+        // pre-calculate map's scale
         this._scale ??= (1 / Math.pow(2, this.settings.zoom.maxout));
-
-        const contextmenu: ContextMenu = new ContextMenu(this);
-
-        this.on('load', (): void => contextmenu.close());
-        this.on('unload', (): void => contextmenu.close());
-        this.on('resize', (): void => contextmenu.close());
-        this.on('viewreset', (): void => contextmenu.close());
-
-        this.on('move', (): void => contextmenu.close());
-        this.on('movestart', (): void => contextmenu.close());
-        this.on('moveend', (): void => contextmenu.close());
-
-        this.on('zoom', (): void => contextmenu.close());
-        this.on('zoomstart', (): void => contextmenu.close());
-        this.on('zoomend', (): void => contextmenu.close());
-        this.on('zoomlevelschange', (): void => contextmenu.close());
-
-        this.on('popupopen', (): void => contextmenu.close());
-        this.on('popupclose', (): void => contextmenu.close());
-        this.on('tooltipopen', (): void => contextmenu.close());
-        this.on('tooltipclose', (): void => contextmenu.close());
-
-        this.on('click', (): void => contextmenu.close());
-        this.on('dblclick', (): void => contextmenu.close());
-        this.on('mousedown', (): void => contextmenu.close());
-        this.on('mouseup', (): void => contextmenu.close());
-        this.on('preclick', (): void => contextmenu.close());
-
-        this.on('keydown', (e: L.LeafletKeyboardEvent): void => {
-            if (e.originalEvent.key === 'Escape') {
-                contextmenu.close();
-            }
-        });
-
-        this.on('contextmenu', (e: L.LeafletMouseEvent): void => contextmenu.open(e));
     }
 
     init(): void {

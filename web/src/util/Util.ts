@@ -4,7 +4,7 @@ import {LngLat} from './LngLat';
 export class Util {
     public static createSVGIcon(icon: string): DocumentFragment {
         const template: HTMLTemplateElement = L.DomUtil.create('template');
-        template.innerHTML = `<svg class="svg-icon"><use href="#icon-${icon}"></use></svg>`;
+        template.innerHTML = `<svg><use href='#svg-${icon}'></use></svg>`;
         return template.content;
     }
 

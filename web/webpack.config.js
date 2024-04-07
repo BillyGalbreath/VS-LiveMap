@@ -40,7 +40,7 @@ module.exports = {
         test: /\.svg$/,
         loader: 'svg-sprite-loader',
         options: {
-          symbolId: (filePath) => `icon-${path.basename(filePath, '.svg')}`,
+          symbolId: (filePath) => `svg-${path.basename(filePath, '.svg')}`,
         },
       }
     ]
