@@ -4,8 +4,8 @@ import {MarkersControl} from './control/MarkersControl';
 import {CoordsControl} from './control/CoordsControl';
 import {LinkControl} from './control/LinkControl';
 import {Settings} from './settings/Settings';
+import {ContextMenu} from "./util/ContextMenu";
 import {Util} from './util/Util';
-import {LiveMapContextMenu} from "./util/LiveMapContextMenu";
 import './scss/styles';
 import './svg/svgs'
 
@@ -63,7 +63,7 @@ export class LiveMap extends L.Map {
         this._linkControl = new LinkControl(this);
 
         // the fancy context menu
-        new LiveMapContextMenu(this);
+        new ContextMenu(this);
 
         // pre-calculate map's scale
         this._scale ??= (1 / Math.pow(2, this.settings.zoom.maxout));
