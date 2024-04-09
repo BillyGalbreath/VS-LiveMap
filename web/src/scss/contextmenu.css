@@ -14,12 +14,12 @@
 }
 
 .contextmenu {
-  color: #aaa;
-  background: rgba(10, 10, 10, 0.9);
+  color: #ccc;
+  background: rgba(10, 10, 10, .9);
   box-shadow: 5px 5px 7px rgba(0, 0, 0, .7);
 
   padding: 2px;
-  border-radius: 0 10px 10px 10px;
+  border-radius: 10px;
 
   border-top: 1px #444 solid;
   border-left: 1px #444 solid;
@@ -51,7 +51,7 @@
 }
 
 .contextmenu :first-child {
-  border-radius: 0 7px 0 0;
+  border-radius: 7px 7px 0 0;
 }
 
 .contextmenu :last-child {
@@ -63,8 +63,8 @@
 }
 
 .contextmenu > *:not(:first-child):hover {
-  color: #ddd;
-  background: rgba(255, 255, 255, 0.1);
+  color: #eee;
+  background: rgba(255, 255, 255, .1);
   transition: background-color .25s;
 }
 
@@ -87,7 +87,7 @@
 .contextmenu > * > *:last-child {
   margin-right: 10px;
   text-align: right;
-  color: #888;
+  color: #aaa;
   font-size: 11px;
 }
 

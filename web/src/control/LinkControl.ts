@@ -11,7 +11,7 @@ export class LinkControl extends ControlBox {
         super(livemap, 'bottomleft');
 
         this._dom = L.DomUtil.create('a', 'leaflet-control-layers link');
-        this._dom.title = 'Get link from view';
+        this._dom.title = 'Share this location';
         this._dom.onclick = (e: MouseEvent): void => {
             e.preventDefault();
             window.history.replaceState({}, 'LiveMap', this._dom.href);

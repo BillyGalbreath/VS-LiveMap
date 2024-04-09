@@ -6,8 +6,8 @@ const TerserPlugin = require('terser-webpack-plugin');
 module.exports = {
   devServer: {
     headers: {
-      'Cache-Control': 'no-store',
-    },
+      'Cache-Control': 'no-store'
+    }
   },
   devtool: 'source-map',
   entry: [
@@ -31,10 +31,10 @@ module.exports = {
             loader: 'css-loader',
             options: {
               sourceMap: true,
-              url: false,
+              url: false
             }
           }
-        ],
+        ]
       },
       {
         test: /\.svg$/,

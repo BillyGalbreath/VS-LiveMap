@@ -9,14 +9,20 @@ import {Util} from './util/Util';
 import './scss/styles';
 import './svg/svgs'
 
-window.onload = function (): void {
+window.onload = (): void => {
     // todo - add initial loading screen
     //
 
     // todo - add timeout error getting settings
     //
 
-    L.DomUtil.create('div', undefined, document.body).id = 'map';
+    // create map element
+    const map: HTMLDivElement = L.DomUtil.create('div', undefined, document.body);
+    map.id = 'map';
+
+    // fix map height for android devices
+    // https://chanind.github.io/javascript/2019/09/28/avoid-100vh-on-mobile-web.html
+    map.style.height = `${window.innerHeight}px`;
 
     Util.fetchJson('tiles/settings.json').then((json): void => {
         window.livemap = new LiveMap(json as Settings);

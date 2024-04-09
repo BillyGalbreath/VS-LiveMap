@@ -1,0 +1,53 @@
+.notifications {
+  position: absolute;
+  left: 12px;
+  bottom: 55px;
+  z-index: 9998;
+  margin-right: 12px;
+  max-width: 350px;
+
+  div {
+    position: relative;
+    margin-top: 12px;
+    padding: 10px 0;
+    color: #eee;
+    border-radius: 5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, .9);
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, .9);
+
+    svg {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-left: 10px;
+      width: 32px;
+      height: 32px;
+      filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, .9));
+    }
+
+    p {
+      margin-left: 55px;
+      padding: 0 20px 0 15px;
+      border-left: 1px solid rgba(255, 255, 255, .3);
+      line-height: 1.2;
+      font-size: 16px;
+      text-align: justify;
+    }
+
+    &.info {
+      background: #A3ADB2;
+    }
+
+    &.success {
+      background: #A4B123;
+    }
+
+    &.warning {
+      background: #E7B600;
+    }
+
+    &.danger {
+      background: #C20000;
+    }
+  }
+}

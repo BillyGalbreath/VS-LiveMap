@@ -5,7 +5,7 @@
 }
 
 body {
-  background: #121212;
+  background: #00122d;
   overflow: hidden;
 }
 
@@ -15,14 +15,18 @@ ul, li {
   vertical-align: middle;
 }
 
-body #map {
+#map {
   width: 100vw;
   height: 100vh;
   cursor: crosshair;
 }
 
-body.leaflet-dragging #map {
+.leaflet-dragging #map {
   cursor: grabbing;
+}
+
+a {
+  cursor: pointer !important;
 }
 
 img.leaflet-tile {
@@ -43,14 +47,20 @@ img.leaflet-tile {
   color: #333333;
 }
 
+.leaflet-control {
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, .9) !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, .3) !important;
+}
+
+.leaflet-control svg {
+  color: #000;
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, .5));
+}
+
 .leaflet-bottom.leaflet-left .link,
 .leaflet-bottom.leaflet-left .coordinates {
   display: inline-block;
   float: none;
-}
-
-.leaflet-bottom.leaflet-left .link {
-  cursor: pointer;
 }
 
 a.leaflet-control-layers.link svg {
@@ -58,17 +68,23 @@ a.leaflet-control-layers.link svg {
   width: 26px;
   height: 26px;
   vertical-align: bottom;
-  color: #000;
 }
 
 div.leaflet-control-layers.coordinates {
-  vertical-align: bottom;
   padding: 0 10px;
-  font-size: 15px;
-  line-height: 30px;
   height: 30px;
+  line-height: 30px;
+  vertical-align: bottom;
+  font-family: 'Inter', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: 'slnt' 0;
+  font-size: 15px;
+  white-space: pre;
 }
 
 @import 'contextmenu';
+@import 'notification';
 @import 'font';
 @import 'leaflet';
