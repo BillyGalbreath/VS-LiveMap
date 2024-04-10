@@ -63,7 +63,7 @@ export class Util {
         return tuples as LngLat[];
     }
 
-    public static async fetchJson(url: string): Promise<any> {
+    public static async fetchJson(url: string) {
         const res: Response = await fetch(url, {
             headers: {
                 'Content-Disposition': 'inline'

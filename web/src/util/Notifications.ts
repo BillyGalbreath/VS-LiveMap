@@ -20,7 +20,7 @@ export class Notifications {
 
         setTimeout((): void => {
             div.classList.add('show');
-            let handler = (): void => {
+            const handler = (): void => {
                 div.removeEventListener('transitionend', handler);
                 setTimeout((): void => {
                     div.classList.remove('show');
