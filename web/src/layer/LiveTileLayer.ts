@@ -2,6 +2,8 @@ import * as L from 'leaflet';
 import {LiveMap} from '../LiveMap';
 
 export class LiveTileLayer extends L.TileLayer {
+    private readonly _livemap: LiveMap;
+
     constructor(livemap: LiveMap) {
         super('tiles/{z}/{x}_{y}.png', {
             // tile sizes match regions sizes (512 blocks x 512 blocks)
@@ -30,6 +32,8 @@ export class LiveTileLayer extends L.TileLayer {
             // zoomOffset = -(zoom.maxin)
             zoomOffset: -livemap.settings.zoom.maxin
         });
+
+        this._livemap = livemap;
 
         // push this layer to the back (leaflet defaults it to 1)
         this.setZIndex(0);

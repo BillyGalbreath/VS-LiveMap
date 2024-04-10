@@ -1,10 +1,11 @@
 import * as L from 'leaflet';
 import {TileLayerControl} from './control/TileLayerControl';
-import {MarkersControl} from './control/MarkersControl';
+import {LayersControl} from './control/LayersControl';
 import {CoordsControl} from './control/CoordsControl';
 import {LinkControl} from './control/LinkControl';
-import {Settings} from './settings/Settings';
+import {Settings} from './data/Settings';
 import {ContextMenu} from "./util/ContextMenu";
+import {Notifications} from "./util/Notifications";
 import {Util} from './util/Util';
 import './scss/styles';
 import './svg/svgs'
@@ -17,14 +18,14 @@ window.onload = (): void => {
     //
 
     // create map element
-    const map: HTMLDivElement = L.DomUtil.create('div', undefined, document.body);
+    const map: HTMLDivElement = L.DomUtil.create('div', 'loading', document.body);
     map.id = 'map';
 
     // fix map height for android devices
     // https://chanind.github.io/javascript/2019/09/28/avoid-100vh-on-mobile-web.html
     map.style.height = `${window.innerHeight}px`;
 
-    Util.fetchJson('tiles/settings.json').then((json): void => {
+    Util.fetchJson('data/settings.json').then((json): void => {
         window.livemap = new LiveMap(json as Settings);
         window.livemap.init();
     });
@@ -34,9 +35,12 @@ export class LiveMap extends L.Map {
     private readonly _settings: Settings;
 
     private readonly _tileLayerControl: TileLayerControl;
-    private readonly _markersControl: MarkersControl;
+    private readonly _layersControl: LayersControl;
     private readonly _linkControl: LinkControl;
     private readonly _coordsControl: CoordsControl;
+
+    private readonly _contextMenu: ContextMenu;
+    private readonly _notifications: Notifications;
 
     private readonly _scale: number;
 
@@ -60,25 +64,27 @@ export class LiveMap extends L.Map {
             wheelPxPerZoomLevel: 60
         });
 
+        this.on('load', ()=> {
+            this.getContainer().classList.remove('loading');
+        })
+
         this._settings = settings;
 
         // setup the controllers
         this._tileLayerControl = new TileLayerControl(this);
-        this._markersControl = new MarkersControl(this);
+        this._layersControl = new LayersControl(this);
         this._coordsControl = new CoordsControl(this);
         this._linkControl = new LinkControl(this);
 
-        // the fancy context menu
-        new ContextMenu(this);
+        // the fancy context menu and stuff
+        this._contextMenu = new ContextMenu(this);
+        this._notifications = new Notifications();
 
         // pre-calculate map's scale
         this._scale ??= (1 / Math.pow(2, this.settings.zoom.maxout));
     }
 
     init(): void {
-        // pretty background
-        this.getContainer().style.background = 'url(images/sky.png)';
-
         // replace leaflet's attribution with our own
         this.attributionControl.setPrefix(this._settings.attribution);
 
@@ -97,8 +103,16 @@ export class LiveMap extends L.Map {
         return this._coordsControl;
     }
 
-    get markersControl(): MarkersControl {
-        return this._markersControl;
+    get linkControl(): LinkControl {
+        return this._linkControl
+    }
+
+    get layersControl(): LayersControl {
+        return this._layersControl;
+    }
+
+    get notifications(): Notifications {
+        return this._notifications;
     }
 
     get settings(): Settings {
@@ -113,7 +127,7 @@ export class LiveMap extends L.Map {
         try {
             if (document.visibilityState === 'visible') {
                 this._tileLayerControl.tick(count);
-                this._markersControl.tick(count);
+                this._layersControl.tick(count);
             }
         } catch (e) {
             console.error(`Error processing tick (${count})\n`, e);
@@ -122,8 +136,14 @@ export class LiveMap extends L.Map {
         setTimeout(() => this.loop(++count), 1000);
     }
 
-    public centerOn(x: number, y: number, zoom: number): void {
-        this.setZoom(this.settings.zoom.maxout - zoom);
+    public getOrCreatePane(name?: string): HTMLElement | undefined {
+        return name ? this.getPane(name) ?? this.createPane(name) : undefined;
+    }
+
+    public centerOn(x: number, y: number, zoom?: number): void {
+        if (zoom !== undefined) {
+            this.setZoom(this.settings.zoom.maxout - zoom);
+        }
         this.setView(Util.tupleToLatLng([
             x + this.settings.spawn.x,
             y + this.settings.spawn.y

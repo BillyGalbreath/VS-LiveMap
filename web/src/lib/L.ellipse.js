@@ -95,6 +95,46 @@ L.Ellipse = L.Path.extend({
     this._mRadiusY = point.y;
   },
 
+  setRadius: function (radii) {
+    this._mRadiusX = radii[0];
+    this._mRadiusY = radii[1];
+    return this.redraw();
+  },
+
+  getRadius: function () {
+    return new L.point(this._mRadiusX, this._mRadiusY);
+  },
+
+  setTilt: function (tilt) {
+    this._tiltDeg = tilt;
+    return this.redraw();
+  },
+
+  getBounds: function () {
+    // TODO respect tilt (bounds are too big)
+    var lngRadius = this._getLngRadius(),
+      latRadius = this._getLatRadius(),
+      latlng = this._latlng;
+
+    return new L.LatLngBounds(
+      [latlng.lat - latRadius, latlng.lng - lngRadius],
+      [latlng.lat + latRadius, latlng.lng + lngRadius]);
+  },
+
+  // @method setLatLng(latLng: LatLng): this
+  // Sets the position of a circle marker to a new location.
+  setLatLng: function (latlng) {
+    this._latlng = L.latLng(latlng);
+    this.redraw();
+    return this.fire('move', {latlng: this._latlng});
+  },
+
+  // @method getLatLng(): LatLng
+  // Returns the current geographical position of the circle marker
+  getLatLng: function () {
+    return this._latlng;
+  },
+
   setStyle: L.Path.prototype.setStyle,
 
   _project: function () {

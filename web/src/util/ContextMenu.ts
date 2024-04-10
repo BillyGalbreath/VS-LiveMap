@@ -32,7 +32,7 @@ export class ContextMenu {
 
         this._contents = this._contents.concat([
             {text: 'Share', icon: 'link', key: 'Ctrl+S', action: () => this.share()},
-            {text: 'Bookmark', icon: 'star2', key: 'Ctrl+B', action: (e: KeyboardEvent) => this.bookmark(e)},
+            {text: 'Bookmark', icon: 'star2', key: 'Ctrl+B'},
             {},
             {text: 'Center', icon: 'center', key: 'F10', action: () => this.center()}
         ] as Contents[]);
@@ -46,9 +46,8 @@ export class ContextMenu {
         window.oncontextmenu = (e: MouseEvent) => this.open(e);
         window.onkeydown = (e: KeyboardEvent) => this.keydown(e);
 
-        this._livemap.on('load unload resize viewreset move movestart moveend zoom zoomstart' +
-            'zoomend zoomlevelschange popupopen popupclose tooltipopen tooltipclose click dblclick' +
-            'mousedown mouseup preclick', (): void => this.close());
+        this._livemap.on('load unload resize viewreset move movestart moveend zoom zoomstart zoomend' +
+            ' zoomlevelschange click dblclick mousedown mouseup preclick', (): void => this.close());
     }
 
     get shownMenu(): HTMLElement | null {
@@ -90,7 +89,7 @@ export class ContextMenu {
         this.stopPropagation(e);
 
         // update coordinates in first row
-        menu.querySelector('div:first-child p:nth-child(2)')!.innerHTML = this.getPoint();
+        menu.querySelector('div:first-child p:nth-child(2)')!.innerHTML = this.getLocation();
     }
 
     private keydown(e: KeyboardEvent): void {
@@ -146,9 +145,7 @@ export class ContextMenu {
 
         // populate contents
         if (contents.icon) {
-            const template: HTMLTemplateElement = document.createElement('template');
-            template.innerHTML = `<svg><use href='#svg-${contents.icon}'></use></svg>`;
-            iconElem.appendChild(template.content);
+            iconElem.appendChild(Util.createSVGIcon(contents.icon));
         }
         textElem.innerHTML = contents.text ?? '';
         keyElem.innerHTML = contents.key ?? '';
@@ -192,54 +189,49 @@ export class ContextMenu {
         return combo;
     }
 
-    private getPoint(): string {
-        const point: [number, number] = this._livemap.coordsControl.getCoordinates();
-        return `[ ${point[0]}, ${point[1]} ]`;
+    private getLocation(): string {
+        //const point: [number, number] = this._livemap.coordsControl.getCoordinates();
+        return '';//`[ ${point[0]}, ${point[1]} ]`;
     }
 
     public copy(): void {
         let text: string | undefined = this.shownMenu?.querySelector('p:nth-child(2)')?.innerHTML;
-        //Util.copyToClipboard(text = text ?? this.getPoint())
-        navigator.clipboard.writeText(text = text ?? this.getPoint())
+        navigator.clipboard.writeText(text ?? this.getLocation())
             .then((): void => {
-                console.log(`copied point '${text}' to clipboard`)
+                this._livemap.notifications.success('Copied location to clipboard');
                 this.close();
             })
             .catch((e): void => {
-                console.log(e);
+                console.error('Could not copy location', e);
+                this._livemap.notifications.danger('Could not copy location');
             });
     }
 
     public paste(): void {
-        navigator.clipboard.readText().then((text: string): void => {
-            const match: RegExpExecArray | null = this._pointRegex.exec(text);
-            console.log(`pasted text '${text}' (is point: ${!!match})`);
-            if (!match) {
-                return;
-            }
-            const x: number = parseInt(match[1]);
-            const y: number = parseInt(match[2]);
-            console.log(`x: ${x}`, `y: ${y}`);
-            this._livemap.setView(Util.toLatLng([
-                x + this._livemap.settings.spawn.x,
-                y + this._livemap.settings.spawn.y
-            ]));
-        });
+        navigator.clipboard.readText()
+            .then((text: string): void => {
+                const match: RegExpExecArray | null = this._pointRegex.exec(text);
+                if (!match) {
+                    this._livemap.notifications.warning('Not a valid location');
+                    return;
+                }
+                this._livemap.notifications.info('Centered on location from clipboard');
+                this._livemap.centerOn(parseInt(match[1]), parseInt(match[2]));
+            })
+            .catch((e): void => {
+                console.error('Could not paste location', e);
+                this._livemap.notifications.danger('Could not paste location');
+            });
     }
 
     public share(): void {
         //
     }
 
-    public bookmark(e: Event): void {
-        //
-
-        if (e instanceof KeyboardEvent) {
-            this.stopPropagation(e);
-        }
-    }
-
     public center(): void {
-        //
+        //const point: [number, number] = this._livemap.coordsControl.getCoordinates();
+        //this._livemap.centerOn(point[0], point[1]);
+        //this._livemap.coordsControl.update();
+        //this._livemap.linkControl.update();
     }
 }

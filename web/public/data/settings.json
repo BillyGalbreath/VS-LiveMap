@@ -1,5 +1,6 @@
 {
   "attribution": "<a href=\"https://mods.vintagestory.at/livemap\" target=\"_blank\">Livemap</a> &copy;2024",
+  "interval": 30,
   "size": {
     "x": 1024000,
     "y": 1024000
@@ -13,5 +14,9 @@
     "maxin": 3,
     "maxout": 8
   },
-  "interval": 30
+  "markers": [
+    "players",
+    "spawn",
+    "test"
+  ]
 }

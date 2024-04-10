@@ -1,3 +1,8 @@
+@import 'contextmenu';
+@import 'notification';
+@import 'font';
+@import 'leaflet';
+
 * {
   margin: 0;
   padding: 0;
@@ -5,8 +10,8 @@
 }
 
 body {
-  background: #00122d;
   overflow: hidden;
+  background: #00122d;
 }
 
 ul, li {
@@ -18,7 +23,14 @@ ul, li {
 #map {
   width: 100vw;
   height: 100vh;
+  background: transparent url(images/sky.png) repeat;
   cursor: crosshair;
+  opacity: 1;
+  transition: opacity 1s;
+}
+
+#map.loading {
+  opacity: 0;
 }
 
 .leaflet-dragging #map {
@@ -27,6 +39,16 @@ ul, li {
 
 a {
   cursor: pointer !important;
+}
+
+img.logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90%;
+  max-width: 1024px;
+  transform: translateX(-50%) translateY(-50%);
+  background: #00122d;
 }
 
 img.leaflet-tile {
@@ -83,8 +105,3 @@ div.leaflet-control-layers.coordinates {
   font-size: 15px;
   white-space: pre;
 }
-
-@import 'contextmenu';
-@import 'notification';
-@import 'font';
-@import 'leaflet';

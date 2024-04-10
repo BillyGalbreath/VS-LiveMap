@@ -8,6 +8,7 @@
 */node_modules/
 /web/public/livemap.js*
 /web/public/livemap.css*
+/web/public/data/*
 /web/public/markers/*
 /web/public/tiles/*
 !/web/public/tiles/settings.json

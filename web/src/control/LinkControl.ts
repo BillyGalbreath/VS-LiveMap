@@ -12,20 +12,13 @@ export class LinkControl extends ControlBox {
 
         this._dom = L.DomUtil.create('a', 'leaflet-control-layers link');
         this._dom.title = 'Share this location';
+        this._dom.appendChild(Util.createSVGIcon('link'));
         this._dom.onclick = (e: MouseEvent): void => {
             e.preventDefault();
             window.history.replaceState({}, 'LiveMap', this._dom.href);
-            navigator.clipboard.writeText(this._dom.href).then((): void => {
-                // todo feedback popup
-            });
         }
 
         L.DomEvent.disableClickPropagation(this._dom);
-
-        this._dom.appendChild(Util.createSVGIcon('link'));
-        //const img: HTMLImageElement = L.DomUtil.create('img', '', this._dom);
-        //img.src = 'images/icon/link.svg';
-        //img.alt = '';
 
         this.addTo(livemap);
     }
@@ -43,5 +36,8 @@ export class LinkControl extends ControlBox {
 
     update = (): void => {
         this._dom.href = this._livemap.getUrlFromView();
+
+        // todo - find out how to prevent chrome from spamming history
+        //window.history.replaceState({}, 'LiveMap', this._dom.href);
     }
 }
