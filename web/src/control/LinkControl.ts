@@ -16,6 +16,12 @@ export class LinkControl extends ControlBox {
         this._dom.onclick = (e: MouseEvent): void => {
             e.preventDefault();
             window.history.replaceState({}, 'LiveMap', this._dom.href);
+
+            const center: L.LatLng = this._livemap.getCenter();
+            this._livemap.contextMenu.share([
+                Math.floor(Util.metersToPixels(center.lat)) - this._livemap.settings.spawn.x,
+                Math.floor(Util.metersToPixels(center.lng)) - this._livemap.settings.spawn.y
+            ]);
         }
 
         L.DomEvent.disableClickPropagation(this._dom);
@@ -38,6 +44,6 @@ export class LinkControl extends ControlBox {
         this._dom.href = this._livemap.getUrlFromView();
 
         // todo - find out how to prevent chrome from spamming history
-        //window.history.replaceState({}, 'LiveMap', this._dom.href);
+        window.history.replaceState({}, '', this._dom.href);
     }
 }

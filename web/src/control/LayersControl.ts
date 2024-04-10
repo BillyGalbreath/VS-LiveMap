@@ -13,7 +13,7 @@ export class LayersControl extends L.Control.Layers {
         this.addTo(livemap);
 
         // each json file is its own layer full of markers
-        livemap.settings.markers?.forEach((layer: string) => {
+        livemap.settings.markers?.forEach((layer: string): void => {
             try {
                 new MarkersLayer(livemap, `data/markers/${layer}.json`);
             } catch (e) {
@@ -23,11 +23,11 @@ export class LayersControl extends L.Control.Layers {
     }
 
     public tick(count: number): void {
-        this._layers.forEach((obj: L.Control.LayersObject) => {
+        this._layers.forEach((obj: L.Control.LayersObject): void => {
             try {
                 (obj.layer as MarkersLayer).tick(count);
             } catch (e) {
-                console.log('Error ticking markers layer\n', obj.layer, e);
+                console.error('Error ticking markers layer\n', obj.layer, e);
             }
         });
     }

@@ -11,7 +11,12 @@ export interface Contents {
 export class ContextMenu {
     private readonly _livemap: LiveMap;
     private readonly _pointRegex: RegExp = /\[? ?(-?\d+) ?,? ?(-?\d+) ?]?/;
+
+    private readonly _menu: [HTMLElement, HTMLElement];
     private readonly _contents: Contents[];
+
+    private _point?: [number, number];
+    private _cur: boolean = false;
 
     public constructor(livemap: LiveMap) {
         this._livemap = livemap;
@@ -26,20 +31,21 @@ export class ContextMenu {
             this._contents = this._contents.concat([
                 {text: 'Copy', icon: 'copy', key: 'Ctrl+C', action: () => this.copy()},
                 {text: 'Paste', icon: 'paste', key: 'Ctrl+V', action: () => this.paste()},
+                {},
+                {text: 'Share', icon: 'link', key: 'Ctrl+S', action: () => this.share(this._point)},
                 {}
             ] as Contents[]);
         }
 
         this._contents = this._contents.concat([
-            {text: 'Share', icon: 'link', key: 'Ctrl+S', action: () => this.share()},
-            {text: 'Bookmark', icon: 'star2', key: 'Ctrl+B'},
-            {},
             {text: 'Center', icon: 'center', key: 'F10', action: () => this.center()}
         ] as Contents[]);
 
         // create dual menus to swap between
-        this.createMenu();
-        this.createMenu();
+        this._menu = [
+            this.createMenu(),
+            this.createMenu()
+        ];
 
         // setup map's listeners
         window.onblur = document.onblur = (): void => this.close();
@@ -50,27 +56,21 @@ export class ContextMenu {
             ' zoomlevelschange click dblclick mousedown mouseup preclick', (): void => this.close());
     }
 
-    get shownMenu(): HTMLElement | null {
+    get nextMenu(): HTMLElement {
         // get the current active menu
-        return document.querySelector('.wrapper.show');
+        return this._menu[+(this._cur = !this._cur)];
     }
 
-    get hiddenMenu(): HTMLElement | null {
-        // get the first inactive menu
-        return document.querySelector('.wrapper:not(.show)');
+    get currentMenu(): HTMLElement {
+        // get the current menu
+        return this._menu[+this._cur];
     }
 
     private close(): void {
         // hide the current menu
-        const menu: HTMLElement | null = this.shownMenu;
-        if (menu) {
-            // delay this so our query selector works correctly elsewhere
-            // closing too quickly will just make open use the same menu
-            // again which effectively skips the open/close animations
-            setTimeout((): void => {
-                menu.classList.remove('show');
-            }, 50);
-        }
+        this.currentMenu.classList.remove('show');
+
+        this._point = undefined;
     }
 
     private open(e: MouseEvent): void {
@@ -78,7 +78,7 @@ export class ContextMenu {
         this.close();
 
         // get the next menu
-        const menu: HTMLElement = this.hiddenMenu!;
+        const menu: HTMLElement = this.nextMenu;
 
         // show the menu at mouse position, while keeping it inside the viewable area
         menu.classList.add('show');
@@ -90,6 +90,8 @@ export class ContextMenu {
 
         // update coordinates in first row
         menu.querySelector('div:first-child p:nth-child(2)')!.innerHTML = this.getLocation();
+
+        this._point = this._livemap.coordsControl.getPoint();
     }
 
     private keydown(e: KeyboardEvent): void {
@@ -106,11 +108,12 @@ export class ContextMenu {
         this._contents.forEach((contents: Contents): void => {
             if (contents.key == combo && contents.action) {
                 contents.action(e);
+                this.stopPropagation(e);
             }
         });
     }
 
-    private createMenu(): void {
+    private createMenu(): HTMLElement {
         // create the menu
         const wrapper: HTMLElement = document.createElement('div');
         const div: HTMLElement = document.createElement('div');
@@ -130,6 +133,8 @@ export class ContextMenu {
 
         // add menu to body
         document.body.appendChild(wrapper);
+
+        return wrapper;
     }
 
     private createRow(contents: Contents): HTMLElement {
@@ -189,21 +194,23 @@ export class ContextMenu {
         return combo;
     }
 
-    private getLocation(): string {
-        //const point: [number, number] = this._livemap.coordsControl.getCoordinates();
-        return '';//`[ ${point[0]}, ${point[1]} ]`;
+    private getLocation(point?: [number, number]): string {
+        point ??= this._livemap.coordsControl.getPoint();
+        return `[ ${point[0]}, ${point[1]} ]`;
     }
 
     public copy(): void {
-        let text: string | undefined = this.shownMenu?.querySelector('p:nth-child(2)')?.innerHTML;
-        navigator.clipboard.writeText(text ?? this.getLocation())
+        //const text: string | undefined = this.currentMenu.querySelector('p:nth-child(2)')?.innerHTML;
+        navigator.clipboard.writeText(this.getLocation())
             .then((): void => {
-                this._livemap.notifications.success('Copied location to clipboard');
-                this.close();
+                window.livemap.notifications.success('Copied location to clipboard');
             })
             .catch((e): void => {
-                console.error('Could not copy location', e);
-                this._livemap.notifications.danger('Could not copy location');
+                console.error('Could not copy location\n', e);
+                window.livemap.notifications.danger('Could not copy location');
+            })
+            .finally((): void => {
+                this.close();
             });
     }
 
@@ -219,19 +226,34 @@ export class ContextMenu {
                 this._livemap.centerOn(parseInt(match[1]), parseInt(match[2]));
             })
             .catch((e): void => {
-                console.error('Could not paste location', e);
+                console.error('Could not paste location\n', e);
                 this._livemap.notifications.danger('Could not paste location');
+            })
+            .finally((): void => {
+                this.close();
             });
     }
 
-    public share(): void {
-        //
+    public share(point?: [number, number]): void {
+        point ??= this._livemap.coordsControl.getPoint();
+        const text: string = `${window.location.origin}${window.location.pathname}?x=${point[0]}&z=${point[1]}&zoom=${this._livemap.currentZoom()}`;
+        navigator.clipboard.writeText(text)
+            .then((): void => {
+                window.livemap.notifications.success('Copied shareable url to clipboard');
+            })
+            .catch((e): void => {
+                console.error('Could not copy shareable url\n', e);
+                window.livemap.notifications.danger('Could not copy shareable url');
+            })
+            .finally((): void => {
+                this.close();
+            });
     }
 
     public center(): void {
-        //const point: [number, number] = this._livemap.coordsControl.getCoordinates();
-        //this._livemap.centerOn(point[0], point[1]);
-        //this._livemap.coordsControl.update();
-        //this._livemap.linkControl.update();
+        const point: [number, number] = this._livemap.coordsControl.getPoint();
+        this._livemap.centerOn(point[0], point[1]);
+        this._livemap.coordsControl.update();
+        this._livemap.linkControl.update();
     }
 }

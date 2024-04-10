@@ -111,7 +111,6 @@ L.Ellipse = L.Path.extend({
   },
 
   getBounds: function () {
-    // TODO respect tilt (bounds are too big)
     var lngRadius = this._getLngRadius(),
       latRadius = this._getLatRadius(),
       latlng = this._latlng;

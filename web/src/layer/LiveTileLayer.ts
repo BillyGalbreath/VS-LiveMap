@@ -11,7 +11,7 @@ export class LiveTileLayer extends L.TileLayer {
             // dont wrap tiles at edges
             noWrap: true,
             // zoom stuff (this is a pita, btw)
-            // this doesnt work right, so we leave it false and override _getZoomForUrl below
+            // this doesn't work right, so we leave it false and override _getZoomForUrl below
             zoomReverse: false,
             // the closest zoomed in possible (without stretching)
             // this is always 0. no exceptions!
@@ -77,7 +77,7 @@ export class LiveTileLayer extends L.TileLayer {
                 return;
             }
 
-            // Get image data and convert into object URL so it can be used as a src
+            // Get image data and convert into object URL, so it can be used as a src
             // Leaflet's onload listener will take it from here
             res.blob().then((blob: Blob): void => {
                 // don't use URL.createObjectURL, it creates memory leak

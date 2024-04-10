@@ -14,9 +14,6 @@ export class CoordsControl extends ControlBox {
 
         this._dom = L.DomUtil.create('div', 'leaflet-control-layers coordinates');
 
-        // todo - why does this break lighthouse's accessibility report?? (axe-core Error: wf[r] is not a function)
-        //this._dom.innerHTML = "0, 0";
-
         L.DomEvent.disableClickPropagation(this._dom);
 
         this.addTo(livemap);
@@ -24,6 +21,9 @@ export class CoordsControl extends ControlBox {
 
     onAdd(map: L.Map): HTMLElement {
         map.addEventListener('mousemove', this.update);
+
+        this.update();
+
         return this._dom;
     }
 
@@ -31,16 +31,20 @@ export class CoordsControl extends ControlBox {
         map.removeEventListener('mousemove', this.update);
     }
 
-    public update = (e: L.LeafletMouseEvent): void => {
+    public update = (e?: L.LeafletMouseEvent): void => {
+        if (!e) {
+            this._dom.innerHTML = '0, 0';
+            return;
+        }
+
         const point: L.Point = Util.toPoint(e!.latlng);
         this._x = Math.round(point.x - this._livemap.settings.spawn.x);
         this._y = Math.round(point.y - this._livemap.settings.spawn.y);
 
-        // todo - why does this break lighthouse's accessibility report?? (axe-core Error: wf[r] is not a function)
         this._dom.innerHTML = `${this._x}, ${this._y}`;
     }
 
-    public getCoordinates(): L.PointTuple {
+    public getPoint(): L.PointTuple {
         return [this._x, this._y];
     }
 }

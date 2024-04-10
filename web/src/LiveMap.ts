@@ -11,12 +11,6 @@ import './scss/styles';
 import './svg/svgs'
 
 window.onload = (): void => {
-    // todo - add initial loading screen
-    //
-
-    // todo - add timeout error getting settings
-    //
-
     // create map element
     const map: HTMLDivElement = L.DomUtil.create('div', 'loading', document.body);
     map.id = 'map';
@@ -64,13 +58,14 @@ export class LiveMap extends L.Map {
             wheelPxPerZoomLevel: 60
         });
 
-        this.on('load', ()=> {
+        this.on('load', () => {
             this.getContainer().classList.remove('loading');
+            document.querySelector('.logo svg')?.classList.remove('loading');
         })
 
         this._settings = settings;
 
-        // setup the controllers
+        // set up the controllers
         this._tileLayerControl = new TileLayerControl(this);
         this._layersControl = new LayersControl(this);
         this._coordsControl = new CoordsControl(this);
@@ -80,23 +75,28 @@ export class LiveMap extends L.Map {
         this._contextMenu = new ContextMenu(this);
         this._notifications = new Notifications();
 
+        // replace leaflet's attribution with our own
+        this.attributionControl.setPrefix(this._settings.attribution);
+
         // pre-calculate map's scale
         this._scale ??= (1 / Math.pow(2, this.settings.zoom.maxout));
     }
 
+    // this has to be done _after_ the map has already been initialized
     init(): void {
-        // replace leaflet's attribution with our own
-        this.attributionControl.setPrefix(this._settings.attribution);
-
         // move to the coords or spawn point at specified or default zoom level
         this.centerOn(
             this.getUrlParam('x', 0),
-            this.getUrlParam('y', 0),
+            this.getUrlParam('z', 0),
             this.getUrlParam('zoom', this.settings.zoom.def)
         );
 
         // start the tick loop
         this.loop(0);
+    }
+
+    get contextMenu(): ContextMenu {
+        return this._contextMenu;
     }
 
     get coordsControl(): CoordsControl {
@@ -151,16 +151,19 @@ export class LiveMap extends L.Map {
         this._linkControl.update();
     }
 
+    public currentZoom(): number {
+        return this.settings.zoom.maxout - this.getZoom();
+    }
+
     public getUrlParam(query: string, def: number): number {
         return parseInt(new URLSearchParams(window.location.search).get(query) ?? `${def}`);
     }
 
     public getUrlFromView(): string {
         const center: L.Point = Util.toPoint(this.getCenter());
-        const zoom: number = this.settings.zoom.maxout - this.getZoom();
         const x: number = Math.floor(center.x) - this.settings.spawn.x;
         const y: number = Math.floor(center.y) - this.settings.spawn.y;
-        return `?x=${x}&y=${y}&zoom=${zoom}`;
+        return `?x=${x}&z=${y}&zoom=${this.currentZoom()}`;
     }
 }
 

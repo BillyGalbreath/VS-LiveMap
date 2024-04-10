@@ -25,12 +25,42 @@ ul, li {
   height: 100vh;
   background: transparent url(images/sky.png) repeat;
   cursor: crosshair;
-  opacity: 1;
-  transition: opacity 1s;
+  transition: opacity 1s ease-in-out;
 }
 
 #map.loading {
   opacity: 0;
+}
+
+#map.loading * {
+  pointer-events: none;
+}
+
+.logo {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+}
+
+.logo img {
+  display: block;
+  margin: 0 auto;
+  width: 90%;
+  max-width: 1024px;
+}
+
+.logo svg {
+  display: block;
+  margin: 0 auto;
+  width: 64px;
+  height: 64px;
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+.logo svg.loading {
+  opacity: 1;
 }
 
 .leaflet-dragging #map {
@@ -39,16 +69,6 @@ ul, li {
 
 a {
   cursor: pointer !important;
-}
-
-img.logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 90%;
-  max-width: 1024px;
-  transform: translateX(-50%) translateY(-50%);
-  background: #00122d;
 }
 
 img.leaflet-tile {
@@ -104,4 +124,9 @@ div.leaflet-control-layers.coordinates {
   font-variation-settings: 'slnt' 0;
   font-size: 15px;
   white-space: pre;
+}
+
+.leaflet-container img.leaflet-tile {
+  /* See: https://github.com/GoogleChrome/lighthouse/issues/15497#issuecomment-2047385179 */
+  mix-blend-mode: color-dodge !important;
 }
