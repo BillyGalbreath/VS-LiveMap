@@ -14,9 +14,5 @@
     "maxin": 3,
     "maxout": 8
   },
-  "markers": [
-    "players",
-    "spawn",
-    "test"
-  ]
+  "markers": []
 }
