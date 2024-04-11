@@ -17,7 +17,7 @@
 // https://github.com/jdfergason/Leaflet.Ellipse
 
 import * as L from "leaflet";
-import {Util} from "../util/Util";
+import {Location} from "../data/Location";
 
 L.SVG.include({
   _updateEllipse: function (layer) {
@@ -90,9 +90,9 @@ L.Ellipse = L.Path.extend({
       this._tiltDeg = 0;
     }
 
-    const point = Util.tupleToPoint(options.radii ?? [10, 10]);
+    const point = Location.of(options.radii ?? [10, 10]);
     this._mRadiusX = point.x;
-    this._mRadiusY = point.y;
+    this._mRadiusY = point.z;
   },
 
   setRadius: function (radii) {
@@ -146,8 +146,8 @@ L.Ellipse = L.Path.extend({
     this._point = this._map.latLngToLayerPoint(latlng);
 
     // https://github.com/jdfergason/Leaflet.Ellipse/issues/10#issuecomment-348963516
-    this._radiusX = Util.pixelsToMeters(Math.abs(this._point.x - pointLeft.x));
-    this._radiusY = Util.pixelsToMeters(Math.abs(pointBelow.y - this._point.y));
+    this._radiusX = Location.pixelsToMeters(Math.abs(this._point.x - pointLeft.x));
+    this._radiusY = Location.pixelsToMeters(Math.abs(pointBelow.y - this._point.y));
 
     this._tilt = Math.PI * this._tiltDeg / 180;
     this._endPointParams = this._centerPointToEndPoint();

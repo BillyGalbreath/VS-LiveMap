@@ -1,11 +1,11 @@
 import * as L from 'leaflet';
 import {Marker, MarkerJson} from "./Marker";
-import {Util} from "../../util/Util";
 import {LiveMap} from "../../LiveMap";
+import {Location} from "../../data/Location";
 
 export class Ellipse extends Marker {
     constructor(livemap: LiveMap, json: MarkerJson) {
-        super(livemap, json, L.ellipse(Util.tupleToLngLat(json.point), {
+        super(livemap, json, L.ellipse(Location.of(json.point).toLatLng(), {
             ...json.options,
             radii: Ellipse.radius(json)
         }));
@@ -13,7 +13,7 @@ export class Ellipse extends Marker {
 
     public override update(data: MarkerJson): void {
         (this._marker as L.Ellipse)
-            .setLatLng(Util.tupleToLngLat(data.point))
+            .setLatLng(Location.of(data.point).toLatLng())
             .setRadius(Ellipse.radius(data));
     }
 

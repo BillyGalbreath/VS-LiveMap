@@ -1,5 +1,5 @@
 import {LiveMap} from "../LiveMap";
-import {Util} from "./Util";
+import {Location} from "../data/Location";
 
 export interface Contents {
     text: string;
@@ -10,12 +10,12 @@ export interface Contents {
 
 export class ContextMenu {
     private readonly _livemap: LiveMap;
-    private readonly _pointRegex: RegExp = /\[? ?(-?\d+) ?,? ?(-?\d+) ?]?/;
+    private readonly _locRegex: RegExp = /\[? ?(-?\d+) ?,? ?(-?\d+) ?]?/;
 
     private readonly _menu: [HTMLElement, HTMLElement];
     private readonly _contents: Contents[];
 
-    private _point?: [number, number];
+    private _loc?: Location;
     private _cur: boolean = false;
 
     public constructor(livemap: LiveMap) {
@@ -32,7 +32,7 @@ export class ContextMenu {
                 {text: 'Copy', icon: 'copy', key: 'Ctrl+C', action: () => this.copy()},
                 {text: 'Paste', icon: 'paste', key: 'Ctrl+V', action: () => this.paste()},
                 {},
-                {text: 'Share', icon: 'link', key: 'Ctrl+S', action: () => this.share(this._point)},
+                {text: 'Share', icon: 'link', key: 'Ctrl+S', action: () => this.share(this._loc)},
                 {}
             ] as Contents[]);
         }
@@ -70,7 +70,7 @@ export class ContextMenu {
         // hide the current menu
         this.currentMenu.classList.remove('show');
 
-        this._point = undefined;
+        this._loc = undefined;
     }
 
     private open(e: MouseEvent): void {
@@ -91,7 +91,7 @@ export class ContextMenu {
         // update coordinates in first row
         menu.querySelector('div:first-child p:nth-child(2)')!.innerHTML = this.getLocation();
 
-        this._point = this._livemap.coordsControl.getPoint();
+        this._loc = this._livemap.coordsControl.getLocation();
     }
 
     private keydown(e: KeyboardEvent): void {
@@ -150,7 +150,7 @@ export class ContextMenu {
 
         // populate contents
         if (contents.icon) {
-            iconElem.appendChild(Util.createSVGIcon(contents.icon));
+            iconElem.appendChild(this._livemap.createSVGIcon(contents.icon));
         }
         textElem.innerHTML = contents.text ?? '';
         keyElem.innerHTML = contents.key ?? '';
@@ -194,9 +194,9 @@ export class ContextMenu {
         return combo;
     }
 
-    private getLocation(point?: [number, number]): string {
-        point ??= this._livemap.coordsControl.getPoint();
-        return `[ ${point[0]}, ${point[1]} ]`;
+    private getLocation(loc?: Location): string {
+        loc ??= this._livemap.coordsControl.getLocation();
+        return `[ ${loc.x}, ${loc.z} ]`;
     }
 
     public copy(): void {
@@ -217,13 +217,13 @@ export class ContextMenu {
     public paste(): void {
         navigator.clipboard.readText()
             .then((text: string): void => {
-                const match: RegExpExecArray | null = this._pointRegex.exec(text);
+                const match: RegExpExecArray | null = this._locRegex.exec(text);
                 if (!match) {
                     this._livemap.notifications.warning('Not a valid location');
                     return;
                 }
                 this._livemap.notifications.info('Centered on location from clipboard');
-                this._livemap.centerOn(parseInt(match[1]), parseInt(match[2]));
+                this._livemap.centerOn(Location.of(parseInt(match[1]), parseInt(match[2])));
             })
             .catch((e): void => {
                 console.error('Could not paste location\n', e);
@@ -234,9 +234,9 @@ export class ContextMenu {
             });
     }
 
-    public share(point?: [number, number]): void {
-        point ??= this._livemap.coordsControl.getPoint();
-        const text: string = `${window.location.origin}${window.location.pathname}?x=${point[0]}&z=${point[1]}&zoom=${this._livemap.currentZoom()}`;
+    public share(loc?: Location): void {
+        loc ??= this._livemap.coordsControl.getLocation();
+        const text: string = `${window.location.origin}${window.location.pathname}?x=${loc.x}&z=${loc.z}&zoom=${this._livemap.currentZoom()}`;
         navigator.clipboard.writeText(text)
             .then((): void => {
                 window.livemap.notifications.success('Copied shareable url to clipboard');
@@ -251,8 +251,7 @@ export class ContextMenu {
     }
 
     public center(): void {
-        const point: [number, number] = this._livemap.coordsControl.getPoint();
-        this._livemap.centerOn(point[0], point[1]);
+        this._livemap.centerOn(this._livemap.coordsControl.getLocation());
         this._livemap.coordsControl.update();
         this._livemap.linkControl.update();
     }

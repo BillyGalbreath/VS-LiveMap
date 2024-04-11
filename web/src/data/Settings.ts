@@ -1,21 +1,21 @@
-import * as L from 'leaflet';
+import {Location} from "./Location";
 import {Zoom} from './Zoom';
 
 export class Settings {
     private readonly _attribution: string;
     private readonly _interval: number;
-    private readonly _size: L.Point;
-    private readonly _spawn: L.Point;
+    private readonly _size: Location;
+    private readonly _spawn: Location;
     private readonly _zoom: Zoom;
-    private readonly _markers: string[]
+    private readonly _markers: string[];
 
-    constructor(attribution?: string, interval?: number, size?: L.Point, spawn?: L.Point, zoom?: Zoom, markers?: string[]) {
-        this._attribution = attribution ?? '';
-        this._interval = interval ?? 30;
-        this._size = size ?? L.point(1024000, 1024000);
-        this._spawn = spawn ?? this._size.divideBy(2);
-        this._zoom = zoom ?? new Zoom();
-        this._markers = markers ?? []
+    constructor(json: Settings) {
+        this._attribution = json.attribution ?? '';
+        this._interval = json.interval ?? 30;
+        this._size = json.size ? Location.of(json.size) : Location.of(1024000, 1024000);
+        this._spawn = json.spawn ? Location.of(json.spawn) : this.size.divide(2);
+        this._zoom = json.zoom ? new Zoom(json.zoom) : new Zoom();
+        this._markers = json.markers ?? [];
     }
 
     get attribution(): string {
@@ -26,11 +26,11 @@ export class Settings {
         return this._interval;
     }
 
-    get size(): L.Point {
+    get size(): Location {
         return this._size;
     }
 
-    get spawn(): L.Point {
+    get spawn(): Location {
         return this._spawn;
     }
 

@@ -3,10 +3,10 @@ import {TileLayerControl} from './control/TileLayerControl';
 import {LayersControl} from './control/LayersControl';
 import {CoordsControl} from './control/CoordsControl';
 import {LinkControl} from './control/LinkControl';
+import {Location} from "./data/Location";
 import {Settings} from './data/Settings';
-import {ContextMenu} from "./util/ContextMenu";
-import {Notifications} from "./util/Notifications";
-import {Util} from './util/Util';
+import {ContextMenu} from "./layer/ContextMenu";
+import {Notifications} from "./layer/Notifications";
 import './scss/styles';
 import './svg/svgs'
 
@@ -19,10 +19,17 @@ window.onload = (): void => {
     // https://chanind.github.io/javascript/2019/09/28/avoid-100vh-on-mobile-web.html
     map.style.height = `${window.innerHeight}px`;
 
-    Util.fetchJson('data/settings.json').then((json): void => {
-        window.livemap = new LiveMap(json as Settings);
+    LiveMap.fetchJson('data/settings.json').then((json): void => {
+        window.livemap = new LiveMap(new Settings(json));
         window.livemap.init();
     });
+};
+
+// https://stackoverflow.com/a/3955096
+Array.prototype.remove = function <T>(obj: T, ax?: number): void {
+    while ((ax = this.indexOf(obj)) !== -1) {
+        this.splice(ax, 1);
+    }
 };
 
 export class LiveMap extends L.Map {
@@ -47,7 +54,7 @@ export class LiveMap extends L.Map {
                 transformation: new L.Transformation(1, 0, 1, 0)
             }),
             // center map on spawn
-            center: [settings.spawn.x, settings.spawn.y],
+            center: [settings.spawn.x, settings.spawn.z],
             // always allow attribution in case a layer needs it
             attributionControl: true,
             // canvas is more efficient than svg
@@ -86,8 +93,10 @@ export class LiveMap extends L.Map {
     init(): void {
         // move to the coords or spawn point at specified or default zoom level
         this.centerOn(
-            this.getUrlParam('x', 0),
-            this.getUrlParam('z', 0),
+            Location.of(
+                this.getUrlParam('x', 0),
+                this.getUrlParam('z', 0)
+            ),
             this.getUrlParam('zoom', this.settings.zoom.def)
         );
 
@@ -140,14 +149,11 @@ export class LiveMap extends L.Map {
         return name ? this.getPane(name) ?? this.createPane(name) : undefined;
     }
 
-    public centerOn(x: number, y: number, zoom?: number): void {
+    public centerOn(loc: Location, zoom?: number): void {
         if (zoom !== undefined) {
             this.setZoom(this.settings.zoom.maxout - zoom);
         }
-        this.setView(Util.tupleToLatLng([
-            x + this.settings.spawn.x,
-            y + this.settings.spawn.y
-        ]));
+        this.setView(loc.add(this.settings.spawn).toLatLng());
         this._linkControl.update();
     }
 
@@ -160,16 +166,26 @@ export class LiveMap extends L.Map {
     }
 
     public getUrlFromView(): string {
-        const center: L.Point = Util.toPoint(this.getCenter());
-        const x: number = Math.floor(center.x) - this.settings.spawn.x;
-        const y: number = Math.floor(center.y) - this.settings.spawn.y;
-        return `?x=${x}&z=${y}&zoom=${this.currentZoom()}`;
+        const loc: Location = Location.of(this.getCenter())
+            .floor()
+            .subtract(this.settings.spawn);
+        return `?x=${loc.x}&z=${loc.z}&zoom=${this.currentZoom()}`;
+    }
+
+    public createSVGIcon(icon: string): DocumentFragment {
+        const template: HTMLTemplateElement = L.DomUtil.create('template');
+        template.innerHTML = `<svg><use href='#svg-${icon}'></use></svg>`;
+        return template.content;
+    }
+
+    public static async fetchJson(url: string) {
+        const res: Response = await fetch(url, {
+            headers: {
+                'Content-Disposition': 'inline'
+            }
+        });
+        if (res.ok) {
+            return await res.json();
+        }
     }
 }
-
-// https://stackoverflow.com/a/3955096
-Array.prototype.remove = function <T>(obj: T, ax?: number): void {
-    while ((ax = this.indexOf(obj)) !== -1) {
-        this.splice(ax, 1);
-    }
-};

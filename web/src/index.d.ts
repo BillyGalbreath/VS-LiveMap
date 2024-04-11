@@ -6,14 +6,6 @@ declare global {
         livemap: LiveMap;
     }
 
-    type MagicTuples = ArrayOfMagic
-
-    interface Voodoo extends (MagicTuples | L.LatLng | number) {
-    }
-
-    interface ArrayOfMagic extends Array<Voodoo> {
-    }
-
     interface Array<T> {
         remove(obj: T): void;
     }

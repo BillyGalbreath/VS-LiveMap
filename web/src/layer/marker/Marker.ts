@@ -1,12 +1,13 @@
 import * as L from 'leaflet';
 import {LiveMap} from "../../LiveMap";
 import {MarkersLayer} from "../MarkersLayer";
+import {Location} from "../../data/Location";
 
 export interface MarkerJson {
     type: string,
     id: string,
-    point: L.PointTuple,
-    points: L.PointTuple[],
+    point: Location,
+    points: Location[],
     options: L.MarkerOptions,
     tooltip: L.TooltipOptions,
     popup: PopupOptions

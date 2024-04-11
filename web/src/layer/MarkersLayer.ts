@@ -1,6 +1,5 @@
 import * as L from 'leaflet';
 import {LiveMap} from '../LiveMap';
-import {Util} from '../util/Util';
 import {Marker, MarkerJson, PopupOptions} from "./marker/Marker";
 import {Circle} from "./marker/Circle";
 import {Ellipse} from "./marker/Ellipse";
@@ -73,7 +72,7 @@ export class MarkersLayer extends L.LayerGroup {
     }
 
     private updateLayer(): void {
-        Util.fetchJson(this._url).then((json: LayerJson): void => {
+        LiveMap.fetchJson(this._url).then((json: LayerJson): void => {
             try {
                 if (!this._label) {
                     // this is the first tick

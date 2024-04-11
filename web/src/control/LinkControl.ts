@@ -1,7 +1,7 @@
 import * as L from 'leaflet';
 import {ControlBox} from './ControlBox';
 import {LiveMap} from '../LiveMap';
-import {Util} from "../util/Util";
+import {Location} from "../data/Location";
 import '../svg/link.svg';
 
 export class LinkControl extends ControlBox {
@@ -12,16 +12,17 @@ export class LinkControl extends ControlBox {
 
         this._dom = L.DomUtil.create('a', 'leaflet-control-layers link');
         this._dom.title = 'Share this location';
-        this._dom.appendChild(Util.createSVGIcon('link'));
+        this._dom.appendChild(livemap.createSVGIcon('link'));
         this._dom.onclick = (e: MouseEvent): void => {
             e.preventDefault();
             window.history.replaceState({}, 'LiveMap', this._dom.href);
 
-            const center: L.LatLng = this._livemap.getCenter();
-            this._livemap.contextMenu.share([
-                Math.floor(Util.metersToPixels(center.lat)) - this._livemap.settings.spawn.x,
-                Math.floor(Util.metersToPixels(center.lng)) - this._livemap.settings.spawn.y
-            ]);
+
+            this._livemap.contextMenu.share(
+                Location.of(this._livemap.getCenter())
+                    .floor()
+                    .subtract(this._livemap.settings.spawn)
+            );
         }
 
         L.DomEvent.disableClickPropagation(this._dom);
