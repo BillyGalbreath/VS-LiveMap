@@ -23,9 +23,9 @@ ul, li {
 #map {
   width: 100vw;
   height: 100vh;
-  background: transparent url(images/sky.png) repeat;
+  background: transparent url(/images/sky.webp) repeat;
   cursor: crosshair;
-  transition: opacity 1s ease-in-out;
+  transition: opacity .5s ease-in-out;
 }
 
 #map.loading {
@@ -47,6 +47,7 @@ ul, li {
   display: block;
   margin: 0 auto;
   width: 90%;
+  height: auto;
   max-width: 1024px;
 }
 
@@ -56,10 +57,10 @@ ul, li {
   width: 64px;
   height: 64px;
   opacity: 0;
-  transition: opacity .3s;
+  transition: opacity .5s;
 }
 
-.logo svg.loading {
+.logo.loading svg {
   opacity: 1;
 }
 
@@ -79,7 +80,7 @@ img.leaflet-tile {
 .leaflet-control-layers-toggle {
   width: 30px !important;
   height: 30px !important;
-  background-image: url('images/layers.png');
+  background-image: url(/images/layers.png);
   background-size: 20px 20px;
   background-repeat: no-repeat;
   background-position: 50% 50%;

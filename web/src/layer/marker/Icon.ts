@@ -1,20 +1,22 @@
 import * as L from 'leaflet';
 import {Marker, MarkerJson} from "./Marker";
-import {LiveMap} from "../../LiveMap";
+import {MarkersLayer} from "../MarkersLayer";
 import {Location} from "../../data/Location";
 
 export class Icon extends Marker {
-    constructor(livemap: LiveMap, json: MarkerJson) {
-        super(livemap, json, L.marker(Location.of(json.point).toLatLng(), {
+    constructor(layer: MarkersLayer, json: MarkerJson) {
+        console.log(json)
+        super(layer, json, L.marker(Location.of(json.point).toLatLng(), {
             ...json.options,
             'icon': L.icon({...json.options as L.IconOptions})
         }));
     }
 
-    public override update(data: MarkerJson): void {
+    public override update(json: MarkerJson): void {
+        super.update(json);
         const icon: L.Marker = this._marker as L.Marker;
-        icon.setLatLng(Location.of(data.point).toLatLng());
-        Object.assign(icon.options, data.options);
-        Object.assign(icon.options.icon!.options, data.options as L.IconOptions);
+        icon.setLatLng(Location.of(json.point).toLatLng());
+        Object.assign(icon.options, json.options);
+        Object.assign(icon.options.icon!.options, json.options as L.IconOptions);
     }
 }

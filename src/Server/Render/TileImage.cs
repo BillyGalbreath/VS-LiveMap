@@ -59,7 +59,7 @@ public sealed unsafe class TileImage {
     public void Save() {
         try {
             for (int zoom = 0; zoom <= Config.Instance.Zoom.MaxOut; zoom++) {
-                FileInfo fileInfo = new(Path.Combine(FileUtil.TilesDir, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.png"));
+                FileInfo fileInfo = new(Path.Combine(FileUtil.TilesDir, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.webp"));
                 GamePaths.EnsurePathExists(fileInfo.Directory!.FullName);
 
                 if (zoom > 0) {
@@ -69,11 +69,11 @@ public sealed unsafe class TileImage {
                     WritePixels(png, zoom);
 
                     using FileStream outStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                    png.Encode(SKEncodedImageFormat.Png, 0).SaveTo(outStream);
+                    png.Encode(SKEncodedImageFormat.Webp, 100).SaveTo(outStream);
                     png.Dispose();
                 } else {
                     using FileStream outStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                    _png.Encode(SKEncodedImageFormat.Png, 0).SaveTo(outStream);
+                    _png.Encode(SKEncodedImageFormat.Webp, 100).SaveTo(outStream);
                 }
             }
 

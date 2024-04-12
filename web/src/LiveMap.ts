@@ -19,6 +19,11 @@ window.onload = (): void => {
     // https://chanind.github.io/javascript/2019/09/28/avoid-100vh-on-mobile-web.html
     map.style.height = `${window.innerHeight}px`;
 
+    // fix svg size issues in weird browsers like safari
+    document.querySelectorAll('svg').forEach((svg: Element) => {
+        svg.setAttribute('preserveAspectRatio', 'none');
+    });
+
     LiveMap.fetchJson('data/settings.json').then((json): void => {
         window.livemap = new LiveMap(new Settings(json));
         window.livemap.init();
@@ -67,7 +72,11 @@ export class LiveMap extends L.Map {
 
         this.on('load', () => {
             this.getContainer().classList.remove('loading');
-            document.querySelector('.logo svg')?.classList.remove('loading');
+            const logo: HTMLElement | null = document.querySelector('.loading.logo');
+            if (logo) {
+                logo.addEventListener('transitionend', () => logo.remove());
+                logo.classList.remove('loading');
+            }
         })
 
         this._settings = settings;
@@ -101,7 +110,7 @@ export class LiveMap extends L.Map {
         );
 
         // start the tick loop
-        this.loop(0);
+        //this.loop(0);
     }
 
     get contextMenu(): ContextMenu {
@@ -145,8 +154,11 @@ export class LiveMap extends L.Map {
         setTimeout(() => this.loop(++count), 1000);
     }
 
-    public getOrCreatePane(name?: string): HTMLElement | undefined {
-        return name ? this.getPane(name) ?? this.createPane(name) : undefined;
+    public createPaneIfNotExist(pane?: string) {
+        if (pane && this.getPane(pane) === undefined) {
+            console.log('create pane', pane);
+            this.createPane(pane);
+        }
     }
 
     public centerOn(loc: Location, zoom?: number): void {

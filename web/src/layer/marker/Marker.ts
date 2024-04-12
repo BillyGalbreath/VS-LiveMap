@@ -1,5 +1,4 @@
 import * as L from 'leaflet';
-import {LiveMap} from "../../LiveMap";
 import {MarkersLayer} from "../MarkersLayer";
 import {Location} from "../../data/Location";
 
@@ -19,32 +18,45 @@ export interface PopupOptions extends L.PopupOptions {
 
 export abstract class Marker {
     protected readonly _id: string;
+    protected readonly _type: string;
     protected readonly _marker: L.Layer;
-    protected readonly _json: MarkerJson;
+    protected readonly _layer: MarkersLayer;
 
-    protected constructor(livemap: LiveMap, json: MarkerJson, marker: L.Layer) {
-        this._id = '';
+    protected _json: MarkerJson;
+
+    protected constructor(layer: MarkersLayer, json: MarkerJson, marker: L.Layer) {
+        this._id = json.id;
+        this._type = json.type;
         this._json = json;
         this._marker = marker;
+        this._layer = layer;
+
+        // create any panes needed for this marker
+        window.livemap.createPaneIfNotExist(json.options?.pane);
+        window.livemap.createPaneIfNotExist(json.popup?.pane);
+        window.livemap.createPaneIfNotExist(json.tooltip?.pane);
 
         // add popup
-        if (this._json.popup) {
-            this._marker.bindPopup(this._json.popup.content as string, this._json.popup);
+        if (json.popup) {
+            this._marker.bindPopup(json.popup.content as string, json.popup);
         }
 
         // add tooltip
-        if (this._json.tooltip) {
-            this._marker.bindTooltip(this._json.tooltip.content as string, this._json.tooltip);
+        if (json.tooltip) {
+            this._marker.bindTooltip(json.tooltip.content as string, json.tooltip);
         }
-
-        // create any panes needed for this marker
-        livemap.getOrCreatePane(json.options?.pane);
-        livemap.getOrCreatePane(json.popup?.pane);
-        livemap.getOrCreatePane(json.tooltip?.pane);
     }
 
     get id(): string {
         return this._id;
+    }
+
+    get type(): string {
+        return this._type;
+    }
+
+    get json(): MarkerJson {
+        return this._json;
     }
 
     get(): L.Layer {
@@ -55,7 +67,7 @@ export abstract class Marker {
         // add to marker layer
         this._marker.addTo(layer);
 
-        // add popup
+        // popups dont open on their own, so we have to add that ability
         if (this._json?.popup?.autoOpen) {
             this._marker.openPopup();
         }
@@ -67,5 +79,13 @@ export abstract class Marker {
         this._marker.remove();
     }
 
-    public abstract update(data: MarkerJson): void;
+    public update(json: MarkerJson): void {
+        this._json = json;
+    }
+
+    public setPane(pane?: string) {
+        if (pane) {
+            this._marker.options.pane = pane;
+        }
+    }
 }

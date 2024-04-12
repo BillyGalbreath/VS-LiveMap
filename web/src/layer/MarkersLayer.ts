@@ -18,9 +18,10 @@ interface LayerJson {
     label: string,
     interval: number,
     hidden: boolean,
-    defaults: Defaults,
     options: L.LayerOptions,
-    markers: MarkerJson[];
+    defaults: Defaults,
+    markers: MarkerJson[],
+    css: string
 }
 
 export class MarkersLayer extends L.LayerGroup {
@@ -29,9 +30,11 @@ export class MarkersLayer extends L.LayerGroup {
 
     private readonly _markers: Map<string, Marker> = new Map<string, Marker>();
 
+    private _id?: string;
     private _label?: string;
     private _interval?: number;
     private _defaults?: Defaults;
+    private _json?: LayerJson;
 
     constructor(livemap: LiveMap, url: string) {
         super([]);
@@ -40,6 +43,22 @@ export class MarkersLayer extends L.LayerGroup {
 
         // initial update to get interval and label
         this.updateLayer();
+    }
+
+    get id(): string {
+        return this._id!;
+    }
+
+    get label(): string {
+        return this._label!;
+    }
+
+    get interval(): number {
+        return this._interval!;
+    }
+
+    get json(): LayerJson {
+        return this._json!;
     }
 
     public tick(count: number): void {
@@ -52,6 +71,7 @@ export class MarkersLayer extends L.LayerGroup {
         this._label = json.label;
         this._interval = json.interval ?? 300;
         this._defaults = json.defaults;
+        this._json = json;
 
         // merge in the custom layer options
         if (json.options) {
@@ -59,6 +79,14 @@ export class MarkersLayer extends L.LayerGroup {
                 ...this.options,
                 ...json.options
             };
+
+            // create any panes needed for this marker
+            this._livemap.createPaneIfNotExist(json.options?.pane);
+        }
+
+        // insert any custom css
+        if (json.css) {
+            document.head.insertAdjacentHTML('beforeend', `<style id="${this.id}">${json.css}</style>`);
         }
 
         // only add to the map if we are not hiding it by default
@@ -87,23 +115,23 @@ export class MarkersLayer extends L.LayerGroup {
         });
     }
 
-    private updateMarkers(json: LayerJson): void {
+    private updateMarkers(layerJson: LayerJson): void {
         const toRemove: string[] = [...this._markers.keys()];
 
         // get all markers from json
-        json.markers.forEach((data: MarkerJson): void => {
+        layerJson.markers.forEach((markerJson: MarkerJson): void => {
             try {
-                const marker: Marker | undefined = this._markers.get(data.id);
+                const marker: Marker | undefined = this._markers.get(markerJson.id);
                 if (marker) {
                     // update existing marker
-                    marker.update(data);
-                    toRemove.remove(data.id);
+                    marker.update(markerJson);
+                    toRemove.remove(markerJson.id);
                 } else {
                     // create new marker
-                    this.createMarker(data);
+                    this.createMarker(markerJson);
                 }
             } catch (e) {
-                console.error(`Error refreshing markers in layer (${this._label})\n`, this, data, e);
+                console.error(`Error refreshing markers in layer (${this._label})\n`, this, markerJson, e);
             }
         });
 
@@ -114,50 +142,51 @@ export class MarkersLayer extends L.LayerGroup {
         });
     }
 
-    private createMarker(data: MarkerJson): void {
+    private createMarker(json: MarkerJson): void {
         // merge in default options, if any
         if (this._defaults) {
             if (this._defaults.options) {
-                data.options = {...data.options, ...this._defaults.options};
+                json.options = {...this._defaults.options, ...json.options};
             }
             if (this._defaults.popup) {
-                data.popup = {...data.popup, ...this._defaults.popup};
+                json.popup = {...this._defaults.popup, ...json.popup};
             }
             if (this._defaults.tooltip) {
-                data.tooltip = {...data.tooltip, ...this._defaults.tooltip};
+                json.tooltip = {...this._defaults.tooltip, ...json.tooltip};
             }
         }
 
-        // create any panes needed for this marker
-        this._livemap.getOrCreatePane(data.options?.pane);
-        this._livemap.getOrCreatePane(data.popup?.pane);
-        this._livemap.getOrCreatePane(data.tooltip?.pane);
+        // set to correct pane from layer if needed
+        const layerPane: string | undefined = this.json.options?.pane;
+        if (layerPane !== undefined) {
+            if (json.options?.pane === undefined) {
+                console.log('setting', json.id, 'marker pane', layerPane)
+                json.options = {
+                    ...json.options,
+                    pane: layerPane
+                }
+            }
+        }
 
-        // create new marker from data
-        const marker: Marker = this.createType(this._livemap, data);
-
-        // add marker to markers layer
-        marker.addTo(this);
-
-        // store marker
-        this._markers.set(data.id, marker);
+        // create new marker from json, add to layer, and store
+        this._markers.set(json.id, this.createType(json).addTo(this));
     }
 
-    public createType(livemap: LiveMap, data: MarkerJson): Marker {
-        switch (data.type) {
+    private createType(json: MarkerJson): Marker {
+        switch (json.type) {
             case 'circle':
-                return new Circle(livemap, data);
+                return new Circle(this, json);
             case 'ellipse':
-                return new Ellipse(livemap, data);
+                return new Ellipse(this, json);
             case 'icon':
-                return new Icon(livemap, data);
+                return new Icon(this, json);
             case 'polygon':
-                return new Polygon(livemap, data);
+                return new Polygon(this, json);
             case 'polyline':
-                return new Polyline(livemap, data);
+                return new Polyline(this, json);
             case 'rectangle':
-                return new Rectangle(livemap, data);
+                return new Rectangle(this, json);
         }
-        throw new Error(`Invalid marker type (${data.type})`);
+        throw new Error(`Invalid marker type (${json.type})`);
     }
 }
