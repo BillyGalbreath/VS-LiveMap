@@ -17,6 +17,7 @@ import './logo.svg';
 import './mushroom.svg';
 import './paste.svg';
 import './pick.svg';
+import './player.svg';
 import './propick.svg';
 import './rocks.svg';
 import './ruins.svg';

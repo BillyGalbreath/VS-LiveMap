@@ -8,7 +8,7 @@ import {Settings} from './data/Settings';
 import {ContextMenu} from "./layer/ContextMenu";
 import {Notifications} from "./layer/Notifications";
 import './scss/styles';
-import './svg/svgs'
+import './svg'
 
 window.onload = (): void => {
     // create map element
@@ -156,7 +156,6 @@ export class LiveMap extends L.Map {
 
     public createPaneIfNotExist(pane?: string) {
         if (pane && this.getPane(pane) === undefined) {
-            console.log('create pane', pane);
             this.createPane(pane);
         }
     }

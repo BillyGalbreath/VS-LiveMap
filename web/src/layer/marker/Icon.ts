@@ -4,11 +4,19 @@ import {MarkersLayer} from "../MarkersLayer";
 import {Location} from "../../data/Location";
 
 export class Icon extends Marker {
+    private static svgHtml: string = '<svg preserveAspectRatio="none" width="100%" height="100%"><use href="{0}"></use></svg>';
+
     constructor(layer: MarkersLayer, json: MarkerJson) {
-        console.log(json)
+        const iconOptions: L.IconOptions = json.options as L.IconOptions;
         super(layer, json, L.marker(Location.of(json.point).toLatLng(), {
             ...json.options,
-            'icon': L.icon({...json.options as L.IconOptions})
+            'icon': iconOptions?.iconUrl?.startsWith('#svg-') ?
+                L.divIcon({
+                    ...iconOptions,
+                    className: '',
+                    html: Icon.svgHtml.replace('{0}', iconOptions.iconUrl)
+                }) :
+                L.icon(iconOptions)
         }));
     }
 
