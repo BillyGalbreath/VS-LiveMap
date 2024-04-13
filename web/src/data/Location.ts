@@ -1,54 +1,77 @@
 import * as L from 'leaflet';
 
 export class Location {
-    public static of(x: any, z?: number): Location {
-        if (x === undefined || x === null) {
-            return x;
+    public static of(a: number | number[] | L.Point | L.LatLng | Location, b?: number): Location {
+        if (a === undefined || a === null) {
+            // fail fast
+            return a;
         }
-        if (x instanceof L.Point) {
-            return new Location(x.x, x.y);
+        if (Array.isArray(a) && a.length > 1) {
+            // 2 length is L.PointTuple, 3 length is L.LatLngTuple
+            return new Location(a[0], a[1], a.length == 3);
         }
-        if (x instanceof L.LatLng) {
-            return new Location(
-                Location.metersToPixels(x.lng),
-                Location.metersToPixels(x.lat)
-            );
+        if (typeof a === 'object') {
+            if ('x' in a) {
+                // 'x' is in Location and L.Point
+                if ('y' in a) {
+                    // 'y' is in L.Point
+                    return new Location(a.x, a.y);
+                }
+                if ('z' in a) {
+                    // 'z' is in Location
+                    return new Location(a.x, a.z);
+                }
+            }
+            if ('lat' in a) {
+                // 'lat' is in L.LatLng
+                return new Location(a.lat, a.lng, true);
+            }
         }
-        if (Array.isArray(x)) {
-            return new Location(x[0], x[1]);
+        // must be regular numbers
+        if (typeof a === 'number') {
+            return new Location(a, b ?? 0);
         }
-        return new Location(x, z!);
+        // i guess not...
+        return undefined!;
     }
 
-    public static toLatLngArray(arr: Location[] | L.LatLng[]): L.LatLng[] | Location | L.LatLng {
-        for (let i: number = 0; i < arr.length; i++) {
-            const entry: Location | L.LatLng = arr[i];
-            if (!Array.isArray(entry)) {
-                continue;
+    public static toLatLngArray(inArr: unknown[]): L.LatLng | L.LatLng[] {
+        const outArr: L.LatLng[] = [];
+        inArr.forEach((coord: unknown) => {
+            if (!Array.isArray(coord)) {
+                // not a valid coordinate entry
+                return;
             }
-            if (Array.isArray(entry[0])) {
-                arr[i] = this.toLatLngArray(entry) as Location | L.LatLng;
-            } else {
-                arr[i] = Location.of(entry).toLatLng();
+            if (Array.isArray(coord[0])) {
+                // entry is a set of coordinates, must dig deeper
+                outArr.push(this.toLatLngArray(coord) as L.LatLng);
+                return;
             }
-        }
-        return arr as L.LatLng[];
+            const loc: Location = Location.of(coord);
+            if (loc) {
+                // coordinate is a valid location
+                outArr.push(loc.toLatLng());
+            }
+        });
+        return outArr;
     }
 
     public static pixelsToMeters(num: number): number {
+        // todo - there's got to be a way to handle this in the CRS
         return num * window.livemap.scale;
     }
 
     public static metersToPixels(num: number): number {
+        // todo - there's got to be a way to handle this in the CRS
         return num / window.livemap.scale;
     }
 
     private _x: number;
     private _z: number;
 
-    constructor(x: number, z: number) {
-        this._x = x;
-        this._z = z;
+    constructor(x: number, z: number, latlng?: boolean) {
+        this._x = latlng ? Location.metersToPixels(z) : x;
+        this._z = latlng ? Location.metersToPixels(x) : z;
     }
 
     get x(): number {

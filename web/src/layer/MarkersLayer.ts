@@ -159,8 +159,9 @@ export class MarkersLayer extends L.LayerGroup {
         // set to correct pane from layer if needed
         const layerPane: string | undefined = this.json.options?.pane;
         if (layerPane !== undefined) {
+            // layer has custom pane set
             if (json.options?.pane === undefined) {
-                console.log('setting', json.id, 'marker pane', layerPane)
+                // marker does not have custom pane, use layer's instead
                 json.options = {
                     ...json.options,
                     pane: layerPane
