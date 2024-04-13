@@ -7,7 +7,7 @@ export class ContextMenu {
     private readonly _livemap: LiveMap;
     private readonly _menu: [HTMLElement, HTMLElement];
     private readonly _rows: MenuRow[];
-    private readonly _locRegex: RegExp = /(?:\[|x=)?(?<x>-?\d+)[,&](?:z=)?(?<y>-?\d+)]?/;
+    private readonly _locRegex: RegExp = /\[?(?<x>-?\d+),(?<y>-?\d+)]?/;
     private readonly _format: string = '[ {x}, {z} ]';
 
     private _loc?: Location;
@@ -147,13 +147,13 @@ export class ContextMenu {
     public paste(): void {
         navigator.clipboard.readText()
             .then((text: string): void => {
-                const match: RegExpExecArray | null = this._locRegex.exec(text.replace(/\s+/g, ''));
-                if (!match) {
+                const loc: Location | undefined = this.pasteUrl(text) ?? this.pasteLocation(text);
+                if (loc) {
+                    this._livemap.notifications.info('Centered on location from clipboard');
+                    this._livemap.centerOn(loc);
+                } else {
                     this._livemap.notifications.warning('Not a valid location');
-                    return;
                 }
-                this._livemap.notifications.info('Centered on location from clipboard');
-                this._livemap.centerOn(Location.of(parseInt(match[1]), parseInt(match[2])));
             })
             .catch((e): void => {
                 console.error('Could not paste location\n', e);
@@ -162,6 +162,22 @@ export class ContextMenu {
             .finally((): void => {
                 this.close();
             });
+    }
+
+    private pasteLocation(text: string): Location | undefined {
+        const match: RegExpExecArray | null = this._locRegex.exec(text.replace(/\s+/g, ''));
+        if (match) {
+            return Location.of(parseInt(match[1]), parseInt(match[2]));
+        }
+    }
+
+    private pasteUrl(text: string): Location | undefined {
+        try {
+            const params: URLSearchParams = new URLSearchParams(new URL(text).searchParams);
+            return Location.of(parseInt(params.get('x') ?? ''), parseInt(params.get('z') ?? ''));
+        } catch (err) {
+            return;
+        }
     }
 
     public share(loc?: Location): void {
