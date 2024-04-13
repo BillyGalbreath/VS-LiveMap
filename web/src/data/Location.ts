@@ -134,4 +134,10 @@ export class Location {
             Location.pixelsToMeters(this._x) + (offset?._x ?? 0)
         );
     }
+
+    public toString(format?: string): string {
+        return (format ? format : '{x}, {z}')
+            .replace('{x}', `${this._x}`)
+            .replace('{z}', `${this._z}`);
+    }
 }

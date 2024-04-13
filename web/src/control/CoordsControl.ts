@@ -31,15 +31,13 @@ export class CoordsControl extends ControlBox {
     }
 
     public update = (e?: L.LeafletMouseEvent): void => {
-        if (!e) {
-            this._dom.innerHTML = '0, 0';
-            return;
-        }
-
-        this._loc = Location.of(e!.latlng)
-            .subtract(this._livemap.settings.spawn)
-            .round();
-        this._dom.innerHTML = `${this._loc.x}, ${this._loc.z}`;
+        this._dom.innerHTML = (
+            this._loc = e
+                ? Location.of(e.latlng)
+                    .subtract(this._livemap.settings.spawn)
+                    .round()
+                : new Location(0, 0)
+        ).toString();
     }
 
     public getLocation(): Location {

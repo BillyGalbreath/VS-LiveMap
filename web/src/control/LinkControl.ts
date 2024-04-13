@@ -12,7 +12,7 @@ export class LinkControl extends ControlBox {
 
         this._dom = L.DomUtil.create('a', 'leaflet-control-layers link');
         this._dom.title = 'Share this location';
-        this._dom.appendChild(livemap.createSVGIcon('link'));
+        this._dom.appendChild(LiveMap.createSVGIcon('link'));
         this._dom.onclick = (e: MouseEvent): void => {
             e.preventDefault();
             window.history.replaceState({}, 'LiveMap', this._dom.href);

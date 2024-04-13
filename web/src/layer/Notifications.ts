@@ -1,4 +1,5 @@
 import * as L from 'leaflet';
+import {LiveMap} from "../LiveMap";
 
 export class Notifications {
     private readonly _dom: HTMLElement;
@@ -10,7 +11,7 @@ export class Notifications {
 
     public create(type: ('info' | 'success' | 'warning' | 'danger'), text: string): void {
         const div: HTMLElement = L.DomUtil.create('div', `${type}`);
-        div.appendChild(window.livemap.createSVGIcon(type));
+        div.appendChild(LiveMap.createSVGIcon(type));
 
         const p: HTMLElement = div.appendChild(L.DomUtil.create('p'));
         p.innerText = text;

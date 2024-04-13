@@ -5,7 +5,7 @@ import {CoordsControl} from './control/CoordsControl';
 import {LinkControl} from './control/LinkControl';
 import {Location} from "./data/Location";
 import {Settings} from './data/Settings';
-import {ContextMenu} from "./layer/ContextMenu";
+import {ContextMenu} from "./layer/menu/ContextMenu";
 import {Notifications} from "./layer/Notifications";
 import './scss/styles';
 import './svg'
@@ -183,7 +183,7 @@ export class LiveMap extends L.Map {
         return `?x=${loc.x}&z=${loc.z}&zoom=${this.currentZoom()}`;
     }
 
-    public createSVGIcon(icon: string): DocumentFragment {
+    public static createSVGIcon(icon: string): DocumentFragment {
         const template: HTMLTemplateElement = L.DomUtil.create('template');
         template.innerHTML = `<svg><use href='#svg-${icon}'></use></svg>`;
         return template.content;

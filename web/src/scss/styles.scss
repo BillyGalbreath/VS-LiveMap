@@ -131,3 +131,60 @@ div.leaflet-control-layers.coordinates {
   /* See: https://github.com/GoogleChrome/lighthouse/issues/15497#issuecomment-2047385179 */
   mix-blend-mode: color-dodge !important;
 }
+
+
+
+/* ##############################################################################*/
+
+.leaflet-players-pane {
+  z-index: 9007199254740498;
+}
+.leaflet-nameplates-pane {
+  z-index: 9007199254740499;
+}
+.leaflet-nameplates-pane div {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+.leaflet-nameplates-pane div:before {
+  border-color: transparent;
+}
+.leaflet-nameplates-pane ul {
+  padding: 3px;
+  color: #ffffff;
+  font-weight: 700;
+  line-height: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.75);
+  border-radius: 5px;
+  box-shadow: 1px 1px 3px rgba(0,0,0,.5);
+}
+.leaflet-nameplates-pane img {
+  display: block;
+}
+.leaflet-nameplates-pane li:first-child img {
+  margin-right: 5px;
+  vertical-align: middle;
+  width: 32px;
+  height: 32px;
+  border-radius: 5px;
+  border: 1px solid black;
+}
+.leaflet-nameplates-pane li:not(:first-child) img {
+  width: 81px;
+  height: 9px;
+  background-position: 0 0;
+}
+.leaflet-nameplates-pane li:not(:first-child) img:first-child {
+  background: url(images/health.png) no-repeat;
+}
+.leaflet-nameplates-pane li:not(:first-child) img:not(:first-child)  {
+  background: url(images/armor.png) no-repeat;
+}
+.leaflet-nameplates-pane div,
+.leaflet-marker-pane img {
+  transition: all 0.25s;
+}
