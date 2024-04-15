@@ -2,6 +2,7 @@ import * as L from "leaflet";
 import {LiveMap} from "../../LiveMap";
 import {Location} from "../../data/Location";
 import {MenuRow} from "./MenuRow";
+import '../../scss/contextmenu';
 
 export class ContextMenu {
     private readonly _livemap: LiveMap;

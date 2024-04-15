@@ -170,7 +170,9 @@ export class MarkersLayer extends L.LayerGroup {
         }
 
         // create new marker from json, add to layer, and store
-        this._markers.set(json.id, this.createType(json).addTo(this));
+        const marker: Marker = this.createType(json).addTo(this);
+        marker.update(json);
+        this._markers.set(json.id, marker);
     }
 
     private createType(json: MarkerJson): Marker {

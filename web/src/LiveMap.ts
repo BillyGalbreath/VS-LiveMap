@@ -129,9 +129,6 @@ export class LiveMap extends L.Map {
             this.getUrlParam('zoom', this.settings.zoom.def)
         );
 
-        // start the tick loop
-        this.loop(0);
-
         // fix map height for android devices
         // https://chanind.github.io/javascript/2019/09/28/avoid-100vh-on-mobile-web.html
         this.updateHeight();
@@ -145,6 +142,9 @@ export class LiveMap extends L.Map {
         document.querySelectorAll('svg').forEach((svg: Element): void => {
             svg.setAttribute('preserveAspectRatio', 'none');
         });
+
+        // start the tick loop
+        this.loop(0);
     }
 
     // https://stackoverflow.com/a/60391674/3530727

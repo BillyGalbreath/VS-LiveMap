@@ -26,5 +26,6 @@ export class Icon extends Marker {
         icon.setLatLng(Location.of(json.point).toLatLng());
         Object.assign(icon.options, json.options);
         Object.assign(icon.options.icon!.options, json.options as L.IconOptions);
+        //(this._marker as L.Marker).getElement()?.setAttribute('aria-label', icon.options?.title ?? icon.options.alt ?? '');
     }
 }
