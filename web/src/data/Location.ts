@@ -31,13 +31,13 @@ export class Location {
         if (typeof a === 'number') {
             return new Location(a, b ?? 0);
         }
-        // i guess not...
+        // guess not...
         return undefined!;
     }
 
     public static toLatLngArray(inArr: unknown[]): L.LatLng | L.LatLng[] {
         const outArr: L.LatLng[] = [];
-        inArr.forEach((coord: unknown) => {
+        inArr.forEach((coord: unknown): void => {
             if (!Array.isArray(coord)) {
                 // not a valid coordinate entry
                 return;

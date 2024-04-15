@@ -1,3 +1,5 @@
+// noinspection all
+
 /**
  * Copyright 2014 JD Fergason
  *

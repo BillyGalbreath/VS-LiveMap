@@ -14,7 +14,7 @@ public sealed class ColorMapCommand : AbstractClientCommand {
         handler.RegisterSubCommand("colormap", this);
     }
 
-    public override CommandResult Execute(Caller caller, IEnumerable<string> args) {
+    public override CommandResult Execute(Caller caller, IEnumerable<string> _) {
         caller.SendMessage(CommandResult.Success("command.colormap.started"));
 
         // colormap to store colors

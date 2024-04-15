@@ -81,7 +81,7 @@ export class LiveTileLayer extends L.TileLayer {
                 reader.readAsDataURL(blob);
                 reader.onload = () => tile.src = String(reader.result);
             });
-        }).catch((e) => this._tileOnError(done, tile, e));
+        }).catch((err) => this._tileOnError(done, tile, err));
 
         return tile;
     }

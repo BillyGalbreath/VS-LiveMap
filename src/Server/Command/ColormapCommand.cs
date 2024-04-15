@@ -9,7 +9,7 @@ public sealed class ColormapCommand : AbstractServerCommand {
         handler.RegisterSubCommand("colormap", this);
     }
 
-    public override CommandResult Execute(Caller caller, IEnumerable<string> args) {
+    public override CommandResult Execute(Caller caller, IEnumerable<string> _) {
         return CommandResult.Success("command.client-command");
     }
 }

@@ -11,24 +11,39 @@ import './scss/styles';
 import './svg'
 
 window.onload = (): void => {
-    // create map element
-    const map: HTMLDivElement = L.DomUtil.create('div', 'loading', document.body);
-    map.id = 'map';
+    window.fetchJson<Settings>('data/settings.json')
+        .then((json: Settings): void => {
+            // create the map div element
+            L.DomUtil.create('div', 'loading', document.body).id = 'map';
 
-    // fix map height for android devices
-    // https://chanind.github.io/javascript/2019/09/28/avoid-100vh-on-mobile-web.html
-    map.style.height = `${window.innerHeight}px`;
+            // create the map itself
+            window.livemap = new LiveMap(new Settings(json));
 
-    // fix svg size issues in weird browsers like safari
-    document.querySelectorAll('svg').forEach((svg: Element) => {
-        svg.setAttribute('preserveAspectRatio', 'none');
-    });
-
-    LiveMap.fetchJson('data/settings.json').then((json): void => {
-        window.livemap = new LiveMap(new Settings(json));
-        window.livemap.init();
-    });
+            // initialize the map stuffs
+            window.livemap.init();
+        })
+        .catch((err: unknown): void => {
+            console.error(`Error creating map\n`, err);
+        });
 };
+
+window.fetchJson = async <T>(url: string): Promise<T> => {
+    let res: Response = await fetch(url, {
+        headers: {
+            "Content-Disposition": "inline"
+        }
+    });
+    if (res.ok) {
+        return await res.json();
+    }
+    throw (res.statusText);
+}
+
+window.createSVGIcon = (icon: string): DocumentFragment => {
+    const template: HTMLTemplateElement = L.DomUtil.create('template');
+    template.innerHTML = `<svg><use href='#svg-${icon}'></use></svg>`;
+    return template.content;
+}
 
 // https://stackoverflow.com/a/3955096
 Array.prototype.remove = function <T>(obj: T, ax?: number): void {
@@ -38,6 +53,10 @@ Array.prototype.remove = function <T>(obj: T, ax?: number): void {
 };
 
 export class LiveMap extends L.Map {
+    declare _controlCorners: { [x: string]: HTMLDivElement; };
+    declare _controlContainer?: HTMLElement;
+    declare _container?: HTMLElement;
+
     private readonly _settings: Settings;
 
     private readonly _tileLayerControl: TileLayerControl;
@@ -70,14 +89,15 @@ export class LiveMap extends L.Map {
             wheelPxPerZoomLevel: 60
         });
 
-        this.on('load', () => {
-            this.getContainer().classList.remove('loading');
-            const logo: HTMLElement | null = document.querySelector('.loading.logo');
-            if (logo) {
-                logo.addEventListener('transitionend', () => logo.remove());
-                logo.classList.remove('loading');
-            }
-        })
+        this.on('load', (): void => {
+            const container: HTMLElement = this.getContainer();
+            container.classList.remove('loading');
+            container.addEventListener('transitionend', (e: TransitionEvent): void => {
+                if (e.target === container) {
+                    document.querySelector('.logo')?.remove();
+                }
+            }, {passive: true});
+        });
 
         this._settings = settings;
 
@@ -110,7 +130,42 @@ export class LiveMap extends L.Map {
         );
 
         // start the tick loop
-        //this.loop(0);
+        this.loop(0);
+
+        // fix map height for android devices
+        // https://chanind.github.io/javascript/2019/09/28/avoid-100vh-on-mobile-web.html
+        this.updateHeight();
+
+        // update map height when device orientation changes, small delay for animations
+        window.addEventListener("orientationchange", (): void => {
+            setTimeout(() => this.updateHeight(), 500);
+        }, {passive: true});
+
+        // fix svg size issues in weird browsers like safari
+        document.querySelectorAll('svg').forEach((svg: Element): void => {
+            svg.setAttribute('preserveAspectRatio', 'none');
+        });
+    }
+
+    // https://stackoverflow.com/a/60391674/3530727
+    _initControlPos(): void {
+        const container: HTMLDivElement = this._controlContainer = L.DomUtil.create('div', 'leaflet-control-container', this._container);
+        const corners: { [x: string]: HTMLDivElement; } = this._controlCorners = {};
+
+        function createRow(vSide: string): void {
+            const div: HTMLDivElement = L.DomUtil.create('div', `leaflet-control-container-${vSide}`, container);
+            createCell(vSide, 'left', div);
+            createCell(vSide, 'center', div);
+            createCell(vSide, 'right', div);
+        }
+
+        function createCell(vSide: string, hSide: string, container: HTMLDivElement): void {
+            corners[`${vSide}${hSide}`] = L.DomUtil.create('div', `leaflet-${vSide} leaflet-${hSide}`, container);
+        }
+
+        createRow('top');
+        createRow('middle');
+        createRow('bottom');
     }
 
     get contextMenu(): ContextMenu {
@@ -154,7 +209,7 @@ export class LiveMap extends L.Map {
         setTimeout(() => this.loop(++count), 1000);
     }
 
-    public createPaneIfNotExist(pane?: string) {
+    public createPaneIfNotExist(pane?: string): void {
         if (pane && this.getPane(pane) === undefined) {
             this.createPane(pane);
         }
@@ -183,20 +238,8 @@ export class LiveMap extends L.Map {
         return `?x=${loc.x}&z=${loc.z}&zoom=${this.currentZoom()}`;
     }
 
-    public static createSVGIcon(icon: string): DocumentFragment {
-        const template: HTMLTemplateElement = L.DomUtil.create('template');
-        template.innerHTML = `<svg><use href='#svg-${icon}'></use></svg>`;
-        return template.content;
-    }
-
-    public static async fetchJson(url: string) {
-        const res: Response = await fetch(url, {
-            headers: {
-                'Content-Disposition': 'inline'
-            }
-        });
-        if (res.ok) {
-            return await res.json();
-        }
+    public updateHeight(): void {
+        this.getContainer().style.height = `${window.innerHeight}px`;
+        this.invalidateSize();
     }
 }

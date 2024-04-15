@@ -1,5 +1,3 @@
-import {LiveMap} from "../../LiveMap";
-
 export class MenuRow {
     private readonly _text?: string;
     private readonly _icon?: string;
@@ -42,7 +40,7 @@ export class MenuRow {
 
         // populate contents
         if (this._icon) {
-            iconElem.appendChild(LiveMap.createSVGIcon(this._icon));
+            iconElem.appendChild(window.createSVGIcon(this._icon));
         }
         textElem.innerHTML = this._text ?? '';
         keyElem.innerHTML = this._key ?? '';

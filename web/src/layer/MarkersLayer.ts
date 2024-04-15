@@ -68,7 +68,7 @@ export class MarkersLayer extends L.LayerGroup {
     }
 
     private initial(json: LayerJson): void {
-        this._label = json.label;
+        this._label = json.label ?? ''; // set _something_ so we don't keep reloading json every tick
         this._interval = json.interval ?? 300;
         this._defaults = json.defaults;
         this._json = json;
@@ -100,8 +100,8 @@ export class MarkersLayer extends L.LayerGroup {
     }
 
     private updateLayer(): void {
-        LiveMap.fetchJson(this._url).then((json: LayerJson): void => {
-            try {
+        window.fetchJson<LayerJson>(this._url)
+            .then((json: LayerJson): void => {
                 if (!this._label) {
                     // this is the first tick
                     this.initial(json);
@@ -109,10 +109,10 @@ export class MarkersLayer extends L.LayerGroup {
 
                 // refresh markers
                 this.updateMarkers(json);
-            } catch (e) {
-                console.error(`Error updating markers layer (${this._label})\n`, this, e);
-            }
-        });
+            })
+            .catch((err: unknown): void => {
+                console.error(`Error updating markers layer (${this._label})\n`, this, err);
+            });
     }
 
     private updateMarkers(layerJson: LayerJson): void {

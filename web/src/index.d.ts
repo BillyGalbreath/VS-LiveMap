@@ -4,6 +4,10 @@ import {LiveMap} from './LiveMap';
 declare global {
     interface Window {
         livemap: LiveMap;
+
+        fetchJson<T>(url: string): Promise<T>;
+
+        createSVGIcon(icon: string): DocumentFragment
     }
 
     interface Array<T> {

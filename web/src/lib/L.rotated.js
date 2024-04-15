@@ -1,3 +1,5 @@
+// noinspection all
+
 /**
  * The MIT License (MIT)
  *

@@ -1,0 +1,112 @@
+.leaflet-players-pane {
+  z-index: 1000000000 !important;
+
+  > div {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    transition: all 0.25s;
+
+    &.leaflet-tooltip {
+      z-index: 10000000000;
+    }
+
+    &:before {
+      border-color: transparent;
+    }
+
+    > svg {
+      filter: drop-shadow(1px 1px 2px #00000080);
+      transition: all 0.25s;
+    }
+
+    > ul {
+      padding: 3px;
+      color: #FFFFFF;
+      font-weight: 700;
+      background: #336699BF;
+      border: 1px solid #000000;
+      border-radius: 5px;
+      box-shadow: 2px 2px 3px #00000080;
+      vertical-align: top;
+
+      > li:first-child {
+        display: inline-block;
+
+        > img {
+          vertical-align: middle;
+          width: 32px;
+          height: 32px;
+          border-radius: 5px;
+          border: 1px solid #000000;
+          box-shadow: 1px 1px 1px #00000080;
+        }
+      }
+
+      > li:not(:first-child) {
+        --width: 90px;
+        --height: 8px;
+        --amount: 100%;
+        --segments: 5;
+        --health-color: #A80000;
+        --satiety-color: #A8A800;
+
+        display: inline-block;
+        margin-left: 5px;
+        text-align: center;
+        line-height: 15px;
+        vertical-align: top;
+        text-shadow: 1px 1px 1px #000000;
+
+        > div {
+          margin: 1px auto 0;
+          width: var(--width);
+          height: var(--height);
+          background: #262626;
+          border-radius: calc(var(--height) / 2);
+          box-shadow: 1px 1px 1px #00000080;
+
+          &:after {
+            content: "";
+            display: block;
+            transform: translateY(-100%);
+            width: calc(100% - 2px);
+            height: calc(100% - 2px);
+            border-radius: calc(var(--height) / 2);
+            border-top: 1px solid #FFFFFF66;
+            border-left: 1px solid #FFFFFF66;
+            border-right: 1px solid #00000099;
+            border-bottom: 1px solid #00000099;
+            background: repeating-linear-gradient(
+                to right,
+                transparent,
+                transparent calc(100% / var(--segments) - 1px),
+                #00000080 calc(100% / var(--segments) - 1px),
+                #00000080 calc(100% / var(--segments) - 0px),
+                transparent calc(100% / var(--segments) - 0px),
+                transparent calc(100% / var(--segments) + 1px / (var(--segments) / 1.5))
+            );
+          }
+
+          > p {
+            height: 100%;
+            border-radius: calc(var(--height) / 2);
+
+            .health & {
+              width: var(--amount);
+              background: var(--health-color);
+            }
+
+            .satiety & {
+              margin-top: 2px;
+              width: var(--amount);
+              background: var(--satiety-color);
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -67,7 +67,7 @@ export abstract class Marker {
         // add to marker layer
         this._marker.addTo(layer);
 
-        // popups dont open on their own, so we have to add that ability
+        // popups don't open on their own, so we have to add that ability
         if (this._json?.popup?.autoOpen) {
             this._marker.openPopup();
         }
@@ -83,7 +83,7 @@ export abstract class Marker {
         this._json = json;
     }
 
-    public setPane(pane?: string) {
+    public setPane(pane?: string): void {
         if (pane) {
             this._marker.options.pane = pane;
         }

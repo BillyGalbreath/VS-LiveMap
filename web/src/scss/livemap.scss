@@ -1,0 +1,144 @@
+.leaflet-grab {
+  cursor: crosshair;
+}
+
+.leaflet-dragging .leaflet-grab {
+  cursor: grabbing;
+}
+
+img.leaflet-tile {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+
+  /* See: https://github.com/GoogleChrome/lighthouse/issues/15497#issuecomment-2047385179 */
+  mix-blend-mode: color-dodge !important;
+}
+
+.leaflet-control-container {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-auto-rows: 1fr;
+  pointer-events: none;
+
+  .leaflet-control-layers-toggle {
+    width: 30px !important;
+    height: 30px !important;
+    background-image: url(images/layers.png);
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+  }
+
+  .leaflet-control-container-top,
+  .leaflet-control-container-middle,
+  .leaflet-control-container-bottom {
+    position: relative;
+    display: grid;
+    grid-gap: inherit;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    align-items: flex-start;
+    z-index: 1000;
+
+    > div {
+      width: 100%;
+      height: 100%;
+    }
+
+    .leaflet-left,
+    .leaflet-center,
+    .leaflet-right {
+      position: static;
+      display: grid;
+      grid-auto-flow: row;
+      grid-gap: 1rem;
+      justify-content: flex-start;
+
+      > *:not(.leaflet-control-attribution) {
+        border: 1px outset #000000;
+      }
+    }
+
+    .leaflet-top {
+      align-content: flex-start;
+    }
+
+    .leaflet-middle {
+      align-content: center;
+    }
+
+    .leaflet-bottom {
+      align-content: flex-end;
+    }
+
+    .leaflet-left {
+      justify-content: flex-start;
+    }
+
+    .leaflet-center {
+      justify-content: center;
+    }
+
+    .leaflet-right {
+      justify-content: flex-end;
+    }
+  }
+
+  .leaflet-control {
+    box-shadow: 2px 2px 3px #00000080 !important;
+    text-shadow: 1px 1px 2px #00000080 !important;
+
+    > svg {
+      color: #000000;
+      filter: drop-shadow(1px 1px 2px #000000BF);
+    }
+
+    &.leaflet-control-attribution {
+      text-shadow: none !important;
+
+      > a {
+        color: #333333;
+      }
+    }
+
+    &.link {
+      cursor: pointer;
+
+      > svg {
+        margin: 2px;
+        width: 26px;
+        height: 26px;
+        vertical-align: bottom;
+      }
+    }
+
+    &.coordinates {
+      padding: 0 10px;
+      height: 30px;
+      line-height: 32px;
+      font-family: 'Cousine', 'monospace', serif;
+      font-size: 15px;
+      white-space: nowrap;
+
+      span {
+        &:first-child {
+          text-align: right;
+        }
+
+        &:nth-child(2) {
+          margin: 0 6px 0 3px;
+        }
+
+        &:last-child {
+          text-align: left;
+        }
+
+        &:not(:nth-child(2)) {
+          display: inline-block;
+          width: 50px;
+        }
+      }
+    }
+  }
+}

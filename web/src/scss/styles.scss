@@ -1,7 +1,10 @@
+@import 'font';
+@import 'livemap';
 @import 'contextmenu';
 @import 'notification';
-@import 'font';
 @import 'leaflet';
+
+@import 'players';
 
 * {
   margin: 0;
@@ -11,7 +14,7 @@
 
 body {
   overflow: hidden;
-  background: #00122d;
+  background: #00122D;
 }
 
 ul, li {
@@ -20,171 +23,37 @@ ul, li {
   vertical-align: middle;
 }
 
-#map {
-  width: 100vw;
-  height: 100vh;
-  background: transparent url(images/sky.webp) repeat;
-  cursor: crosshair;
-  transition: opacity .5s ease-in-out;
-}
-
-#map.loading {
-  opacity: 0;
-}
-
-#map.loading * {
-  pointer-events: none;
-}
-
 .logo {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   width: 100%;
+
+  > img {
+    display: block;
+    margin: 0 auto;
+    width: 90%;
+    height: auto;
+    max-width: 1024px;
+  }
+
+  > svg {
+    display: block;
+    margin: 0 auto;
+    width: 64px;
+    height: 64px;
+  }
 }
 
-.logo img {
-  display: block;
-  margin: 0 auto;
-  width: 90%;
-  height: auto;
-  max-width: 1024px;
-}
+#map {
+  background: transparent url(images/sky.webp) repeat;
+  transition: opacity .5s ease-in-out;
 
-.logo svg {
-  display: block;
-  margin: 0 auto;
-  width: 64px;
-  height: 64px;
-  opacity: 0;
-  transition: opacity .5s;
-}
+  &.loading {
+    opacity: 0;
 
-.logo.loading svg {
-  opacity: 1;
-}
-
-.leaflet-dragging #map {
-  cursor: grabbing;
-}
-
-a {
-  cursor: pointer !important;
-}
-
-img.leaflet-tile {
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges
-}
-
-.leaflet-control-layers-toggle {
-  width: 30px !important;
-  height: 30px !important;
-  background-image: url(images/layers.png);
-  background-size: 20px 20px;
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-}
-
-.leaflet-control-attribution a {
-  color: #333333;
-}
-
-.leaflet-control {
-  box-shadow: 3px 3px 10px rgba(0, 0, 0, .9) !important;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, .3) !important;
-}
-
-.leaflet-control svg {
-  color: #000;
-  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, .5));
-}
-
-.leaflet-bottom.leaflet-left .link,
-.leaflet-bottom.leaflet-left .coordinates {
-  display: inline-block;
-  float: none;
-}
-
-a.leaflet-control-layers.link svg {
-  margin: 2px;
-  width: 26px;
-  height: 26px;
-  vertical-align: bottom;
-}
-
-div.leaflet-control-layers.coordinates {
-  padding: 0 10px;
-  height: 30px;
-  line-height: 30px;
-  vertical-align: bottom;
-  font-family: 'Inter', sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  font-variation-settings: 'slnt' 0;
-  font-size: 15px;
-  white-space: pre;
-}
-
-.leaflet-container img.leaflet-tile {
-  /* See: https://github.com/GoogleChrome/lighthouse/issues/15497#issuecomment-2047385179 */
-  mix-blend-mode: color-dodge !important;
-}
-
-
-
-/* ##############################################################################*/
-
-.leaflet-players-pane {
-  z-index: 9007199254740498;
-}
-.leaflet-nameplates-pane {
-  z-index: 9007199254740499;
-}
-.leaflet-nameplates-pane div {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  box-shadow: none;
-}
-.leaflet-nameplates-pane div:before {
-  border-color: transparent;
-}
-.leaflet-nameplates-pane ul {
-  padding: 3px;
-  color: #ffffff;
-  font-weight: 700;
-  line-height: 1rem;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(0, 0, 0, 0.75);
-  border-radius: 5px;
-  box-shadow: 1px 1px 3px rgba(0,0,0,.5);
-}
-.leaflet-nameplates-pane img {
-  display: block;
-}
-.leaflet-nameplates-pane li:first-child img {
-  margin-right: 5px;
-  vertical-align: middle;
-  width: 32px;
-  height: 32px;
-  border-radius: 5px;
-  border: 1px solid black;
-}
-.leaflet-nameplates-pane li:not(:first-child) img {
-  width: 81px;
-  height: 9px;
-  background-position: 0 0;
-}
-.leaflet-nameplates-pane li:not(:first-child) img:first-child {
-  background: url(images/health.png) no-repeat;
-}
-.leaflet-nameplates-pane li:not(:first-child) img:not(:first-child)  {
-  background: url(images/armor.png) no-repeat;
-}
-.leaflet-nameplates-pane div,
-.leaflet-marker-pane img {
-  transition: all 0.25s;
+    * {
+      pointer-events: none;
+    }
+  }
 }

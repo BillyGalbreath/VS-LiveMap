@@ -11,7 +11,7 @@ public sealed class ReloadCommand : AbstractServerCommand {
         handler.RegisterSubCommand("reload", this);
     }
 
-    public override CommandResult Execute(Caller caller, IEnumerable<string> args) {
+    public override CommandResult Execute(Caller caller, IEnumerable<string> _) {
         // reload the main config
         Config.Reload();
 

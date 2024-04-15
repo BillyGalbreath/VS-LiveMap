@@ -11,7 +11,7 @@ public sealed class FullRenderCommand : AbstractServerCommand {
         handler.RegisterSubCommand("fullrender", this);
     }
 
-    public override CommandResult Execute(Caller caller, IEnumerable<string> args) {
+    public override CommandResult Execute(Caller caller, IEnumerable<string> _) {
         if (!Server.RenderTask.ProcessAllRegions()) {
             return CommandResult.Success("command.fullrender.failed");
         }

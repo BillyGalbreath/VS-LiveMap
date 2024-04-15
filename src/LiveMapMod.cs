@@ -22,14 +22,14 @@ public sealed class LiveMapMod : ModSystem {
         Instance = this;
     }
 
-    public override void StartClientSide(ICoreClientAPI capi) {
-        _api = capi;
-        Client = new LiveMapClient(capi);
+    public override void StartClientSide(ICoreClientAPI api) {
+        _api = api;
+        Client = new LiveMapClient(api);
     }
 
-    public override void StartServerSide(ICoreServerAPI sapi) {
-        _api = sapi;
-        Server = new LiveMapServer(sapi);
+    public override void StartServerSide(ICoreServerAPI api) {
+        _api = api;
+        Server = new LiveMapServer(api);
     }
 
     public override void Dispose() {

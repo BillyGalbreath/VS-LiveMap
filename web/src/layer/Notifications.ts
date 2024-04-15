@@ -1,5 +1,4 @@
 import * as L from 'leaflet';
-import {LiveMap} from "../LiveMap";
 
 export class Notifications {
     private readonly _dom: HTMLElement;
@@ -10,30 +9,21 @@ export class Notifications {
     }
 
     public create(type: ('info' | 'success' | 'warning' | 'danger'), text: string): void {
-        const div: HTMLElement = L.DomUtil.create('div', `${type}`);
-        div.appendChild(LiveMap.createSVGIcon(type));
+        const div: HTMLElement = this._dom.appendChild(L.DomUtil.create('div', type));
+        div.appendChild(window.createSVGIcon(type));
+        div.appendChild(L.DomUtil.create('p')).innerText = text;
 
-        const p: HTMLElement = div.appendChild(L.DomUtil.create('p'));
-        p.innerText = text;
-
-        this._dom.appendChild(div);
-
-        setTimeout((): void => {
-            div.classList.add('show');
-            const handler = (): void => {
-                div.removeEventListener('transitionend', handler);
-                setTimeout((): void => {
-                    div.classList.remove('show');
-                    div.addEventListener('transitionend', (): void => {
-                        try {
-                            this._dom.removeChild(div);
-                        } catch (e) {
-                        }
-                    });
-                }, 2500);
-            };
-            div.addEventListener('transitionend', handler);
-        }, 100);
+        const handler = (): void => {
+            div.removeEventListener('transitionend', handler);
+            setTimeout((): void => {
+                div.addEventListener('transitionend', (): void => {
+                    div.remove();
+                }, {passive: true});
+                div.classList.remove('show');
+            }, 2500);
+        };
+        div.addEventListener('transitionend', handler, {passive: true});
+        setTimeout((): void => div.classList.add('show'), 1);
     }
 
     public info(text: string): void {
