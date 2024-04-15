@@ -28,7 +28,7 @@ window.onload = (): void => {
 };
 
 window.fetchJson = async <T>(url: string): Promise<T> => {
-    let res: Response = await fetch(url, {
+    const res: Response = await fetch(url, {
         headers: {
             "Content-Disposition": "inline"
         }
