@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveMap", "LiveMap.csproj", "{6E98B982-0ECC-491A-856C-B06B61D1C4E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "livemap", "livemap.csproj", "{6E98B982-0ECC-491A-856C-B06B61D1C4E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

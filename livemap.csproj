@@ -86,8 +86,8 @@
     </Target>
 
     <Target Name="Package" AfterTargets="NpmInstallAndRunBuild" Condition="'$(Configuration)' == 'Release'">
-        <MakeDir Directories="bin/Mods" />
-        <ZipDirectory DestinationFile="bin/Mods/$(TargetName).zip" SourceDirectory="$(TargetDir)" Overwrite="true" />
+        <MakeDir Directories="bin/mods" />
+        <ZipDirectory DestinationFile="bin/mods/$(TargetName).zip" SourceDirectory="$(TargetDir)" Overwrite="true" />
     </Target>
 
 </Project>
