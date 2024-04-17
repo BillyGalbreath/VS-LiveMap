@@ -44,6 +44,8 @@ ul, li {
 }
 
 #map {
+  width: 100vw;
+  height: 100vh;
   background: transparent url(images/sky.webp) repeat;
   transition: opacity .5s ease-in-out;
 

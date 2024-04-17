@@ -1,7 +1,7 @@
 import * as L from 'leaflet';
 
 export class Location {
-    public static of(a: number | number[] | L.Point | L.LatLng | Location, b?: number): Location {
+    public static of(a: number | string | number[] | L.Point | L.LatLng | Location, b?: number | string): Location {
         if (a === undefined || a === null) {
             // fail fast
             return a;
@@ -28,8 +28,8 @@ export class Location {
             }
         }
         // must be regular numbers
-        if (typeof a === 'number') {
-            return new Location(a, b ?? 0);
+        if (typeof a === 'number' || 'string') {
+            return new Location(+a, +(b ?? 0));
         }
         // guess not...
         return undefined!;
@@ -70,8 +70,8 @@ export class Location {
     private _z: number;
 
     constructor(x: number, z: number, latlng?: boolean) {
-        this._x = latlng ? Location.metersToPixels(z) : x;
-        this._z = latlng ? Location.metersToPixels(x) : z;
+        this._x = (latlng ? Location.metersToPixels(z) : x) ?? 0;
+        this._z = (latlng ? Location.metersToPixels(x) : z) ?? 0;
     }
 
     get x(): number {

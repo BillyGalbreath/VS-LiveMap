@@ -10,6 +10,13 @@ import {Notifications} from "./layer/Notifications";
 import './scss/styles';
 import './svg'
 
+// update map size when window size, scale, or orientation changes
+"orientationchange resize".split(' ').forEach((event: string): void => {
+    window.addEventListener(event, (): void => {
+        window.livemap?.updateSizeToWindow();
+    }, {passive: true});
+});
+
 window.onload = (): void => {
     window.fetchJson<Settings>('data/settings.json')
         .then((json: Settings): void => {
@@ -19,8 +26,12 @@ window.onload = (): void => {
             // create the map itself
             window.livemap = new LiveMap(new Settings(json));
 
-            // initialize the map stuffs
-            window.livemap.init();
+            // center the map on url coordinates or spawn (0, 0); this initializes the map
+            const url: URLSearchParams = new URLSearchParams(window.location.search);
+            window.livemap.centerOn(
+                Location.of(url.get('x') ?? 0, url.get('z') ?? 0),
+                url.get('zoom') ?? window.livemap.settings.zoom.def
+            );
         })
         .catch((err: unknown): void => {
             console.error(`Error creating map\n`, err);
@@ -96,15 +107,7 @@ export class LiveMap extends L.Map {
             wheelPxPerZoomLevel: L.Browser.linux && L.Browser.chrome ? 120 : 60
         });
 
-        this.on('load', (): void => {
-            const container: HTMLElement = this.getContainer();
-            container.classList.remove('loading');
-            container.addEventListener('transitionend', (e: TransitionEvent): void => {
-                if (e.target === container) {
-                    document.querySelector('.logo')?.remove();
-                }
-            }, {passive: true});
-        });
+        this.on('load', (): void => this.onLoad());
 
         this._settings = settings;
 
@@ -125,30 +128,19 @@ export class LiveMap extends L.Map {
         this._scale ??= (1 / Math.pow(2, this.settings.zoom.maxout));
     }
 
-    // this has to be done _after_ the map has already been initialized
-    init(): void {
-        // move to the coords or spawn point at specified or default zoom level
-        this.centerOn(
-            Location.of(
-                this.getUrlParam('x', 0),
-                this.getUrlParam('z', 0)
-            ),
-            this.getUrlParam('zoom', this.settings.zoom.def)
-        );
-
-        // fix map height for android devices
-        // https://chanind.github.io/javascript/2019/09/28/avoid-100vh-on-mobile-web.html
-        this.updateHeight();
-
-        // update map height when device orientation changes, small delay for animations
-        window.addEventListener("orientationchange", (): void => {
-            setTimeout(() => this.updateHeight(), 500);
+    onLoad(): void {
+        console.log('onLoad')
+        const container: HTMLElement = this.getContainer();
+        container.classList.remove('loading');
+        container.addEventListener('transitionend', (e: TransitionEvent): void => {
+            if (e.target === container) {
+                document.querySelector('.logo')?.remove();
+            }
         }, {passive: true});
 
-        // fix svg size issues in weird browsers like safari
-        document.querySelectorAll('svg').forEach((svg: Element): void => {
-            svg.setAttribute('preserveAspectRatio', 'none');
-        });
+        // fix map size on load - fixes android browser url bar pushing page off-screen
+        // https://chanind.github.io/javascript/2019/09/28/avoid-100vh-on-mobile-web.html
+        this.updateSizeToWindow();
 
         // replace layers.png with an svg
         const layers: HTMLElement = document.querySelector('.leaflet-control-layers-toggle')!;
@@ -158,6 +150,11 @@ export class LiveMap extends L.Map {
         svg.style.width = '24px';
         svg.style.height = '24px';
         svg.style.margin = '3px';
+
+        // fix svg size issues in weird browsers like safari
+        document.querySelectorAll('svg').forEach((svg: Element): void => {
+            svg.setAttribute('preserveAspectRatio', 'none');
+        });
 
         // start the tick loop
         //this.loop(0);
@@ -231,9 +228,9 @@ export class LiveMap extends L.Map {
         }
     }
 
-    public centerOn(loc: Location, zoom?: number): void {
+    public centerOn(loc: Location, zoom?: number | string): void {
         if (zoom !== undefined) {
-            this.setZoom(this.settings.zoom.maxout - zoom);
+            this.setZoom(this.settings.zoom.maxout - +zoom);
         }
         this.setView(loc.add(this.settings.spawn).toLatLng());
         this._linkControl.update();
@@ -243,10 +240,6 @@ export class LiveMap extends L.Map {
         return this.settings.zoom.maxout - this.getZoom();
     }
 
-    public getUrlParam(query: string, def: number): number {
-        return parseInt(new URLSearchParams(window.location.search).get(query) ?? `${def}`);
-    }
-
     public getUrlFromView(): string {
         const loc: Location = Location.of(this.getCenter())
             .floor()
@@ -254,8 +247,10 @@ export class LiveMap extends L.Map {
         return `?x=${loc.x}&z=${loc.z}&zoom=${this.currentZoom()}`;
     }
 
-    public updateHeight(): void {
-        this.getContainer().style.height = `${window.innerHeight}px`;
+    public updateSizeToWindow(): void {
+        const style: CSSStyleDeclaration = this.getContainer().style;
+        style.width = `${window.innerWidth}px`;
+        style.height = `${window.innerHeight}px`;
         this.invalidateSize();
     }
 }
