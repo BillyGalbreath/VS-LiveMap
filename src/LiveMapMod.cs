@@ -14,7 +14,7 @@ public sealed class LiveMapMod : ModSystem {
     public static ICoreAPI Api => Instance._api!;
 
     private LiveMapClient? Client { get; set; }
-    private LiveMapServer? Server { get; set; }
+    public LiveMapServer? Server { get; set; }
 
     private ICoreAPI? _api;
 

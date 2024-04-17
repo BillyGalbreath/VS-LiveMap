@@ -150,8 +150,17 @@ export class LiveMap extends L.Map {
             svg.setAttribute('preserveAspectRatio', 'none');
         });
 
+        // replace layers.png with an svg
+        const layers: HTMLElement = document.querySelector('.leaflet-control-layers-toggle')!;
+        layers.style.backgroundImage = 'none';
+        layers.appendChild(window.createSVGIcon('layers'));
+        const svg: SVGElement = layers.firstChild as SVGElement;
+        svg.style.width = '24px';
+        svg.style.height = '24px';
+        svg.style.margin = '3px';
+
         // start the tick loop
-        this.loop(0);
+        //this.loop(0);
     }
 
     // https://stackoverflow.com/a/60391674/3530727

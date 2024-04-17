@@ -18,8 +18,9 @@
   "logger.info.server-loaded-colormap": "&dColormap loaded from disk.",
   "logger.info.server-received-colormap": "&dColormap packet was received from &n{0}",
 
-  "logger.info.webserver-started": "&aInternal webserver has started on port &e{0}",
+  "logger.info.webserver-started": "&aInternal webserver starting on port &e{0}",
   "logger.info.webserver-stopped": "&cInternal webserver has stopped",
+  "logger.error.webserver-start-failed": "&cInternal webserver has failed to start",
 
   "logger.warning.packet-from-non-admin": "Ignoring colormap packet from non-privileged user {0}",
   "logger.warning.received-null-colormap": "Received null colormap from {0}"

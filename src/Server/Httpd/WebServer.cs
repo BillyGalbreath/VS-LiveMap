@@ -19,6 +19,7 @@ public sealed class WebServer {
     public void Reload() {
         _reload = true;
         Dispose();
+        _stopped = false;
     }
 
     public void Run() {
@@ -41,9 +42,18 @@ public sealed class WebServer {
                 Logger.Info(Lang.Get("logger.info.webserver-started", port));
             }
 
-            (_listener = new HttpListener {
-                Prefixes = { $"http://*:{port}/" }
-            }).Start();
+            try {
+                (_listener = new HttpListener {
+                    Prefixes = { $"http://*:{port}/" }
+                }).Start();
+            } catch (Exception e) {
+                Logger.Error(Lang.Get("logger.error.webserver-start-failed"));
+                Logger.Error(e.ToString());
+                _running = false;
+                _stopped = true;
+                Thread.CurrentThread.Interrupt();
+                return;
+            }
 
             while (_running) {
                 try {
@@ -109,7 +119,9 @@ public sealed class WebServer {
     public void Dispose() {
         _stopped = true;
 
-        _listener?.Stop();
+        try {
+            _listener?.Stop();
+        } catch (ObjectDisposedException) { }
         _listener = null;
 
         _thread?.Interrupt();

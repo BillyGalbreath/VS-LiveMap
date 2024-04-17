@@ -12,15 +12,19 @@ public sealed class ReloadCommand : AbstractServerCommand {
     }
 
     public override CommandResult Execute(Caller caller, IEnumerable<string> _) {
+        DoReload(Server);
+
+        return CommandResult.Success("command.reload.finished");
+    }
+
+    public static void DoReload(LiveMapServer server) {
         // reload the main config
         Config.Reload();
 
-        // colormap file is kinda heavy. lets load it off the main thread.
-        new Thread(_ => Server.Colormap.Reload(Server.Api)).Start();
+        // colormap file is kinda heavy. let's load it off the main thread.
+        new Thread(_ => server.Colormap.Reload(server.Api)).Start();
 
         // reload the web server
-        Server.WebServer.Reload();
-
-        return CommandResult.Success("command.reload.finished");
+        server.WebServer.Reload();
     }
 }

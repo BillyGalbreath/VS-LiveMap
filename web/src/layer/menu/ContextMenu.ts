@@ -33,7 +33,7 @@ export class ContextMenu {
 
         // setup map's listeners
         this._livemap.on('load unload resize viewreset move movestart moveend zoom zoomstart zoomend' +
-            ' zoomlevelschange click dblclick mousedown mouseup preclick', (): void => this.close());
+            ' zoomlevelschange click dblclick mousedown preclick', (): void => this.close());
     }
 
     private createRows(): MenuRow[] {
@@ -54,7 +54,7 @@ export class ContextMenu {
 
     private createMenu(): HTMLElement {
         // create the menu
-        const wrapper: HTMLElement = L.DomUtil.create('div', 'wrapper');
+        const wrapper: HTMLElement = L.DomUtil.create('div', 'contextmenu-wrapper');
         const menu: HTMLElement = document.body.appendChild(wrapper)
             .appendChild(L.DomUtil.create('div'))
             .appendChild(L.DomUtil.create('div', 'contextmenu'));

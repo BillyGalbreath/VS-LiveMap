@@ -13,6 +13,7 @@ import './home.svg';
 import './house.svg';
 import './info.svg';
 import './ladder.svg';
+import './layers.svg';
 import './link.svg';
 import './logo.svg';
 import './marker.svg';

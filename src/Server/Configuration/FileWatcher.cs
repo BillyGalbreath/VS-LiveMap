@@ -1,5 +1,6 @@
 using System.IO;
 using LiveMap.Common.Util;
+using LiveMap.Server.Command;
 using Vintagestory.API.Config;
 
 namespace LiveMap.Server.Configuration;
@@ -51,7 +52,7 @@ public class FileWatcher {
         // wait for other changes to process
         LiveMapMod.Api.Event.RegisterCallback(_ => {
             // reload the config
-            Config.Reload();
+            ReloadCommand.DoReload(LiveMapMod.Instance.Server!);
 
             // wait some more to remove this change from the queue since the reload triggers another write
             LiveMapMod.Api.Event.RegisterCallback(_ => {
