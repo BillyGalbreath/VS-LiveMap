@@ -16,6 +16,10 @@ declare global {
 }
 
 module 'leaflet' {
+    export namespace Browser {
+        const linux: boolean;
+    }
+
     export function ellipse(latLng: L.LatLngExpression, options?: L.EllipseOptions): L.Ellipse;
 
     interface Ellipse extends L.Path {

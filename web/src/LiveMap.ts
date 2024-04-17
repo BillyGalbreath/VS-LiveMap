@@ -86,7 +86,14 @@ export class LiveMap extends L.Map {
             // these get weird when changed
             zoomSnap: 1,
             zoomDelta: 1,
-            wheelPxPerZoomLevel: 60
+
+            // chrome based browsers on linux zoom twice as fast, so we have to double the ratio
+            // effectively undoes the fix for Leaflet/Leaflet#4538 and Leaflet/Leaflet#7403
+            // https://github.com/Leaflet/Leaflet/commit/96977a19358374b0166cff049862fa1f0fed5948
+            //
+            // todo remove this logic when this bug gets fixed: https://issues.chromium.org/issues/40887377
+            // it seems intentional, so it might not get fixed https://issues.chromium.org/issues/40804672
+            wheelPxPerZoomLevel: L.Browser.linux && L.Browser.chrome ? 120 : 60
         });
 
         this.on('load', (): void => {
