@@ -1,7 +1,7 @@
 import * as L from 'leaflet';
 import {ControlBox} from './ControlBox';
 import {LiveMap} from '../LiveMap';
-import {Location} from "../data/Location";
+import {Point} from "../data/Point";
 import '../svg/link.svg';
 
 export class LinkControl extends ControlBox {
@@ -19,7 +19,7 @@ export class LinkControl extends ControlBox {
 
 
             this._livemap.contextMenu.share(
-                Location.of(this._livemap.getCenter())
+                Point.of(this._livemap.getCenter())
                     .floor()
                     .subtract(this._livemap.settings.spawn)
             );

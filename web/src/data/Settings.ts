@@ -1,19 +1,19 @@
-import {Location} from "./Location";
+import {Point} from "./Point";
 import {Zoom} from './Zoom';
 
 export class Settings {
     private readonly _attribution: string;
     private readonly _interval: number;
-    private readonly _size: Location;
-    private readonly _spawn: Location;
+    private readonly _size: Point;
+    private readonly _spawn: Point;
     private readonly _zoom: Zoom;
     private readonly _markers: string[];
 
     constructor(json: Settings) {
         this._attribution = json.attribution ?? '';
         this._interval = json.interval ?? 30;
-        this._size = json.size ? Location.of(json.size) : Location.of(1024000, 1024000);
-        this._spawn = json.spawn ? Location.of(json.spawn) : this.size.divide(2);
+        this._size = json.size ? Point.of(json.size) : Point.of(1024000, 1024000);
+        this._spawn = json.spawn ? Point.of(json.spawn) : this.size.divide(2);
         this._zoom = json.zoom ? new Zoom(json.zoom) : new Zoom();
         this._markers = json.markers ?? [];
     }
@@ -26,11 +26,11 @@ export class Settings {
         return this._interval;
     }
 
-    get size(): Location {
+    get size(): Point {
         return this._size;
     }
 
-    get spawn(): Location {
+    get spawn(): Point {
         return this._spawn;
     }
 

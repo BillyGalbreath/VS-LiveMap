@@ -1,12 +1,12 @@
 import * as L from 'leaflet';
 import {MarkersLayer} from "../MarkersLayer";
-import {Location} from "../../data/Location";
+import {Point} from "../../data/Point";
 
 export interface MarkerJson {
     type: string,
     id: string,
-    point: Location,
-    points: Location[],
+    point: Point,
+    points: Point[],
     options: L.MarkerOptions,
     tooltip: L.TooltipOptions,
     popup: PopupOptions

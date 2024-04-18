@@ -1,14 +1,14 @@
 import * as L from 'leaflet';
 import {ControlBox} from './ControlBox';
 import {LiveMap} from '../LiveMap';
-import {Location} from "../data/Location";
+import {Point} from "../data/Point";
 
 export class CoordsControl extends ControlBox {
     private readonly _dom: HTMLElement;
     private readonly _domX: HTMLElement;
     private readonly _domZ: HTMLElement
 
-    private _loc: Location = new Location(0, 0);
+    private _point: Point = new Point(0, 0);
 
     constructor(livemap: LiveMap) {
         super(livemap, 'bottomcenter');
@@ -37,16 +37,16 @@ export class CoordsControl extends ControlBox {
     }
 
     public update = (e?: L.LeafletMouseEvent): void => {
-        this._loc = e
-            ? Location.of(e.latlng)
+        this._point = e
+            ? Point.of(e.latlng)
                 .subtract(this._livemap.settings.spawn)
                 .round()
-            : new Location(0, 0);
-        this._domX.innerHTML = `${this._loc.x}`;
-        this._domZ.innerHTML = `${this._loc.z}`;
+            : new Point(0, 0);
+        this._domX.innerHTML = `${this._point.x}`;
+        this._domZ.innerHTML = `${this._point.z}`;
     }
 
-    public getLocation(): Location {
-        return this._loc;
+    public getPoint(): Point {
+        return this._point;
     }
 }

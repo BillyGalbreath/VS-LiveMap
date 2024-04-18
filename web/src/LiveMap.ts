@@ -3,7 +3,7 @@ import {TileLayerControl} from './control/TileLayerControl';
 import {LayersControl} from './control/LayersControl';
 import {CoordsControl} from './control/CoordsControl';
 import {LinkControl} from './control/LinkControl';
-import {Location} from "./data/Location";
+import {Point} from "./data/Point";
 import {Settings} from './data/Settings';
 import {ContextMenu} from "./layer/menu/ContextMenu";
 import {Notifications} from "./layer/Notifications";
@@ -29,7 +29,7 @@ window.onload = (): void => {
             // center the map on url coordinates or spawn (0, 0); this initializes the map
             const url: URLSearchParams = new URLSearchParams(window.location.search);
             window.livemap.centerOn(
-                Location.of(url.get('x') ?? 0, url.get('z') ?? 0),
+                Point.of(url.get('x') ?? 0, url.get('z') ?? 0),
                 url.get('zoom') ?? window.livemap.settings.zoom.def
             );
         })
@@ -228,11 +228,11 @@ export class LiveMap extends L.Map {
         }
     }
 
-    public centerOn(loc: Location, zoom?: number | string): void {
+    public centerOn(point: Point, zoom?: number | string): void {
         if (zoom !== undefined) {
             this.setZoom(this.settings.zoom.maxout - +zoom);
         }
-        this.setView(loc.add(this.settings.spawn).toLatLng());
+        this.setView(point.add(this.settings.spawn).toLatLng());
         this._linkControl.update();
     }
 
@@ -241,10 +241,10 @@ export class LiveMap extends L.Map {
     }
 
     public getUrlFromView(): string {
-        const loc: Location = Location.of(this.getCenter())
+        const point: Point = Point.of(this.getCenter())
             .floor()
             .subtract(this.settings.spawn);
-        return `?x=${loc.x}&z=${loc.z}&zoom=${this.currentZoom()}`;
+        return `?x=${point.x}&z=${point.z}&zoom=${this.currentZoom()}`;
     }
 
     public updateSizeToWindow(): void {
