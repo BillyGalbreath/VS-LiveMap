@@ -28,7 +28,7 @@ export class Location {
             }
         }
         // must be regular numbers
-        if (typeof a === 'number' || 'string') {
+        if (typeof a === 'number' || typeof a === 'string') {
             return new Location(+a, +(b ?? 0));
         }
         // guess not...
