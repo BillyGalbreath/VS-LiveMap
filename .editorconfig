@@ -37,6 +37,3 @@ resharper_csharp_type_declaration_braces = end_of_line
 resharper_csharp_brace_style = end_of_line
 resharper_type_declaration_braces = end_of_line
 resharper_brace_style = end_of_line
-
-csharp_style_namespace_declarations = file_scoped:error
-dotnet_diagnostic.IDE0161.severity = error
