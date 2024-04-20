@@ -16,6 +16,7 @@ public readonly struct Color {
         _value = uintVal;
     }
 
+    /// <inheritdoc/>
     public override string ToString() {
         return $"#{_value:X6}";
     }
