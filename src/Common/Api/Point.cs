@@ -10,7 +10,7 @@ namespace LiveMap.Common.Api;
 /// </summary>
 [PublicAPI]
 [JsonConverter(typeof(PointJsonConverter))]
-public class Point {
+public readonly struct Point {
     /// <summary>
     /// The value of the X axis of this point
     /// </summary>
