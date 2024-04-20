@@ -1,0 +1,4 @@
+<map id="Rectangle" name="Rectangle">
+<area shape="rect" id="node1" title="The rectangle marker is used to draw rectangle overlays on the map" alt="" coords="43,80,130,107"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,5,168,32"/>
+</map>
