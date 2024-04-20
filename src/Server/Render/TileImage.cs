@@ -36,7 +36,7 @@ public sealed unsafe class TileImage {
         int imgX = blockX & 511;
         int imgZ = blockZ & 511;
 
-        ((uint*)(_pngPtr + imgZ * _pngRowBytes))[imgX] = argb;
+        ((uint*)(_pngPtr + (imgZ * _pngRowBytes)))[imgX] = argb;
 
         _shadowMap[(imgZ << 9) + imgX] = (byte)(_shadowMap[(imgZ << 9) + imgX] * yDiff);
     }
@@ -45,14 +45,14 @@ public sealed unsafe class TileImage {
         byte[] shadowMapCopy = _shadowMap.ToArray();
         BlurTool.Blur(_shadowMap, 512, 512, 2);
         for (int i = 0; i < _shadowMap.Length; i++) {
-            float shadow = (int)((_shadowMap[i] / 128F - 1F) * 5F) / 5F;
-            shadow += (shadowMapCopy[i] / 128F - 1F) * 5F % 1F / 5F;
+            float shadow = (int)(((_shadowMap[i] / 128F) - 1F) * 5F) / 5F;
+            shadow += ((((shadowMapCopy[i] / 128F) - 1F) * 5F) % 1F) / 5F;
 
             int imgX = i & 511;
             int imgZ = i >> 9;
 
-            uint* row = (uint*)(_pngPtr + imgZ * _pngRowBytes);
-            row[imgX] = (uint)(row[imgX] == 0 ? 0 : ColorUtil.ColorMultiply3Clamped((int)row[imgX], shadow * 1.4F + 1F));
+            uint* row = (uint*)(_pngPtr + (imgZ * _pngRowBytes));
+            row[imgX] = (uint)(row[imgX] == 0 ? 0 : ColorUtil.ColorMultiply3Clamped((int)row[imgX], (shadow * 1.4F) + 1F));
         }
     }
 
@@ -85,13 +85,13 @@ public sealed unsafe class TileImage {
 
     private void WritePixels(SKBitmap png, int zoom) {
         int step = 1 << zoom;
-        int baseX = (_regionX * 512 >> zoom) & 511;
-        int baseZ = (_regionZ * 512 >> zoom) & 511;
+        int baseX = ((_regionX * 512) >> zoom) & 511;
+        int baseZ = ((_regionZ * 512) >> zoom) & 511;
         byte* pngPtr = (byte*)png.GetPixels().ToPointer();
         int pngRowBytes = png.RowBytes;
         for (int x = 0; x < 512; x += step) {
             for (int z = 0; z < 512; z += step) {
-                uint argb = ((uint*)(_pngPtr + z * _pngRowBytes))[x];
+                uint argb = ((uint*)(_pngPtr + (z * _pngRowBytes)))[x];
                 if (argb == 0) {
                     // skipping 0 prevents overwrite existing
                     // parts of the buffer of existing images
@@ -103,7 +103,7 @@ public sealed unsafe class TileImage {
                     argb = DownSample(x, z, argb, step);
                 }
 
-                ((uint*)(pngPtr + (baseZ + (z >> zoom)) * pngRowBytes))[baseX + (x >> zoom)] = argb;
+                ((uint*)(pngPtr + ((baseZ + (z >> zoom)) * pngRowBytes)))[baseX + (x >> zoom)] = argb;
             }
         }
     }
@@ -113,7 +113,7 @@ public sealed unsafe class TileImage {
         for (int i = 0; i < step; i++) {
             for (int j = 0; j < step; j++) {
                 if (i != 0 && j != 0) {
-                    argb = ((uint*)(_pngPtr + (z + j) * _pngRowBytes))[x + i];
+                    argb = ((uint*)(_pngPtr + ((z + j) * _pngRowBytes)))[x + i];
                 }
 
                 a += argb >> 24 & 0xFF;
