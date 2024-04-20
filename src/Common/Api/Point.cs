@@ -1,129 +1,174 @@
 using System;
+using JetBrains.Annotations;
+using livemap.Common.Api.Json;
+using Newtonsoft.Json;
 
 namespace LiveMap.Common.Api;
 
-public class Point {
+/// <summary>
+/// Represents a point on the map
+/// </summary>
+[PublicAPI]
+[JsonConverter(typeof(PointJsonConverter))]
+public class Point : JsonSerializable<Point> {
+    /// <summary>
+    /// The value of the X axis of this point
+    /// </summary>
     public double X { get; }
+
+    /// <summary>
+    /// The value of the Z axis of this point
+    /// </summary>
     public double Z { get; }
 
+    /// <summary>
+    /// Create a new point from a coordinate array
+    /// </summary>
+    /// <param name="arr"></param>
+    public Point(double[] arr) : this(arr[0], arr[1]) { }
+
+    /// <summary>
+    /// Create a new point from coordinates
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="z"></param>
     public Point(double x, double z) {
         X = x;
         Z = z;
     }
 
-    public Point Add(double num) {
-        return this + num;
+    /// <summary>
+    /// Get the axis value of the specified index
+    /// </summary>
+    /// <param name="index">Index of axis</param>
+    /// <remarks>
+    /// Index <c>0</c> represents axis <c>X</c><br/>
+    /// Index <c>1</c> represents axis <c>Z</c>
+    /// </remarks>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    public double this[int index] {
+        get {
+            return index switch {
+                0 => X,
+                1 => Z,
+                _ => throw new ArgumentOutOfRangeException(nameof(index), "Out of bounds")
+            };
+        }
     }
 
-    public Point Add(Point point) {
-        return this + point;
-    }
+    /// <summary>
+    /// Adds the specified amount to the point's axis values
+    /// </summary>
+    /// <param name="num">The value to add to the point's axis values</param>
+    /// <returns>A new point with the added axis values</returns>
+    public Point Add(double num) => this + num;
 
-    public Point Subtract(double num) {
-        return this - num;
-    }
+    /// <summary>
+    /// Adds the specified point's axis values to this point's axis values
+    /// </summary>
+    /// <param name="point">The point to add to this point's axis values</param>
+    /// <returns>A new point with the added axis values</returns>
+    public Point Add(Point point) => this + point;
 
-    public Point Subtract(Point point) {
-        return this - point;
-    }
+    public static Point operator +(Point left, Point right) => new(left.X + right.X, left.Z + right.Z);
+    public static Point operator +(Point left, double right) => new(left.X + right, left.Z + right);
+    public static Point operator +(double left, Point right) => new(left + right.X, left + right.Z);
 
-    public Point Multiply(double num) {
-        return this * num;
-    }
+    /// <summary>
+    /// Subtracts the specified amount to the point's axis values
+    /// </summary>
+    /// <param name="num">The value to subtract to the point's axis values</param>
+    /// <returns>A new point with the subtracted axis values</returns>
+    public Point Subtract(double num) => this - num;
 
-    public Point Multiply(Point point) {
-        return this * point;
-    }
+    /// <summary>
+    /// Subtracts the specified point's axis values to this point's axis values
+    /// </summary>
+    /// <param name="point">The point to subtract to this point's axis values</param>
+    /// <returns>A new point with the subtracted axis values</returns>
+    public Point Subtract(Point point) => this - point;
 
-    public Point Divide(double num) {
-        return this / num;
-    }
+    public static Point operator -(Point left, Point right) => new(left.X - right.X, left.Z - right.Z);
+    public static Point operator -(Point left, double right) => new(left.X - right, left.Z - right);
+    public static Point operator -(double left, Point right) => new(left - right.X, left - right.Z);
 
-    public Point Divide(Point point) {
-        return this / point;
-    }
+    /// <summary>
+    /// Multiplies the specified amount to the point's axis values
+    /// </summary>
+    /// <param name="num">The value to multiply to the point's axis values</param>
+    /// <returns>A new point with the multiplied axis values</returns>
+    public Point Multiply(double num) => this * num;
 
-    public Point Ceil() {
-        return new Point(Math.Ceiling(X), Math.Ceiling(Z));
-    }
+    /// <summary>
+    /// Multiplies the specified point's axis values to this point's axis values
+    /// </summary>
+    /// <param name="point">The point to multiply to this point's axis values</param>
+    /// <returns>A new point with the multiplied axis values</returns>
+    public Point Multiply(Point point) => this * point;
 
-    public Point Floor() {
-        return new Point(Math.Floor(X), Math.Floor(Z));
-    }
+    public static Point operator *(Point left, Point right) => new(left.X * right.X, left.Z * right.Z);
+    public static Point operator *(Point left, double right) => new(left.X * right, left.Z * right);
+    public static Point operator *(double left, Point right) => new(left * right.X, left * right.Z);
 
-    public Point Round() {
-        return new Point(Math.Round(X), Math.Round(Z));
-    }
+    /// <summary>
+    /// Divides the specified amount to the point's axis values
+    /// </summary>
+    /// <param name="num">The value to divide to the point's axis values</param>
+    /// <returns>A new point with the divided axis values</returns>
+    public Point Divide(double num) => this / num;
 
-    public override bool Equals(object? obj) {
-        return obj is Point other && Equals(other.X, other.Z);
-    }
+    /// <summary>
+    /// Divides the specified point's axis values from this point's axis values
+    /// </summary>
+    /// <param name="point">The point to divide from this point's axis values</param>
+    /// <returns>A new point with the divided axis values</returns>
+    public Point Divide(Point point) => this / point;
 
-    public bool Equals(double x, double z) {
-        return X.Equals(x) && Z.Equals(z);
-    }
+    public static Point operator /(Point left, Point right) => new(left.X / right.X, left.Z / right.Z);
+    public static Point operator /(Point left, double right) => new(left.X / right, left.Z / right);
+    public static Point operator /(double left, Point right) => new(left / right.X, left / right.Z);
 
-    public override string ToString() {
-        return $"{X}, {Z}";
-    }
+    /// <summary>Round the point values up to the nearest integer</summary>
+    /// <returns>A new point with the values rounded up to the nearest integer</returns>
+    public Point Ceil() => new(Math.Ceiling(X), Math.Ceiling(Z));
 
-    public override int GetHashCode() {
-        return HashCode.Combine(X, Z);
-    }
+    /// <summary>Round the point values down to the nearest integer</summary>
+    /// <returns>A new point with the values rounded down to the nearest integer</returns>
+    public Point Floor() => new(Math.Floor(X), Math.Floor(Z));
 
-    public static Point operator +(Point left, Point right) {
-        return new Point(left.X + right.X, left.Z + right.Z);
-    }
+    /// <summary>Round the point values to the nearest integer</summary>
+    /// <returns>A new point with the values rounded to the nearest integer</returns>
+    public Point Round() => new(Math.Round(X), Math.Round(Z));
 
-    public static Point operator +(Point left, double right) {
-        return new Point(left.X + right, left.Z + right);
-    }
+    /// <inheritdoc/>
+    public override bool Equals(object? obj) => obj is Point other && Equals(other.X, other.Z);
 
-    public static Point operator +(double left, Point right) {
-        return new Point(left + right.X, left + right.Z);
-    }
+    /// <summary>
+    /// Determines whether the specified values are equal to the current object's values
+    /// </summary>
+    /// <param name="x">The x value to compare with the current object</param>
+    /// <param name="z">The z value to compare with the current object</param>
+    /// <returns><see langword="true"/> if the specified values are equal to the current object's values; otherwise, <see langword="false"/></returns>
+    public bool Equals(double x, double z) => X.Equals(x) && Z.Equals(z);
 
-    public static Point operator -(Point left, Point right) {
-        return new Point(left.X - right.X, left.Z - right.Z);
-    }
+    public static bool operator ==(Point? left, Point? right) => left?.Equals(right) ?? false;
+    public static bool operator !=(Point? left, Point? right) => !(left == right);
 
-    public static Point operator -(Point left, double right) {
-        return new Point(left.X - right, left.Z - right);
-    }
+    /// <inheritdoc/>
+    public override string ToString() => $"{X}, {Z}";
 
-    public static Point operator -(double left, Point right) {
-        return new Point(left - right.X, left - right.Z);
-    }
+    /// <inheritdoc/>
+    public override int GetHashCode() => HashCode.Combine(X, Z);
 
-    public static Point operator *(Point left, Point right) {
-        return new Point(left.X * right.X, left.Z * right.Z);
-    }
+    /// <inheritdoc/>
+    public string ToJson() => $"[{X:0.#},{Z:0.#}]";
 
-    public static Point operator *(Point left, double right) {
-        return new Point(left.X * right, left.Z * right);
-    }
-
-    public static Point operator *(double left, Point right) {
-        return new Point(left * right.X, left * right.Z);
-    }
-
-    public static Point operator /(Point left, Point right) {
-        return new Point(left.X / right.X, left.Z / right.Z);
-    }
-
-    public static Point operator /(Point left, double right) {
-        return new Point(left.X / right, left.Z / right);
-    }
-
-    public static Point operator /(double left, Point right) {
-        return new Point(left / right.X, left / right.Z);
-    }
-
-    public static bool operator ==(Point? left, Point? right) {
-        return left?.Equals(right) ?? false;
-    }
-
-    public static bool operator !=(Point? left, Point? right) {
-        return !(left == right);
+    /// <inheritdoc/>
+    public static Point FromJson(string json) {
+        try {
+            return new Point(JsonConvert.DeserializeObject<double[]>(json)!);
+        } catch (Exception e) {
+            throw new JsonException($"Error deserializing point json ({json})", e);
+        }
     }
 }

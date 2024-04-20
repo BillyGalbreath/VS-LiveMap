@@ -12,6 +12,7 @@
         <DebugType>embedded</DebugType>
         <DebugSymbols>true</DebugSymbols>
         <ExcludeGeneratedDebugSymbol>false</ExcludeGeneratedDebugSymbol>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     </PropertyGroup>
 
     <ItemGroup>
@@ -51,6 +52,10 @@
             <HintPath>$(VINTAGE_STORY)/Lib/Microsoft.Data.Sqlite.dll</HintPath>
             <Private>false</Private>
         </Reference>
+        <Reference Include="Newtonsoft.Json">
+            <HintPath>$(VINTAGE_STORY)/Lib/Newtonsoft.Json.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
         <Reference Include="protobuf-net">
             <HintPath>$(VINTAGE_STORY)/Lib/protobuf-net.dll</HintPath>
             <Private>false</Private>
@@ -61,6 +66,7 @@
         <PackageReference Include="SkiaSharp" Version="2.88.6" />
         <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
         <PackageReference Include="YamlDotNet" Version="13.7.1" />
+        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
     </ItemGroup>
 
     <ItemGroup>

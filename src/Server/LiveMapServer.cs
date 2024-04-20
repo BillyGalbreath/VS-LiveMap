@@ -63,7 +63,7 @@ public sealed class LiveMapServer : Common.LiveMap {
         if (_firstTick) {
             _firstTick = false;
 
-            // colormap file is kinda heavy. lets load it off the main thread.
+            // colormap file is kinda heavy. let's load it off the main thread.
             new Thread(_ => Colormap.Reload(Api)).Start();
         }
 
