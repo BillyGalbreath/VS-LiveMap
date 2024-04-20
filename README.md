@@ -55,6 +55,12 @@ https://ko-fi.com/BillyGalbreath
 
 https://patreon.com/BillyGalbreath
 
+## Developers
+
+There is an extensive marker API that allows you to automate adding/updating your own layers and markers on the map.
+
+https://billygalbreath.github.io/VS-LiveMap
+
 ## Building from Source
 
 Prerequisites:
