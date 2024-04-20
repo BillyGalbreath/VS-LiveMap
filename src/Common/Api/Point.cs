@@ -148,7 +148,7 @@ public class Point {
     /// </summary>
     /// <param name="x">The x value to compare with the current object</param>
     /// <param name="z">The z value to compare with the current object</param>
-    /// <returns><see langword="true"/> if the specified values are equal to the current object's values; otherwise, <see langword="false"/></returns>
+    /// <returns><see langword="true"/> if the specified values are equal to the current object's values</returns>
     public bool Equals(double x, double z) => X.Equals(x) && Z.Equals(z);
 
     public static bool operator ==(Point? left, Point? right) => left?.Equals(right) ?? false;
