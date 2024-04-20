@@ -10,7 +10,7 @@ namespace LiveMap.Common.Api;
 /// </summary>
 [PublicAPI]
 [JsonConverter(typeof(PointJsonConverter))]
-public class Point : JsonSerializable<Point> {
+public class Point {
     /// <summary>
     /// The value of the X axis of this point
     /// </summary>
@@ -159,16 +159,4 @@ public class Point : JsonSerializable<Point> {
 
     /// <inheritdoc/>
     public override int GetHashCode() => HashCode.Combine(X, Z);
-
-    /// <inheritdoc/>
-    public string ToJson() => $"[{X:0.#},{Z:0.#}]";
-
-    /// <inheritdoc/>
-    public static Point FromJson(string json) {
-        try {
-            return new Point(JsonConvert.DeserializeObject<double[]>(json)!);
-        } catch (Exception e) {
-            throw new JsonException($"Error deserializing point json ({json})", e);
-        }
-    }
 }
