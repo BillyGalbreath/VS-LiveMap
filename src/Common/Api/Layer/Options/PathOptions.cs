@@ -1,5 +1,4 @@
 using JetBrains.Annotations;
-using livemap.Common.Api.Json;
 using Newtonsoft.Json;
 
 namespace LiveMap.Common.Api.Layer.Options;
@@ -26,11 +25,10 @@ public abstract class PathOptions : LayerOptions {
     /// Stroke color
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>"#3388FF"</c> if not set
+    /// Defaults to <c>0x3388FF</c> if not set
     /// </remarks>
-    [JsonConverter(typeof(ColorJsonConverter))]
     [JsonProperty(Order = 1)]
-    public uint? Color { get; set; }
+    public Color? Color { get; set; }
 
     /// <summary>
     /// Stroke width, in pixels
@@ -105,9 +103,8 @@ public abstract class PathOptions : LayerOptions {
     /// <remarks>
     /// Defaults to the value of the <see cref="PathOptions.Color">Color</see> option if not set
     /// </remarks>
-    [JsonConverter(typeof(ColorJsonConverter))]
     [JsonProperty(Order = 9)]
-    public uint? FillColor { get; set; }
+    public Color? FillColor { get; set; }
 
     /// <summary>
     /// Fill opacity

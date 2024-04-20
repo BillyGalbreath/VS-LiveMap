@@ -1,33 +1,36 @@
 using System;
-using System.Globalization;
+using LiveMap.Common.Api;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace livemap.Common.Api.Json;
 
 /// <summary>
-/// Converter for uint to/from string color codes
+/// Converter for Color to/from string/uint
 /// </summary>
 public class ColorJsonConverter : JsonConverter {
     /// <inheritdoc/>
     public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) {
-        if (value is uint num) {
-            writer.WriteValue($"#{num:X6}");
+        if (value is Color) {
+            writer.WriteValue(value.ToString());
         }
     }
 
     /// <inheritdoc/>
     public override object? ReadJson(JsonReader reader, Type type, object? existingValue, JsonSerializer serializer) {
-        if (reader.TokenType != JsonToken.String) {
+        if (reader.TokenType == JsonToken.String) {
+            return (Color)JToken.Load(reader).ToObject<string>()!;
+        }
+
+        if (reader.TokenType != JsonToken.Integer) {
             return null;
         }
 
-        string? hex = JToken.Load(reader).ToObject<string>()?[^6..];
-        return hex != null ? uint.Parse(hex, NumberStyles.HexNumber) : null;
+        return (Color)JToken.Load(reader).ToObject<uint>();
     }
 
     /// <inheritdoc/>
     public override bool CanConvert(Type type) {
-        return type.GetElementType() == typeof(string);
+        return type.GetElementType() == typeof(string) || type.GetElementType() == typeof(uint) || type.GetElementType() == typeof(int);
     }
 }
