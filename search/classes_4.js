@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['marker_148',['Marker',['../classMarker.html',1,'']]]
+  ['ellipse_166',['Ellipse',['../classEllipse.html',1,'']]],
+  ['ellipseoptions_167',['EllipseOptions',['../classEllipseOptions.html',1,'']]]
 ];

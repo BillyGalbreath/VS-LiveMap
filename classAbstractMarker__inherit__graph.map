@@ -1,0 +1,9 @@
+<map id="AbstractMarker" name="AbstractMarker">
+<area shape="rect" id="node1" title="Represents a marker on the map" alt="" coords="185,5,306,32"/>
+<area shape="rect" id="node2" href="$classCircle.html" title="The circle marker is used to draw circle overlays on the map" alt="" coords="5,80,64,107"/>
+<area shape="rect" id="node3" href="$classEllipse.html" title="The ellipse marker is used to draw ellipse overlays on the map" alt="" coords="89,80,154,107"/>
+<area shape="rect" id="node4" href="$classIcon.html" title="The icon marker is used to display clickable/draggable icons on the map" alt="" coords="178,80,227,107"/>
+<area shape="rect" id="node5" href="$classPolygon.html" title="The polygon marker is used to draw polygon overlays on the map" alt="" coords="252,80,327,107"/>
+<area shape="rect" id="node6" href="$classPolyline.html" title="The polyline marker is used to draw polyline overlays on the map" alt="" coords="351,80,425,107"/>
+<area shape="rect" id="node7" href="$classRectangle.html" title="The rectangle marker is used to draw rectangle overlays on the map" alt="" coords="450,80,537,107"/>
+</map>

@@ -1,9 +1,6 @@
 var searchData=
 [
-  ['pane_260',['Pane',['../classLayerOptions.html#a4555fe4ab3eaf45ba77d75cc59fe1bb1',1,'LayerOptions']]],
-  ['permanent_261',['Permanent',['../classTooltipOptions.html#a66dc10ab8536b04a5364ec5fc53e8e57',1,'TooltipOptions']]],
-  ['point_262',['Point',['../classCircle.html#a2761f747fea8a6ca7016f1df03d0a00f',1,'Circle.Point()'],['../classEllipse.html#aa4b3069821e1b04ff1cc213104e42ebb',1,'Ellipse.Point()'],['../classIcon.html#ada874824e3e0b7b4f057f43be27c2fa8',1,'Icon.Point()'],['../classRectangle.html#ae18a81cd5e3f445d18731377ef8c59af',1,'Rectangle.Point()']]],
-  ['points_263',['Points',['../classPolygon.html#a6f51d19c9d78cf7e189d2cb38d2c72aa',1,'Polygon.Points()'],['../classPolyline.html#ac24519d203a4ff7d578b971592803a24',1,'Polyline.Points()']]],
-  ['popup_264',['Popup',['../classMarker.html#ad205168bfff71bf0102b6f56d380c318',1,'Marker']]],
-  ['popupanchor_265',['PopupAnchor',['../classIconOptions.html#ae92ce10e77eb423f335a3df6819e943c',1,'IconOptions']]]
+  ['offset_299',['Offset',['../classDivOverlayOptions.html#a51ddcaa33fca5043a52fc63d00507ac3',1,'DivOverlayOptions']]],
+  ['opacity_300',['Opacity',['../classIconOptions.html#a7e0c1b088cceb00ac7a2f3772eca6281',1,'IconOptions.Opacity()'],['../classPathOptions.html#a50ae4367ba51c5b20f690a5b859ef94b',1,'PathOptions.Opacity()'],['../classTooltipOptions.html#a7407a642ac9735f77f815b423924d19e',1,'TooltipOptions.Opacity()']]],
+  ['options_301',['Options',['../classLayer.html#a81b44aa8f0f2af38a8b6e95e276bd2eb',1,'Layer.Options()'],['../classAbstractMarker.html#aca63c2229a611155e8d74267947d87eb',1,'AbstractMarker.Options()'],['../classCircle.html#a7a3a039508576fb7ecb19bdb91a21e36',1,'Circle.Options()'],['../classEllipse.html#a2ed7c81facfcdca24c448e06867441e1',1,'Ellipse.Options()'],['../classIcon.html#a3e2325a8423d6006a628f78a9c688831',1,'Icon.Options()'],['../classPolygon.html#a718f2c613415370d2ad04a621f140f6f',1,'Polygon.Options()'],['../classPolyline.html#ad6ae57e6b05951ee3601150ed918f87e',1,'Polyline.Options()'],['../classRectangle.html#aa03e4e3f8228504837dc03751f339a35',1,'Rectangle.Options()']]]
 ];

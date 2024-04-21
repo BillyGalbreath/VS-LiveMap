@@ -1,4 +1,4 @@
 <map id="Ellipse" name="Ellipse">
-<area shape="rect" id="node1" title="The ellipse marker is used to draw ellipse overlays on the map" alt="" coords="43,80,108,107"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,145,32"/>
+<area shape="rect" id="node1" title="The ellipse marker is used to draw ellipse overlays on the map" alt="" coords="33,80,99,107"/>
+<area shape="rect" id="node2" href="$classAbstractMarker.html" title="Represents a marker on the map" alt="" coords="5,5,127,32"/>
 </map>

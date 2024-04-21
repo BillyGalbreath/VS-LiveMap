@@ -1,4 +1,4 @@
 <map id="Circle" name="Circle">
-<area shape="rect" id="node1" title="The circle marker is used to draw circle overlays on the map" alt="" coords="43,80,102,107"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,140,32"/>
+<area shape="rect" id="node1" title="The circle marker is used to draw circle overlays on the map" alt="" coords="37,80,95,107"/>
+<area shape="rect" id="node2" href="$classAbstractMarker.html" title="Represents a marker on the map" alt="" coords="5,5,127,32"/>
 </map>

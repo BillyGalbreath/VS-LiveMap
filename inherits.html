@@ -98,53 +98,55 @@ $(document).ready(function(){initNavTree('hierarchy.html',''); initResizable(); 
 <div class="textblock">
 <p><a href="hierarchy.html">Go to the textual class hierarchy</a></p>
 </div><table border="0" cellspacing="10" cellpadding="0">
-<tr><td><img src="inherit_graph_0.png" border="0" usemap="#aCircle" alt=""/>
-<map name="aCircle" id="aCircle">
-<area shape="rect" title=" " alt="" coords="5,132,72,159"/>
-<area shape="rect" href="classCircle.html" title="The circle marker is used to draw circle overlays on the map" alt="" coords="134,5,193,32"/>
-<area shape="rect" href="classEllipse.html" title="The ellipse marker is used to draw ellipse overlays on the map" alt="" coords="131,56,196,83"/>
-<area shape="rect" href="classIcon.html" title="The icon marker is used to display clickable/draggable icons on the map" alt="" coords="139,107,188,133"/>
-<area shape="rect" href="classPolygon.html" title="The polygon marker is used to draw polygon overlays on the map" alt="" coords="126,157,201,184"/>
-<area shape="rect" href="classPolyline.html" title="The polyline marker is used to draw polyline overlays on the map" alt="" coords="126,208,201,235"/>
-<area shape="rect" href="classRectangle.html" title="The rectangle marker is used to draw rectangle overlays on the map" alt="" coords="120,259,207,285"/>
+<tr><td><img src="inherit_graph_0.png" border="0" usemap="#aAbstractMarker" alt=""/>
+<map name="aAbstractMarker" id="aAbstractMarker">
+<area shape="rect" href="classAbstractMarker.html" title="Represents a marker on the map" alt="" coords="5,132,127,159"/>
+<area shape="rect" href="classCircle.html" title="The circle marker is used to draw circle overlays on the map" alt="" coords="189,5,247,32"/>
+<area shape="rect" href="classEllipse.html" title="The ellipse marker is used to draw ellipse overlays on the map" alt="" coords="185,56,251,83"/>
+<area shape="rect" href="classIcon.html" title="The icon marker is used to display clickable/draggable icons on the map" alt="" coords="193,107,243,133"/>
+<area shape="rect" href="classPolygon.html" title="The polygon marker is used to draw polygon overlays on the map" alt="" coords="181,157,255,184"/>
+<area shape="rect" href="classPolyline.html" title="The polyline marker is used to draw polyline overlays on the map" alt="" coords="181,208,255,235"/>
+<area shape="rect" href="classRectangle.html" title="The rectangle marker is used to draw rectangle overlays on the map" alt="" coords="175,259,261,285"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_1.png" border="0" usemap="#aColor" alt=""/>
+<tr><td><img src="inherit_graph_1.png" border="0" usemap="#aBaseOptions" alt=""/>
+<map name="aBaseOptions" id="aBaseOptions">
+<area shape="rect" href="interfaceBaseOptions.html" title="A set of base options for markers and overlays" alt="" coords="5,107,109,133"/>
+<area shape="rect" href="classLayerOptions.html" title="A set of options for an overlay layer on the map" alt="" coords="157,107,265,133"/>
+<area shape="rect" href="classInteractiveLayerOptions.html" title="A set of options for an interactive overlay layer on the map" alt="" coords="313,107,492,133"/>
+<area shape="rect" href="classDivOverlayOptions.html" title="Optional settings for TooltipOptions and PopupOptions overlays" alt="" coords="540,56,685,83"/>
+<area shape="rect" href="classIconOptions.html" title="Optional settings for the Icon marker" alt="" coords="563,107,662,133"/>
+<area shape="rect" href="classPathOptions.html" title="A set of options shared between vector overlays &#160;(Polygon, Polyline, Circle, etc.)" alt="" coords="563,157,663,184"/>
+<area shape="rect" href="classPopupOptions.html" title="Optional settings for popup overlays" alt="" coords="739,5,851,32"/>
+<area shape="rect" href="classTooltipOptions.html" title="Optional settings for tooltip overlays" alt="" coords="738,56,853,83"/>
+<area shape="rect" href="classCircleOptions.html" title="Optional settings for the Circle marker" alt="" coords="741,107,850,133"/>
+<area shape="rect" href="classEllipseOptions.html" title="Optional settings for the Ellipse marker" alt="" coords="738,157,853,184"/>
+<area shape="rect" href="classPolylineOptions.html" title="Optional settings for the Polyline marker" alt="" coords="733,208,857,235"/>
+<area shape="rect" href="classPolygonOptions.html" title="Optional settings for the Polygon marker" alt="" coords="912,183,1036,209"/>
+<area shape="rect" href="classRectangleOptions.html" title="Optional settings for the Rectangle marker" alt="" coords="905,233,1043,260"/>
+</map>
+</td></tr>
+<tr><td><img src="inherit_graph_2.png" border="0" usemap="#aColor" alt=""/>
 <map name="aColor" id="aColor">
-<area shape="rect" href="structColor.html" title=" " alt="" coords="5,5,61,32"/>
+<area shape="rect" href="structColor.html" title="Represents a 24 bit color" alt="" coords="5,5,61,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_2.png" border="0" usemap="#aColorJsonConverter" alt=""/>
+<tr><td><img src="inherit_graph_3.png" border="0" usemap="#aColorJsonConverter" alt=""/>
 <map name="aColorJsonConverter" id="aColorJsonConverter">
-<area shape="rect" title=" " alt="" coords="5,31,119,57"/>
-<area shape="rect" href="classColorJsonConverter.html" title="Converter for Color to/from string/uint" alt="" coords="167,5,313,32"/>
-<area shape="rect" href="classPointJsonConverter.html" title="Converter for array to/from point" alt="" coords="167,56,313,83"/>
+<area shape="rect" title=" " alt="" coords="5,56,119,83"/>
+<area shape="rect" href="classColorJsonConverter.html" title="Converter for Color to/from string/uint" alt="" coords="175,5,321,32"/>
+<area shape="rect" href="classOpacityJsonConverter.html" title="Converter for Opacity to/from double/byte" alt="" coords="167,56,329,83"/>
+<area shape="rect" href="classPointJsonConverter.html" title="Converter for array to/from point" alt="" coords="175,107,321,133"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_3.png" border="0" usemap="#aLayerOptions" alt=""/>
-<map name="aLayerOptions" id="aLayerOptions">
-<area shape="rect" title=" " alt="" coords="5,56,77,83"/>
-<area shape="rect" href="classLayerOptions.html" title="A set of options for the base layer object of each marker &#160;(Polygon, Polyline, Circle,..." alt="" coords="125,56,233,83"/>
-<area shape="rect" href="classIconOptions.html" title="Optional settings for the Icon marker" alt="" coords="293,5,392,32"/>
-<area shape="rect" href="classOverlayOptions.html" title="Optional settings for TooltipOptions and PopupOptions overlays" alt="" coords="281,56,404,83"/>
-<area shape="rect" href="classPathOptions.html" title="A set of options shared between vector overlays &#160;(Polygon, Polyline, Circle, etc.)" alt="" coords="293,132,393,159"/>
-<area shape="rect" href="classPopupOptions.html" title="Optional settings for popup overlays" alt="" coords="458,5,570,32"/>
-<area shape="rect" href="classTooltipOptions.html" title="Optional settings for tooltip overlays" alt="" coords="457,56,571,83"/>
-<area shape="rect" href="classCircleOptions.html" title="Optional settings for the Circle marker" alt="" coords="459,107,569,133"/>
-<area shape="rect" href="classEllipseOptions.html" title="Optional settings for the Ellipse marker" alt="" coords="457,157,571,184"/>
-<area shape="rect" href="classPolylineOptions.html" title="Optional settings for the Polyline marker" alt="" coords="452,208,576,235"/>
-<area shape="rect" href="classPolygonOptions.html" title="Optional settings for the Polygon marker" alt="" coords="631,183,755,209"/>
-<area shape="rect" href="classRectangleOptions.html" title="Optional settings for the Rectangle marker" alt="" coords="624,233,761,260"/>
+<tr><td><img src="inherit_graph_4.png" border="0" usemap="#aLayer" alt=""/>
+<map name="aLayer" id="aLayer">
+<area shape="rect" href="classLayer.html" title=" " alt="" coords="5,5,64,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_4.png" border="0" usemap="#aMarker_3_01T_01_4" alt=""/>
-<map name="aMarker_3_01T_01_4" id="aMarker_3_01T_01_4">
-<area shape="rect" href="classMarker.html" title="Represents a marker on the map" alt="" coords="5,5,111,32"/>
-</map>
-</td></tr>
-<tr><td><img src="inherit_graph_5.png" border="0" usemap="#aOptions" alt=""/>
-<map name="aOptions" id="aOptions">
-<area shape="rect" href="interfaceOptions.html" title="A set of base options for markers and overlays" alt="" coords="5,5,77,32"/>
+<tr><td><img src="inherit_graph_5.png" border="0" usemap="#aOpacity" alt=""/>
+<map name="aOpacity" id="aOpacity">
+<area shape="rect" href="structOpacity.html" title=" " alt="" coords="5,5,77,32"/>
 </map>
 </td></tr>
 <tr><td><img src="inherit_graph_6.png" border="0" usemap="#aPoint" alt=""/>

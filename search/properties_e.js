@@ -1,9 +1,11 @@
 var searchData=
 [
-  ['this_5bint_20index_5d_280',['this[int index]',['../structPoint.html#a294e2f14a2d823ad87ec6946e2d024fa',1,'Point']]],
-  ['tilt_281',['Tilt',['../classEllipseOptions.html#a3373395452b2ea7cdb7675b3b061b94e',1,'EllipseOptions']]],
-  ['title_282',['Title',['../classIconOptions.html#a53685a5b448fbd0d838531b3a0a450f6',1,'IconOptions']]],
-  ['tooltip_283',['Tooltip',['../classMarker.html#a7c2b4ce4a32389f1eeda5c6a97a5437d',1,'Marker']]],
-  ['tooltipanchor_284',['TooltipAnchor',['../classIconOptions.html#ab1317c5483cbd6270a038f3457084132',1,'IconOptions']]],
-  ['type_285',['Type',['../classMarker.html#aca1460361b2fae5c41f8b2dec682a772',1,'Marker']]]
+  ['shadowanchor_314',['ShadowAnchor',['../classIconOptions.html#a1519716d7d111f79be9a95d6f8fa1c4b',1,'IconOptions']]],
+  ['shadowpane_315',['ShadowPane',['../classIconOptions.html#aff980b0be8b1758b0db410b1f0f96522',1,'IconOptions']]],
+  ['shadowretinaurl_316',['ShadowRetinaUrl',['../classIconOptions.html#a6c169cc3d37bf6b65fe8a922de73f973',1,'IconOptions']]],
+  ['shadowsize_317',['ShadowSize',['../classIconOptions.html#a8bf32f89f1213623cbed2cea53509911',1,'IconOptions']]],
+  ['shadowurl_318',['ShadowUrl',['../classIconOptions.html#a152bc79de28567fcf2017553712783c9',1,'IconOptions']]],
+  ['smoothfactor_319',['SmoothFactor',['../classPolylineOptions.html#ab5bf3f2c42996d428553644cb14b67fb',1,'PolylineOptions']]],
+  ['sticky_320',['Sticky',['../classTooltipOptions.html#a20e0c4828d000a8c19704b8c8022c5f3',1,'TooltipOptions']]],
+  ['stroke_321',['Stroke',['../classPathOptions.html#ad1369f8ed5586a76bbf6b0da0d67cd49',1,'PathOptions']]]
 ];

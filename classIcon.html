@@ -93,6 +93,7 @@ $(document).ready(function(){initNavTree('classIcon.html',''); initResizable(); 
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#properties">Properties</a> &#124;
 <a href="classIcon-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -107,8 +108,8 @@ Inheritance diagram for Icon:</div>
 <div class="dyncontent">
 <div class="center"><img src="classIcon__inherit__graph.png" border="0" usemap="#aIcon_inherit__map" alt="Inheritance graph"/></div>
 <map name="aIcon_inherit__map" id="aIcon_inherit__map">
-<area shape="rect" title="The icon marker is used to display clickable/draggable icons on the map" alt="" coords="43,80,92,107"/>
-<area shape="rect" title=" " alt="" coords="5,5,129,32"/>
+<area shape="rect" title="The icon marker is used to display clickable/draggable icons on the map" alt="" coords="41,80,91,107"/>
+<area shape="rect" href="classAbstractMarker.html" title="Represents a marker on the map" alt="" coords="5,5,127,32"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
@@ -116,8 +117,8 @@ Collaboration diagram for Icon:</div>
 <div class="dyncontent">
 <div class="center"><img src="classIcon__coll__graph.png" border="0" usemap="#aIcon_coll__map" alt="Collaboration graph"/></div>
 <map name="aIcon_coll__map" id="aIcon_coll__map">
-<area shape="rect" title="The icon marker is used to display clickable/draggable icons on the map" alt="" coords="43,80,92,107"/>
-<area shape="rect" title=" " alt="" coords="5,5,129,32"/>
+<area shape="rect" title="The icon marker is used to display clickable/draggable icons on the map" alt="" coords="41,80,91,107"/>
+<area shape="rect" href="classAbstractMarker.html" title="Represents a marker on the map" alt="" coords="5,5,127,32"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -129,6 +130,19 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9c04a8c0bce8578b75e0e1847903c39f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIcon.html#a9c04a8c0bce8578b75e0e1847903c39f">Icon</a> (string id, <a class="el" href="structPoint.html">Point</a> point, <a class="el" href="classIconOptions.html">IconOptions</a>? options=null)</td></tr>
 <tr class="memdesc:a9c04a8c0bce8578b75e0e1847903c39f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new icon  <a href="classIcon.html#a9c04a8c0bce8578b75e0e1847903c39f">More...</a><br /></td></tr>
 <tr class="separator:a9c04a8c0bce8578b75e0e1847903c39f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classAbstractMarker"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classAbstractMarker')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classAbstractMarker.html">AbstractMarker</a></td></tr>
+<tr class="memitem:a18f3aded0bd8fccfb45d5fa0027acb6d inherit pub_methods_classAbstractMarker"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAbstractMarker.html#a18f3aded0bd8fccfb45d5fa0027acb6d">ToJson</a> ()</td></tr>
+<tr class="memdesc:a18f3aded0bd8fccfb45d5fa0027acb6d inherit pub_methods_classAbstractMarker"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serializes this object to a JSON string  <a href="classAbstractMarker.html#a18f3aded0bd8fccfb45d5fa0027acb6d">More...</a><br /></td></tr>
+<tr class="separator:a18f3aded0bd8fccfb45d5fa0027acb6d inherit pub_methods_classAbstractMarker"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a790ee7b21b2fe579ff17b472e19ac1fa"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classIcon.html">Icon</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIcon.html#a790ee7b21b2fe579ff17b472e19ac1fa">FromJson</a> (string json)</td></tr>
+<tr class="separator:a790ee7b21b2fe579ff17b472e19ac1fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_static_methods_classAbstractMarker"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_classAbstractMarker')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classAbstractMarker.html">AbstractMarker</a></td></tr>
+<tr class="memitem:a04c3d80c000f18d6f4464b4fa349c583 inherit pub_static_methods_classAbstractMarker"><td class="memItemLeft" align="right" valign="top">static T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAbstractMarker.html#a04c3d80c000f18d6f4464b4fa349c583">FromJson&lt; T &gt;</a> (string json)</td></tr>
+<tr class="memdesc:a04c3d80c000f18d6f4464b4fa349c583 inherit pub_static_methods_classAbstractMarker"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserializes a JSON string into an instance of this object  <a href="classAbstractMarker.html#a04c3d80c000f18d6f4464b4fa349c583">More...</a><br /></td></tr>
+<tr class="separator:a04c3d80c000f18d6f4464b4fa349c583 inherit pub_static_methods_classAbstractMarker"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="properties"></a>
 Properties</h2></td></tr>
@@ -137,6 +151,28 @@ Properties</h2></td></tr>
 <tr class="separator:ada874824e3e0b7b4f057f43be27c2fa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e2325a8423d6006a628f78a9c688831"><td class="memItemLeft" align="right" valign="top">new? <a class="el" href="classIconOptions.html">IconOptions</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIcon.html#a3e2325a8423d6006a628f78a9c688831">Options</a><code> [get, set]</code></td></tr>
 <tr class="separator:a3e2325a8423d6006a628f78a9c688831"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header properties_classAbstractMarker"><td colspan="2" onclick="javascript:toggleInherit('properties_classAbstractMarker')"><img src="closed.png" alt="-"/>&#160;Properties inherited from <a class="el" href="classAbstractMarker.html">AbstractMarker</a></td></tr>
+<tr class="memitem:a982efc7167d69d29db44951f6a06b94b inherit properties_classAbstractMarker"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAbstractMarker.html#a982efc7167d69d29db44951f6a06b94b">Type</a><code> [get]</code></td></tr>
+<tr class="memdesc:a982efc7167d69d29db44951f6a06b94b inherit properties_classAbstractMarker"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type identifier for the marker  <a href="classAbstractMarker.html#a982efc7167d69d29db44951f6a06b94b">More...</a><br /></td></tr>
+<tr class="separator:a982efc7167d69d29db44951f6a06b94b inherit properties_classAbstractMarker"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea3d63e92b09520faa1c91c4cc1df73c inherit properties_classAbstractMarker"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAbstractMarker.html#aea3d63e92b09520faa1c91c4cc1df73c">Id</a><code> [get]</code></td></tr>
+<tr class="memdesc:aea3d63e92b09520faa1c91c4cc1df73c inherit properties_classAbstractMarker"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unique id for the marker  <a href="classAbstractMarker.html#aea3d63e92b09520faa1c91c4cc1df73c">More...</a><br /></td></tr>
+<tr class="separator:aea3d63e92b09520faa1c91c4cc1df73c inherit properties_classAbstractMarker"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca63c2229a611155e8d74267947d87eb inherit properties_classAbstractMarker"><td class="memItemLeft" align="right" valign="top"><a class="el" href="interfaceBaseOptions.html">BaseOptions</a>?&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAbstractMarker.html#aca63c2229a611155e8d74267947d87eb">Options</a><code> [get, set]</code></td></tr>
+<tr class="memdesc:aca63c2229a611155e8d74267947d87eb inherit properties_classAbstractMarker"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional settings  <a href="classAbstractMarker.html#aca63c2229a611155e8d74267947d87eb">More...</a><br /></td></tr>
+<tr class="separator:aca63c2229a611155e8d74267947d87eb inherit properties_classAbstractMarker"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1935c7cde2d375f9cea98eab1b28d3f inherit properties_classAbstractMarker"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classTooltipOptions.html">TooltipOptions</a>?&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAbstractMarker.html#ad1935c7cde2d375f9cea98eab1b28d3f">Tooltip</a><code> [get, set]</code></td></tr>
+<tr class="memdesc:ad1935c7cde2d375f9cea98eab1b28d3f inherit properties_classAbstractMarker"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional tooltip settings  <a href="classAbstractMarker.html#ad1935c7cde2d375f9cea98eab1b28d3f">More...</a><br /></td></tr>
+<tr class="separator:ad1935c7cde2d375f9cea98eab1b28d3f inherit properties_classAbstractMarker"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a188dcd70c1791eb3165d0066c0903f8c inherit properties_classAbstractMarker"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classPopupOptions.html">PopupOptions</a>?&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAbstractMarker.html#a188dcd70c1791eb3165d0066c0903f8c">Popup</a><code> [get, set]</code></td></tr>
+<tr class="memdesc:a188dcd70c1791eb3165d0066c0903f8c inherit properties_classAbstractMarker"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional popup settings  <a href="classAbstractMarker.html#a188dcd70c1791eb3165d0066c0903f8c">More...</a><br /></td></tr>
+<tr class="separator:a188dcd70c1791eb3165d0066c0903f8c inherit properties_classAbstractMarker"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_methods_classAbstractMarker"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classAbstractMarker')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classAbstractMarker.html">AbstractMarker</a></td></tr>
+<tr class="memitem:a587a8d85c679577f18e61a6932da663d inherit pro_methods_classAbstractMarker"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAbstractMarker.html#a587a8d85c679577f18e61a6932da663d">AbstractMarker</a> (string type, string id)</td></tr>
+<tr class="separator:a587a8d85c679577f18e61a6932da663d inherit pro_methods_classAbstractMarker"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The icon marker is used to display clickable/draggable icons on the map </p>
@@ -219,6 +255,35 @@ Properties</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a790ee7b21b2fe579ff17b472e19ac1fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a790ee7b21b2fe579ff17b472e19ac1fa">&#9670;&nbsp;</a></span>FromJson()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="classIcon.html">Icon</a> Icon.FromJson </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>json</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p></p>
 
 </div>
 </div>

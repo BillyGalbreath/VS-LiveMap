@@ -43,7 +43,7 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"CircleOptions_8cs.html"
+"AbstractMarker_8cs.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

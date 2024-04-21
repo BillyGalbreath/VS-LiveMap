@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['rectangle_159',['Rectangle',['../classRectangle.html',1,'']]],
-  ['rectangleoptions_160',['RectangleOptions',['../classRectangleOptions.html',1,'']]]
+  ['opacity_173',['Opacity',['../structOpacity.html',1,'']]],
+  ['opacityjsonconverter_174',['OpacityJsonConverter',['../classOpacityJsonConverter.html',1,'']]]
 ];

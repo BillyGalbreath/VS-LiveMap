@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['z_288',['Z',['../structPoint.html#a588ab2cc4cf2be513c5de5a7756e74f2',1,'Point']]],
-  ['zindexoffset_289',['ZIndexOffset',['../classIconOptions.html#a0733672c61af54fdc0733618ce928818',1,'IconOptions']]]
+  ['x_329',['X',['../structPoint.html#ac7a0e60ece03824c4f8b158ac2a25423',1,'Point']]]
 ];

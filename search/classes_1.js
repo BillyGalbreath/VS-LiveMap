@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['ellipse_143',['Ellipse',['../classEllipse.html',1,'']]],
-  ['ellipseoptions_144',['EllipseOptions',['../classEllipseOptions.html',1,'']]]
+  ['baseoptions_160',['BaseOptions',['../interfaceBaseOptions.html',1,'']]]
 ];

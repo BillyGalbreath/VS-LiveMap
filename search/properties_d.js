@@ -1,11 +1,9 @@
 var searchData=
 [
-  ['shadowanchor_272',['ShadowAnchor',['../classIconOptions.html#a1519716d7d111f79be9a95d6f8fa1c4b',1,'IconOptions']]],
-  ['shadowpane_273',['ShadowPane',['../classIconOptions.html#aff980b0be8b1758b0db410b1f0f96522',1,'IconOptions']]],
-  ['shadowretinaurl_274',['ShadowRetinaUrl',['../classIconOptions.html#a6c169cc3d37bf6b65fe8a922de73f973',1,'IconOptions']]],
-  ['shadowsize_275',['ShadowSize',['../classIconOptions.html#a8bf32f89f1213623cbed2cea53509911',1,'IconOptions']]],
-  ['shadowurl_276',['ShadowUrl',['../classIconOptions.html#a152bc79de28567fcf2017553712783c9',1,'IconOptions']]],
-  ['smoothfactor_277',['SmoothFactor',['../classPolylineOptions.html#ab5bf3f2c42996d428553644cb14b67fb',1,'PolylineOptions']]],
-  ['sticky_278',['Sticky',['../classTooltipOptions.html#a20e0c4828d000a8c19704b8c8022c5f3',1,'TooltipOptions']]],
-  ['stroke_279',['Stroke',['../classPathOptions.html#ad1369f8ed5586a76bbf6b0da0d67cd49',1,'PathOptions']]]
+  ['radii_308',['Radii',['../classEllipseOptions.html#a4df3097be51cd6a78ae2cf6ed6ef91c1',1,'EllipseOptions']]],
+  ['radius_309',['Radius',['../classCircleOptions.html#a83ac922381de376da22c6ad1fdb5e344',1,'CircleOptions']]],
+  ['riseoffset_310',['RiseOffset',['../classIconOptions.html#a62c4feaa54977dd53c726ed065ef3349',1,'IconOptions']]],
+  ['riseonhover_311',['RiseOnHover',['../classIconOptions.html#aef533182e259b67ca6cde2993f784bd1',1,'IconOptions']]],
+  ['rotationangle_312',['RotationAngle',['../classIconOptions.html#a6f464bcd5d9d4bfaf2d8bf8ceddc29d9',1,'IconOptions']]],
+  ['rotationorigin_313',['RotationOrigin',['../classIconOptions.html#acccc1cbd64548bf630c7f11d871a3789',1,'IconOptions']]]
 ];

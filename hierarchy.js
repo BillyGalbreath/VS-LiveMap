@@ -1,14 +1,6 @@
 var hierarchy =
 [
-    [ "Color", "structColor.html", null ],
-    [ "JsonConverter", null, [
-      [ "ColorJsonConverter", "classColorJsonConverter.html", null ],
-      [ "PointJsonConverter", "classPointJsonConverter.html", null ]
-    ] ],
-    [ "Marker< T >", "classMarker.html", null ],
-    [ "Options", "interfaceOptions.html", null ],
-    [ "Point", "structPoint.html", null ],
-    [ "Marker", null, [
+    [ "AbstractMarker", "classAbstractMarker.html", [
       [ "Circle", "classCircle.html", null ],
       [ "Ellipse", "classEllipse.html", null ],
       [ "Icon", "classIcon.html", null ],
@@ -16,21 +8,32 @@ var hierarchy =
       [ "Polyline", "classPolyline.html", null ],
       [ "Rectangle", "classRectangle.html", null ]
     ] ],
-    [ "Options", null, [
+    [ "BaseOptions", "interfaceBaseOptions.html", [
       [ "LayerOptions", "classLayerOptions.html", [
-        [ "IconOptions", "classIconOptions.html", null ],
-        [ "OverlayOptions", "classOverlayOptions.html", [
-          [ "PopupOptions", "classPopupOptions.html", null ],
-          [ "TooltipOptions", "classTooltipOptions.html", null ]
-        ] ],
-        [ "PathOptions", "classPathOptions.html", [
-          [ "CircleOptions", "classCircleOptions.html", null ],
-          [ "EllipseOptions", "classEllipseOptions.html", null ],
-          [ "PolylineOptions", "classPolylineOptions.html", [
-            [ "PolygonOptions", "classPolygonOptions.html", null ],
-            [ "RectangleOptions", "classRectangleOptions.html", null ]
+        [ "InteractiveLayerOptions", "classInteractiveLayerOptions.html", [
+          [ "DivOverlayOptions", "classDivOverlayOptions.html", [
+            [ "PopupOptions", "classPopupOptions.html", null ],
+            [ "TooltipOptions", "classTooltipOptions.html", null ]
+          ] ],
+          [ "IconOptions", "classIconOptions.html", null ],
+          [ "PathOptions", "classPathOptions.html", [
+            [ "CircleOptions", "classCircleOptions.html", null ],
+            [ "EllipseOptions", "classEllipseOptions.html", null ],
+            [ "PolylineOptions", "classPolylineOptions.html", [
+              [ "PolygonOptions", "classPolygonOptions.html", null ],
+              [ "RectangleOptions", "classRectangleOptions.html", null ]
+            ] ]
           ] ]
         ] ]
       ] ]
-    ] ]
+    ] ],
+    [ "Color", "structColor.html", null ],
+    [ "JsonConverter", null, [
+      [ "ColorJsonConverter", "classColorJsonConverter.html", null ],
+      [ "OpacityJsonConverter", "classOpacityJsonConverter.html", null ],
+      [ "PointJsonConverter", "classPointJsonConverter.html", null ]
+    ] ],
+    [ "Layer", "classLayer.html", null ],
+    [ "Opacity", "structOpacity.html", null ],
+    [ "Point", "structPoint.html", null ]
 ];

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['marker_2ecs_171',['Marker.cs',['../Marker_8cs.html',1,'']]]
+  ['ellipse_2ecs_193',['Ellipse.cs',['../Ellipse_8cs.html',1,'']]],
+  ['ellipseoptions_2ecs_194',['EllipseOptions.cs',['../EllipseOptions_8cs.html',1,'']]]
 ];

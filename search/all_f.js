@@ -1,12 +1,15 @@
 var searchData=
 [
-  ['shadowanchor_115',['ShadowAnchor',['../classIconOptions.html#a1519716d7d111f79be9a95d6f8fa1c4b',1,'IconOptions']]],
-  ['shadowpane_116',['ShadowPane',['../classIconOptions.html#aff980b0be8b1758b0db410b1f0f96522',1,'IconOptions']]],
-  ['shadowretinaurl_117',['ShadowRetinaUrl',['../classIconOptions.html#a6c169cc3d37bf6b65fe8a922de73f973',1,'IconOptions']]],
-  ['shadowsize_118',['ShadowSize',['../classIconOptions.html#a8bf32f89f1213623cbed2cea53509911',1,'IconOptions']]],
-  ['shadowurl_119',['ShadowUrl',['../classIconOptions.html#a152bc79de28567fcf2017553712783c9',1,'IconOptions']]],
-  ['smoothfactor_120',['SmoothFactor',['../classPolylineOptions.html#ab5bf3f2c42996d428553644cb14b67fb',1,'PolylineOptions']]],
-  ['sticky_121',['Sticky',['../classTooltipOptions.html#a20e0c4828d000a8c19704b8c8022c5f3',1,'TooltipOptions']]],
-  ['stroke_122',['Stroke',['../classPathOptions.html#ad1369f8ed5586a76bbf6b0da0d67cd49',1,'PathOptions']]],
-  ['subtract_123',['Subtract',['../structPoint.html#aae10741f492516d8fa3fc22a62362134',1,'Point.Subtract(double num)'],['../structPoint.html#ab7364f8ba901bfd9d41db0534f848932',1,'Point.Subtract(Point point)']]]
+  ['radii_120',['Radii',['../classEllipseOptions.html#a4df3097be51cd6a78ae2cf6ed6ef91c1',1,'EllipseOptions']]],
+  ['radius_121',['Radius',['../classCircleOptions.html#a83ac922381de376da22c6ad1fdb5e344',1,'CircleOptions']]],
+  ['readjson_122',['ReadJson',['../classColorJsonConverter.html#a8b61f9a13e913c8b76e29df9eb2504fd',1,'ColorJsonConverter.ReadJson()'],['../classOpacityJsonConverter.html#abf4d5ccfdd0a5a691da28accb35d7259',1,'OpacityJsonConverter.ReadJson()'],['../classPointJsonConverter.html#a704066ba0b7bdbaa95b5838d3ffc52aa',1,'PointJsonConverter.ReadJson()']]],
+  ['rectangle_123',['Rectangle',['../classRectangle.html',1,'Rectangle'],['../classRectangle.html#a0afc429baacc45ec58d94bc162459d44',1,'Rectangle.Rectangle()'],['../classRectangle.html#a4c88a4fb923eb2927ae26bf4536a5537',1,'Rectangle.Rectangle(string id, Point[] point, RectangleOptions? options=null)']]],
+  ['rectangle_2ecs_124',['Rectangle.cs',['../Rectangle_8cs.html',1,'']]],
+  ['rectangleoptions_125',['RectangleOptions',['../classRectangleOptions.html',1,'']]],
+  ['rectangleoptions_2ecs_126',['RectangleOptions.cs',['../RectangleOptions_8cs.html',1,'']]],
+  ['riseoffset_127',['RiseOffset',['../classIconOptions.html#a62c4feaa54977dd53c726ed065ef3349',1,'IconOptions']]],
+  ['riseonhover_128',['RiseOnHover',['../classIconOptions.html#aef533182e259b67ca6cde2993f784bd1',1,'IconOptions']]],
+  ['rotationangle_129',['RotationAngle',['../classIconOptions.html#a6f464bcd5d9d4bfaf2d8bf8ceddc29d9',1,'IconOptions']]],
+  ['rotationorigin_130',['RotationOrigin',['../classIconOptions.html#acccc1cbd64548bf630c7f11d871a3789',1,'IconOptions']]],
+  ['round_131',['Round',['../structPoint.html#a2c8e118d67932d6c19ab6f1458c24be9',1,'Point']]]
 ];

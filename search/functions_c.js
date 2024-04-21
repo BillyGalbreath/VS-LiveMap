@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['tojson_215',['ToJson',['../classMarker.html#a7c9b68490697ffa015d4294fed32ded1',1,'Marker']]],
-  ['tostring_216',['ToString',['../structColor.html#a34c1fb4157d9ee56538c033271ceb920',1,'Color.ToString()'],['../structPoint.html#a41611e1395be01bf3d49302d97d2f9bf',1,'Point.ToString()']]]
+  ['subtract_248',['Subtract',['../structPoint.html#aae10741f492516d8fa3fc22a62362134',1,'Point.Subtract(double num)'],['../structPoint.html#ab7364f8ba901bfd9d41db0534f848932',1,'Point.Subtract(Point point)']]]
 ];

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['maxheight_253',['MaxHeight',['../classPopupOptions.html#a4895661e9b8f4d34e4cb8daca3f93ba2',1,'PopupOptions']]],
-  ['maxwidth_254',['MaxWidth',['../classPopupOptions.html#aae842e52e3979224f8f8fdba1378dab1',1,'PopupOptions']]],
-  ['minwidth_255',['MinWidth',['../classPopupOptions.html#a9de5ecb4b3ccbf9c4013f68267c296bd',1,'PopupOptions']]]
+  ['label_291',['Label',['../classLayer.html#a2c8513a02816157f43bd459a01505a8f',1,'Layer']]],
+  ['linecap_292',['LineCap',['../classPathOptions.html#ad186ab98d2489e90258c55a8e6208f5c',1,'PathOptions']]],
+  ['linejoin_293',['LineJoin',['../classPathOptions.html#a992753ca9f57aa5336630c8bf2a70292',1,'PathOptions']]]
 ];

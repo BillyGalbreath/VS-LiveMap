@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['layeroptions_147',['LayerOptions',['../classLayerOptions.html',1,'']]]
+  ['divoverlayoptions_165',['DivOverlayOptions',['../classDivOverlayOptions.html',1,'']]]
 ];

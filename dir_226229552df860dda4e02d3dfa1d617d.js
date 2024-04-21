@@ -5,6 +5,9 @@ var dir_226229552df860dda4e02d3dfa1d617d =
     [ "Color.cs", "Color_8cs.html", [
       [ "Color", "structColor.html", "structColor" ]
     ] ],
+    [ "Opacity.cs", "Opacity_8cs.html", [
+      [ "Opacity", "structOpacity.html", "structOpacity" ]
+    ] ],
     [ "Point.cs", "Point_8cs.html", [
       [ "Point", "structPoint.html", "structPoint" ]
     ] ]

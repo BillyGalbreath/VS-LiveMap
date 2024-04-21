@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['options_149',['Options',['../interfaceOptions.html',1,'']]],
-  ['overlayoptions_150',['OverlayOptions',['../classOverlayOptions.html',1,'']]]
+  ['icon_168',['Icon',['../classIcon.html',1,'']]],
+  ['iconoptions_169',['IconOptions',['../classIconOptions.html',1,'']]],
+  ['interactivelayeroptions_170',['InteractiveLayerOptions',['../classInteractiveLayerOptions.html',1,'']]]
 ];

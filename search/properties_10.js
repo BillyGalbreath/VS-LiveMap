@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['x_287',['X',['../structPoint.html#ac7a0e60ece03824c4f8b158ac2a25423',1,'Point']]]
+  ['weight_328',['Weight',['../classPathOptions.html#a0511990c03c8c5593ad09b8cb0795409',1,'PathOptions']]]
 ];

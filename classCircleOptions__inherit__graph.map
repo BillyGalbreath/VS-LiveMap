@@ -1,6 +1,7 @@
 <map id="CircleOptions" name="CircleOptions">
-<area shape="rect" id="node1" title="Optional settings for the Circle marker" alt="" coords="5,229,115,256"/>
-<area shape="rect" id="node2" href="$classPathOptions.html" title="A set of options shared between vector overlays &#160;(Polygon, Polyline, Circle, etc.)" alt="" coords="10,155,110,181"/>
-<area shape="rect" id="node3" href="$classLayerOptions.html" title="A set of options for the base layer object of each marker &#160;(Polygon, Polyline, Circle,..." alt="" coords="6,80,114,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="24,5,96,32"/>
+<area shape="rect" id="node1" title="Optional settings for the Circle marker" alt="" coords="40,304,149,331"/>
+<area shape="rect" id="node2" href="$classPathOptions.html" title="A set of options shared between vector overlays &#160;(Polygon, Polyline, Circle, etc.)" alt="" coords="45,229,145,256"/>
+<area shape="rect" id="node3" href="$classInteractiveLayerOptions.html" title="A set of options for an interactive overlay layer on the map" alt="" coords="5,155,184,181"/>
+<area shape="rect" id="node4" href="$classLayerOptions.html" title="A set of options for an overlay layer on the map" alt="" coords="41,80,149,107"/>
+<area shape="rect" id="node5" href="$interfaceBaseOptions.html" title="A set of base options for markers and overlays" alt="" coords="43,5,147,32"/>
 </map>
