@@ -15,8 +15,9 @@ public class PointJsonConverter : JsonConverter {
             return;
         }
         writer.WriteStartArray();
-        writer.WriteValue(point.X);
-        writer.WriteValue(point.Z);
+        point = point.Floor();
+        writer.WriteValue((int)point.X);
+        writer.WriteValue((int)point.Z);
         writer.WriteEndArray();
     }
 
