@@ -9,40 +9,39 @@ namespace LiveMap.Common.Api.Layer.Marker;
 /// <summary>
 /// Represents a marker on the map
 /// </summary>
-/// <typeparam name="T">The type of marker this object represents</typeparam>
 [PublicAPI]
-public abstract class Marker<T> where T : Marker<T> {
+public abstract class AbstractMarker {
     /// <summary>
     /// Type identifier for the marker
     /// </summary>
-    [JsonProperty(Order = 0)]
+    [JsonProperty(Order = -10)]
     public string Type { get; }
 
     /// <summary>
     /// Unique id for the marker
     /// </summary>
-    [JsonProperty(Order = 1)]
+    [JsonProperty(Order = -9)]
     public string Id { get; }
 
     /// <summary>
     /// Optional settings
     /// </summary>
-    [JsonProperty(Order = 2)]
-    public Options.Options? Options { get; set; }
+    [JsonProperty(Order = 10)]
+    protected BaseOptions? Options { get; set; }
 
     /// <summary>
     /// Optional tooltip settings
     /// </summary>
-    [JsonProperty(Order = 3)]
+    [JsonProperty(Order = 11)]
     public TooltipOptions? Tooltip { get; set; }
 
     /// <summary>
     /// Optional popup settings
     /// </summary>
-    [JsonProperty(Order = 4)]
+    [JsonProperty(Order = 12)]
     public PopupOptions? Popup { get; set; }
 
-    protected Marker(string type, string id) {
+    protected AbstractMarker(string type, string id) {
         Type = type;
         Id = id;
     }
@@ -67,7 +66,7 @@ public abstract class Marker<T> where T : Marker<T> {
     /// <param name="json">JSON string representing this object</param>
     /// <returns>A new instance of this object</returns>
     /// <exception cref="Newtonsoft.Json.JsonSerializationException">Error deserializing json to object</exception>
-    public static T FromJson(string json) {
+    public static T FromJson<T>(string json) {
         try {
             return JsonConvert.DeserializeObject<T>(json) ?? throw new NullReferenceException("null");
         } catch (Exception) {

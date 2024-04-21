@@ -12,15 +12,15 @@ namespace LiveMap.Common.Api.Layer.Marker;
 /// You can make distorted circles with the <see cref="Ellipse"/>
 /// </remarks>
 [PublicAPI]
-public class Circle : Marker<Circle> {
+public class Circle : AbstractMarker {
     /// <summary>
     /// Absolute (not relative to spawn) world coordinates for the circle's center
     /// </summary>
-    [JsonProperty(Order = 10)]
+    [JsonProperty(Order = -1)]
     public Point Point { get; set; }
 
     /// <inheritdoc cref="CircleOptions"/>
-    [JsonProperty(Order = 11)]
+    [JsonProperty(Order = 10)]
     public new CircleOptions? Options { get; set; }
 
     /// <summary>
@@ -37,5 +37,10 @@ public class Circle : Marker<Circle> {
     public Circle(string id, Point point, CircleOptions? options = null) : base("circle", id) {
         Point = point;
         Options = options;
+    }
+
+    /// <inheritdoc cref="AbstractMarker.FromJson{T}"/>
+    public static Circle FromJson(string json) {
+        return FromJson<Circle>(json);
     }
 }

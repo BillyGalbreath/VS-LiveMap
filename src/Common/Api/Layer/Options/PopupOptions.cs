@@ -7,7 +7,7 @@ namespace LiveMap.Common.Api.Layer.Options;
 /// Optional settings for popup overlays
 /// </summary>
 [PublicAPI]
-public class PopupOptions : OverlayOptions {
+public class PopupOptions : DivOverlayOptions {
     /// <summary>
     /// Maximum width of the popup, in pixels
     /// </summary>

@@ -1,6 +1,6 @@
 using System;
 using JetBrains.Annotations;
-using livemap.Common.Api.Json;
+using LiveMap.Common.Api.Json;
 using Newtonsoft.Json;
 
 namespace LiveMap.Common.Api;

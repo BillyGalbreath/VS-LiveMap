@@ -13,15 +13,15 @@ namespace LiveMap.Common.Api.Layer.Marker;
 /// You can make more detailed shapes with the Polygon
 /// </remarks>
 [PublicAPI]
-public class Rectangle : Marker<Rectangle> {
+public class Rectangle : AbstractMarker {
     /// <summary>
     /// Absolute (not relative to spawn) world coordinates for the rectangle's points
     /// </summary>
-    [JsonProperty(Order = 10)]
+    [JsonProperty(Order = -1)]
     public Point[] Point { get; set; }
 
     /// <inheritdoc cref="RectangleOptions"/>
-    [JsonProperty(Order = 11)]
+    [JsonProperty(Order = 10)]
     public new RectangleOptions? Options { get; set; }
 
     /// <summary>
@@ -38,5 +38,10 @@ public class Rectangle : Marker<Rectangle> {
     public Rectangle(string id, Point[] point, RectangleOptions? options = null) : base("rectangle", id) {
         Point = point;
         Options = options;
+    }
+
+    /// <inheritdoc cref="AbstractMarker.FromJson{T}"/>
+    public static Rectangle FromJson(string json) {
+        return FromJson<Rectangle>(json);
     }
 }

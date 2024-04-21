@@ -12,15 +12,15 @@ namespace LiveMap.Common.Api.Layer.Marker;
 /// You can fill in these polyline shapes with the <see cref="Polygon"/>
 /// </remarks>
 [PublicAPI]
-public class Polyline : Marker<Polyline> {
+public class Polyline : AbstractMarker {
     /// <summary>
     /// Absolute (not relative to spawn) world coordinates for the polyline's points
     /// </summary>
-    [JsonProperty(Order = 10)]
+    [JsonProperty(Order = -1)]
     public Point[][][] Points { get; set; }
 
     /// <inheritdoc cref="PolylineOptions"/>
-    [JsonProperty(Order = 11)]
+    [JsonProperty(Order = 10)]
     public new PolylineOptions? Options { get; set; }
 
     /// <summary>
@@ -61,5 +61,10 @@ public class Polyline : Marker<Polyline> {
     public Polyline(string id, Point[][][] points, PolylineOptions? options = null) : base("polyline", id) {
         Points = points;
         Options = options;
+    }
+
+    /// <inheritdoc cref="AbstractMarker.FromJson{T}"/>
+    public static Polyline FromJson(string json) {
+        return FromJson<Polyline>(json);
     }
 }

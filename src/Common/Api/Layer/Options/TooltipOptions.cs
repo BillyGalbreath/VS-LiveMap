@@ -7,7 +7,7 @@ namespace LiveMap.Common.Api.Layer.Options;
 /// Optional settings for tooltip overlays
 /// </summary>
 [PublicAPI]
-public class TooltipOptions : OverlayOptions {
+public class TooltipOptions : DivOverlayOptions {
     /// <summary>
     /// Direction where to open the tooltip
     /// </summary>
@@ -35,6 +35,9 @@ public class TooltipOptions : OverlayOptions {
     /// <summary>
     /// Tooltip container opacity
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>0.9</c> (<c>0xE5</c>) if not set
+    /// </remarks>
     [JsonProperty(Order = 3)]
-    public byte? Opacity { get; set; }
+    public Opacity? Opacity { get; set; }
 }

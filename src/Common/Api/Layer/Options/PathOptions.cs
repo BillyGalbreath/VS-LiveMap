@@ -12,14 +12,14 @@ namespace LiveMap.Common.Api.Layer.Options;
 /// Do not use it directly
 /// </remarks>
 [PublicAPI]
-public abstract class PathOptions : LayerOptions {
+public abstract class PathOptions : InteractiveLayerOptions {
     /// <summary>
     /// Whether to draw stroke along the path. Set it to <see langword="false"/> to disable borders on polygons or circles
     /// </summary>
     /// <remarks>
     /// Defaults to <see langword="true"/> if not set
     /// </remarks>
-    [JsonProperty(Order = 0)]
+    [JsonProperty(Order = 100)]
     public bool? Stroke { get; set; }
 
     /// <summary>
@@ -28,7 +28,7 @@ public abstract class PathOptions : LayerOptions {
     /// <remarks>
     /// Defaults to <c>0x3388FF</c> if not set
     /// </remarks>
-    [JsonProperty(Order = 1)]
+    [JsonProperty(Order = 101)]
     public Color? Color { get; set; }
 
     /// <summary>
@@ -37,17 +37,17 @@ public abstract class PathOptions : LayerOptions {
     /// <remarks>
     /// Defaults to <c>3</c> if not set
     /// </remarks>
-    [JsonProperty(Order = 2)]
+    [JsonProperty(Order = 102)]
     public int? Weight { get; set; }
 
     /// <summary>
     /// Stroke opacity
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>1.0</c> if not set
+    /// Defaults to <c>1.0</c> (<c>0xFF</c>) if not set
     /// </remarks>
-    [JsonProperty(Order = 3)]
-    public double? Opacity { get; set; }
+    [JsonProperty(Order = 103)]
+    public Opacity? Opacity { get; set; }
 
     /// <summary>
     /// A string that defines shape to be used at the end of the stroke
@@ -56,7 +56,7 @@ public abstract class PathOptions : LayerOptions {
     /// Defaults to <c>"round"</c> if not set
     /// </remarks>
     /// <seealso href="https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-linecap">MDN Web Docs</seealso>
-    [JsonProperty(Order = 4)]
+    [JsonProperty(Order = 104)]
     public string? LineCap { get; set; }
 
     /// <summary>
@@ -66,7 +66,7 @@ public abstract class PathOptions : LayerOptions {
     /// Defaults to <c>"round"</c> if not set
     /// </remarks>
     /// <seealso href="https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-linejoin">MDN Web Docs</seealso>
-    [JsonProperty(Order = 5)]
+    [JsonProperty(Order = 105)]
     public string? LineJoin { get; set; }
 
     /// <summary>
@@ -76,7 +76,7 @@ public abstract class PathOptions : LayerOptions {
     /// Defaults to <c>null</c> if not set
     /// </remarks>
     /// <seealso href="https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-dasharray">MDN Web Docs</seealso>
-    [JsonProperty(Order = 6)]
+    [JsonProperty(Order = 106)]
     public string? DashArray { get; set; }
 
     /// <summary>
@@ -86,7 +86,7 @@ public abstract class PathOptions : LayerOptions {
     /// Defaults to <c>null</c> if not set
     /// </remarks>
     /// <seealso href="https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-dashoffset">MDN Web Docs</seealso>
-    [JsonProperty(Order = 7)]
+    [JsonProperty(Order = 107)]
     public string? DashOffset { get; set; }
 
     /// <summary>
@@ -95,7 +95,7 @@ public abstract class PathOptions : LayerOptions {
     /// <remarks>
     /// Defaults to <see langword="true"/> if not set, except for <see cref="Polyline"/>
     /// </remarks>
-    [JsonProperty(Order = 8)]
+    [JsonProperty(Order = 108)]
     public bool? Fill { get; set; }
 
     /// <summary>
@@ -104,17 +104,17 @@ public abstract class PathOptions : LayerOptions {
     /// <remarks>
     /// Defaults to the value of the <see cref="PathOptions.Color">Color</see> option if not set
     /// </remarks>
-    [JsonProperty(Order = 9)]
+    [JsonProperty(Order = 109)]
     public Color? FillColor { get; set; }
 
     /// <summary>
     /// Fill opacity
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>0.2</c> if not set
+    /// Defaults to <c>0.2</c> (<c>0x33</c>) if not set
     /// </remarks>
-    [JsonProperty(Order = 10)]
-    public double? FillOpacity { get; set; }
+    [JsonProperty(Order = 110)]
+    public Opacity? FillOpacity { get; set; }
 
     /// <summary>
     /// A string that defines how the inside of a shape is determined
@@ -123,6 +123,6 @@ public abstract class PathOptions : LayerOptions {
     /// Defaults to <c>"evenodd"</c> if not set
     /// </remarks>
     /// <seealso href="https://developer.mozilla.org/docs/Web/SVG/Attribute/fill-rule">MDN Web Docs</seealso>
-    [JsonProperty(Order = 11)]
+    [JsonProperty(Order = 111)]
     public string? FillRule { get; set; }
 }

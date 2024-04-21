@@ -8,7 +8,7 @@ namespace LiveMap.Common.Api.Layer.Options.Marker;
 /// Optional settings for the <see cref="Icon"/> marker
 /// </summary>
 [PublicAPI]
-public class IconOptions : LayerOptions {
+public class IconOptions : InteractiveLayerOptions {
     /// <summary>
     /// Text for the browser tooltip that appear on marker hover (no tooltip by default)
     /// </summary>

@@ -12,15 +12,15 @@ namespace LiveMap.Common.Api.Layer.Marker;
 /// You can make perfect circles with the <see cref="Circle"/>
 /// </remarks>
 [PublicAPI]
-public class Ellipse : Marker<Ellipse> {
+public class Ellipse : AbstractMarker {
     /// <summary>
     /// Absolute (not relative to spawn) world coordinates for the ellipse's center
     /// </summary>
-    [JsonProperty(Order = 10)]
+    [JsonProperty(Order = -1)]
     public Point Point { get; set; }
 
     /// <inheritdoc cref="EllipseOptions"/>
-    [JsonProperty(Order = 11)]
+    [JsonProperty(Order = 10)]
     public new EllipseOptions? Options { get; set; }
 
     /// <summary>
@@ -37,5 +37,10 @@ public class Ellipse : Marker<Ellipse> {
     public Ellipse(string id, Point point, EllipseOptions? options = null) : base("ellipse", id) {
         Point = point;
         Options = options;
+    }
+
+    /// <inheritdoc cref="AbstractMarker.FromJson{T}"/>
+    public static Ellipse FromJson(string json) {
+        return FromJson<Ellipse>(json);
     }
 }

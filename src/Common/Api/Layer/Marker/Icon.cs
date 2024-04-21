@@ -13,15 +13,15 @@ namespace LiveMap.Common.Api.Layer.Marker;
 /// You can highlight entire areas instead of just a point with the <see cref="Polygon"/>
 /// </remarks>
 [PublicAPI]
-public class Icon : Marker<Icon> {
+public class Icon : AbstractMarker {
     /// <summary>
     /// Absolute (not relative to spawn) world coordinates for the icon's anchor
     /// </summary>
-    [JsonProperty(Order = 10)]
+    [JsonProperty(Order = -1)]
     public Point Point { get; set; }
 
     /// <inheritdoc cref="IconOptions"/>
-    [JsonProperty(Order = 11)]
+    [JsonProperty(Order = 10)]
     public new IconOptions? Options { get; set; }
 
     /// <summary>
@@ -38,5 +38,10 @@ public class Icon : Marker<Icon> {
     public Icon(string id, Point point, IconOptions? options = null) : base("icon", id) {
         Point = point;
         Options = options;
+    }
+
+    /// <inheritdoc cref="AbstractMarker.FromJson{T}"/>
+    public static Icon FromJson(string json) {
+        return FromJson<Icon>(json);
     }
 }

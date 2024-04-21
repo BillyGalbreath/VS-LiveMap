@@ -1,31 +1,34 @@
 using System;
+using LiveMap.Common.Api;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace LiveMap.Common.Api.Json;
 
 /// <summary>
-/// Converter for Color to/from string/uint
+/// Converter for Opacity to/from double/byte
 /// </summary>
-public class ColorJsonConverter : JsonConverter {
+public class OpacityJsonConverter : JsonConverter {
     /// <inheritdoc/>
     public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) {
-        if (value is Color) {
-            writer.WriteValue(value.ToString());
+        if (value is Opacity opacity) {
+            writer.WriteValue(opacity.ToDouble());
         }
     }
 
     /// <inheritdoc/>
     public override object? ReadJson(JsonReader reader, Type type, object? existingValue, JsonSerializer serializer) {
-        if (reader.TokenType == JsonToken.String) {
-            return (Color)JToken.Load(reader).ToObject<string>()!;
+        Console.WriteLine(reader.TokenType);
+
+        if (reader.TokenType == JsonToken.Bytes) {
+            return (Opacity)JToken.Load(reader).ToObject<byte>()!;
         }
 
-        if (reader.TokenType != JsonToken.Integer) {
+        if (reader.TokenType != JsonToken.Float) {
             return null;
         }
 
-        return (Color)JToken.Load(reader).ToObject<uint>();
+        return (Opacity)JToken.Load(reader).ToObject<double>();
     }
 
     /// <inheritdoc/>

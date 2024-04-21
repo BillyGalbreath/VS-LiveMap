@@ -3,7 +3,7 @@ using LiveMap.Common.Api;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace livemap.Common.Api.Json;
+namespace LiveMap.Common.Api.Json;
 
 /// <summary>
 /// Converter for array to/from point

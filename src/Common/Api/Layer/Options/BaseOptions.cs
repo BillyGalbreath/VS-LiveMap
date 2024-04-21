@@ -9,4 +9,4 @@ namespace LiveMap.Common.Api.Layer.Options;
 /// Do not use it directly
 /// </remarks>
 [PublicAPI]
-public interface Options { }
+public interface BaseOptions { }
