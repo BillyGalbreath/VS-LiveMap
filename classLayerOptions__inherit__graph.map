@@ -1,14 +1,14 @@
 <map id="LayerOptions" name="LayerOptions">
-<area shape="rect" id="node1" title="A set of options for the base layer object of each marker &#160;(Layer.Marker.Polygon, Layer...." alt="" coords="145,80,253,107"/>
-<area shape="rect" id="node3" href="$classIconOptions.html" title="Optional settings for the Layer.Marker.Icon marker" alt="" coords="15,155,113,181"/>
+<area shape="rect" id="node1" title="A set of options for the base layer object of each marker &#160;(Polygon, Polyline, Circle,..." alt="" coords="145,80,253,107"/>
+<area shape="rect" id="node3" href="$classIconOptions.html" title="Optional settings for the Icon marker" alt="" coords="15,155,113,181"/>
 <area shape="rect" id="node4" href="$classOverlayOptions.html" title="Optional settings for TooltipOptions and PopupOptions overlays" alt="" coords="137,155,260,181"/>
-<area shape="rect" id="node7" href="$classPathOptions.html" title="A set of options shared between vector overlays &#160;(Layer.Marker.Polygon, Layer.Marker...." alt="" coords="353,155,453,181"/>
+<area shape="rect" id="node7" href="$classPathOptions.html" title="A set of options shared between vector overlays &#160;(Polygon, Polyline, Circle, etc.)" alt="" coords="353,155,453,181"/>
 <area shape="rect" id="node2" title=" " alt="" coords="163,5,235,32"/>
 <area shape="rect" id="node5" href="$classPopupOptions.html" title="Optional settings for popup overlays" alt="" coords="5,229,117,256"/>
 <area shape="rect" id="node6" href="$classTooltipOptions.html" title="Optional settings for tooltip overlays" alt="" coords="141,229,256,256"/>
-<area shape="rect" id="node8" href="$classCircleOptions.html" title="Optional settings for the Layer.Marker.Circle marker" alt="" coords="280,229,389,256"/>
-<area shape="rect" id="node9" href="$classEllipseOptions.html" title="Optional settings for the Layer.Marker.Ellipse marker" alt="" coords="413,229,528,256"/>
-<area shape="rect" id="node10" href="$classPolylineOptions.html" title="Optional settings for the Layer.Marker.Polyline marker" alt="" coords="553,229,677,256"/>
-<area shape="rect" id="node11" href="$classPolygonOptions.html" title="Optional settings for the Layer.Marker.Polygon marker" alt="" coords="475,304,599,331"/>
-<area shape="rect" id="node12" href="$classRectangleOptions.html" title="Optional settings for the Layer.Marker.Rectangle marker" alt="" coords="623,304,761,331"/>
+<area shape="rect" id="node8" href="$classCircleOptions.html" title="Optional settings for the Circle marker" alt="" coords="280,229,389,256"/>
+<area shape="rect" id="node9" href="$classEllipseOptions.html" title="Optional settings for the Ellipse marker" alt="" coords="413,229,528,256"/>
+<area shape="rect" id="node10" href="$classPolylineOptions.html" title="Optional settings for the Polyline marker" alt="" coords="553,229,677,256"/>
+<area shape="rect" id="node11" href="$classPolygonOptions.html" title="Optional settings for the Polygon marker" alt="" coords="475,304,599,331"/>
+<area shape="rect" id="node12" href="$classRectangleOptions.html" title="Optional settings for the Rectangle marker" alt="" coords="623,304,761,331"/>
 </map>

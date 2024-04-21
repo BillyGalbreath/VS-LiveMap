@@ -1,7 +1,7 @@
 <map id="RectangleOptions" name="RectangleOptions">
-<area shape="rect" id="node1" title="Optional settings for the Layer.Marker.Rectangle marker" alt="" coords="5,304,143,331"/>
-<area shape="rect" id="node2" href="$classPolylineOptions.html" title="Optional settings for the Layer.Marker.Polyline marker" alt="" coords="12,229,136,256"/>
-<area shape="rect" id="node3" href="$classPathOptions.html" title="A set of options shared between vector overlays &#160;(Layer.Marker.Polygon, Layer.Marker...." alt="" coords="24,155,124,181"/>
-<area shape="rect" id="node4" href="$classLayerOptions.html" title="A set of options for the base layer object of each marker &#160;(Layer.Marker.Polygon, Layer...." alt="" coords="20,80,128,107"/>
+<area shape="rect" id="node1" title="Optional settings for the Rectangle marker" alt="" coords="5,304,143,331"/>
+<area shape="rect" id="node2" href="$classPolylineOptions.html" title="Optional settings for the Polyline marker" alt="" coords="12,229,136,256"/>
+<area shape="rect" id="node3" href="$classPathOptions.html" title="A set of options shared between vector overlays &#160;(Polygon, Polyline, Circle, etc.)" alt="" coords="24,155,124,181"/>
+<area shape="rect" id="node4" href="$classLayerOptions.html" title="A set of options for the base layer object of each marker &#160;(Polygon, Polyline, Circle,..." alt="" coords="20,80,128,107"/>
 <area shape="rect" id="node5" title=" " alt="" coords="38,5,110,32"/>
 </map>

@@ -1,6 +1,6 @@
 <map id="PopupOptions" name="PopupOptions">
 <area shape="rect" id="node1" title="Optional settings for popup overlays" alt="" coords="11,229,123,256"/>
 <area shape="rect" id="node2" href="$classOverlayOptions.html" title="Optional settings for TooltipOptions and PopupOptions overlays" alt="" coords="5,155,128,181"/>
-<area shape="rect" id="node3" href="$classLayerOptions.html" title="A set of options for the base layer object of each marker &#160;(Layer.Marker.Polygon, Layer...." alt="" coords="13,80,121,107"/>
+<area shape="rect" id="node3" href="$classLayerOptions.html" title="A set of options for the base layer object of each marker &#160;(Polygon, Polyline, Circle,..." alt="" coords="13,80,121,107"/>
 <area shape="rect" id="node4" title=" " alt="" coords="31,5,103,32"/>
 </map>

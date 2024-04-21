@@ -1,6 +1,6 @@
 <map id="PolylineOptions" name="PolylineOptions">
-<area shape="rect" id="node1" title="Optional settings for the Layer.Marker.Polyline marker" alt="" coords="5,229,129,256"/>
-<area shape="rect" id="node2" href="$classPathOptions.html" title="A set of options shared between vector overlays &#160;(Layer.Marker.Polygon, Layer.Marker...." alt="" coords="17,155,117,181"/>
-<area shape="rect" id="node3" href="$classLayerOptions.html" title="A set of options for the base layer object of each marker &#160;(Layer.Marker.Polygon, Layer...." alt="" coords="13,80,121,107"/>
+<area shape="rect" id="node1" title="Optional settings for the Polyline marker" alt="" coords="5,229,129,256"/>
+<area shape="rect" id="node2" href="$classPathOptions.html" title="A set of options shared between vector overlays &#160;(Polygon, Polyline, Circle, etc.)" alt="" coords="17,155,117,181"/>
+<area shape="rect" id="node3" href="$classLayerOptions.html" title="A set of options for the base layer object of each marker &#160;(Polygon, Polyline, Circle,..." alt="" coords="13,80,121,107"/>
 <area shape="rect" id="node4" title=" " alt="" coords="31,5,103,32"/>
 </map>
