@@ -70,9 +70,9 @@ public abstract class Marker<T> where T : Marker<T> {
     public static T FromJson(string json) {
         try {
             return JsonConvert.DeserializeObject<T>(json) ?? throw new NullReferenceException("null");
-        } catch (Exception e) {
-            Console.Error.WriteLine($"HMMM: {e}");
-            throw new JsonSerializationException($"Error deserializing marker json ({json})", e);
+        } catch (Exception) {
+            Console.Error.WriteLine($"Error deserializing marker json ({json})");
+            throw;
         }
     }
 }
