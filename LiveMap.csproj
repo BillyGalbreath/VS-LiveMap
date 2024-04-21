@@ -73,7 +73,7 @@
             )" File="$(ModInfoJson)" Overwrite="true" Encoding="UTF-8"
         />
         <MakeDir Directories="bin/mods" />
-        <ZipDirectory DestinationFile="bin/mods/livemap.zip" SourceDirectory="$(TargetDir)" Overwrite="true" />
+        <ZipDirectory DestinationFile="bin/mods/livemap-$(VersionBuild).zip" SourceDirectory="$(TargetDir)" Overwrite="true" />
     </Target>
 
 </Project>
