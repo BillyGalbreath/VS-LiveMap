@@ -1,11 +1,12 @@
 using JetBrains.Annotations;
+using LiveMap.Common.Api.Layer.Marker;
 using Newtonsoft.Json;
 
 namespace LiveMap.Common.Api.Layer.Options;
 
 /// <summary>
 /// A set of options for the base layer object of each marker<br/>
-/// (<see cref="Layer.Marker.Polygon"/>, <see cref="Layer.Marker.Polyline"/>, <see cref="Layer.Marker.Circle"/>, etc.)
+/// (<see cref="Polygon"/>, <see cref="Polyline"/>, <see cref="Circle"/>, etc.)
 /// <remarks>
 /// Do not use it directly
 /// </remarks>

@@ -1,11 +1,12 @@
 using JetBrains.Annotations;
+using LiveMap.Common.Api.Layer.Marker;
 using Newtonsoft.Json;
 
 namespace LiveMap.Common.Api.Layer.Options;
 
 /// <summary>
 /// A set of options shared between vector overlays<br/>
-/// (<see cref="Layer.Marker.Polygon"/>, <see cref="Layer.Marker.Polyline"/>, <see cref="Layer.Marker.Circle"/>, etc.)
+/// (<see cref="Polygon"/>, <see cref="Polyline"/>, <see cref="Circle"/>, etc.)
 /// </summary>
 /// <remarks>
 /// Do not use it directly
@@ -92,7 +93,7 @@ public abstract class PathOptions : LayerOptions {
     /// Whether to fill the path with color. Set it to <see langword="false"/> to disable filling on polygons or circles
     /// </summary>
     /// <remarks>
-    /// Defaults to <see langword="true"/> if not set, except for <see cref="Layer.Marker.Polyline"/>
+    /// Defaults to <see langword="true"/> if not set, except for <see cref="Polyline"/>
     /// </remarks>
     [JsonProperty(Order = 8)]
     public bool? Fill { get; set; }

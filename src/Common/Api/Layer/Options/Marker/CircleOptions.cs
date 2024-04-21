@@ -1,10 +1,11 @@
 using JetBrains.Annotations;
+using LiveMap.Common.Api.Layer.Marker;
 using Newtonsoft.Json;
 
 namespace LiveMap.Common.Api.Layer.Options.Marker;
 
 /// <summary>
-/// Optional settings for the <see cref="Layer.Marker.Circle"/> marker
+/// Optional settings for the <see cref="Circle"/> marker
 /// </summary>
 [PublicAPI]
 public class CircleOptions : PathOptions {

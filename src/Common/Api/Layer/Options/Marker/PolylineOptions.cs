@@ -1,10 +1,11 @@
 using JetBrains.Annotations;
+using LiveMap.Common.Api.Layer.Marker;
 using Newtonsoft.Json;
 
 namespace LiveMap.Common.Api.Layer.Options.Marker;
 
 /// <summary>
-/// Optional settings for the <see cref="Layer.Marker.Polyline"/> marker
+/// Optional settings for the <see cref="Polyline"/> marker
 /// </summary>
 [PublicAPI]
 public class PolylineOptions : PathOptions {
