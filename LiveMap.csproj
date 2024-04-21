@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <PackageId>LiveMap</PackageId>
-        <Version>1.2.3</Version>
+        <Version>0.0.4</Version>
         <Authors>BillyGalbreath</Authors>
         <Company>Pl3x</Company>
         <Description>A browser-based world map viewer for Vintage Story servers</Description>
