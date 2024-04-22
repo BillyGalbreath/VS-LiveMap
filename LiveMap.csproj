@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <PackageId>LiveMap</PackageId>
+        <Title>LiveMap</Title>
         <Ver>0.0.5</Ver>
         <Version Condition="'$(BUILD_NUMBER)' != ''">$(Ver)-b$(BUILD_NUMBER)</Version>
         <Version Condition="'$(BUILD_NUMBER)' == ''">$(Ver)-SNAPSHOT</Version>
@@ -13,7 +14,7 @@
         <PackageIcon>modicon.png</PackageIcon>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <ProjectUrl>https://mods.vintagestory.at/livemap</ProjectUrl>
+        <PackageProjectUrl>https://mods.vintagestory.at/livemap</PackageProjectUrl>
         <RepositoryUrl>https://github.com/billygalbreath/vs-livemap</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <RepositoryBranch>master</RepositoryBranch>
