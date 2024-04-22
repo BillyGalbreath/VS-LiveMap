@@ -1,15 +1,11 @@
 <div align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/BillyGalbreath/VS-LiveMap/master/web/public/images/og.webp">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/BillyGalbreath/VS-LiveMap/master/web/public/images/og.webp">
-  <img src="https://raw.githubusercontent.com/BillyGalbreath/VS-LiveMap/master/web/public/images/og.webp" alt="Pl3xMap">
-</picture>
+![LiveMap](https://raw.githubusercontent.com/BillyGalbreath/VS-LiveMap/master/web/public/images/og.webp)
 
 # LiveMap
 
 [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.pl3x.net%2Fjob%2FVS-LiveMap&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACt0lEQVQ4y4WT3UuTURzHv8/Opm7PxrOpU+frnJM1p/kylShQb3ojEeyVoqIuI5D+gKCCwosgMLoW8SYipChiXllIkJiZG5ot3fJ1L24+29x0bs/2nC4icFPpd/XjnM/58ON7+DE4oLq6upTlOt1gkTqvud5kKA5HtkKOH85nQ6/eDWSz0uwDq9UqM1RVuc90NDGnjjcUplMJECJR2edrHkW3YukR29iLvbwkW2DU17ytqKjUlihzCiZnfiK6HQcAmKp1XHuz+Wo2nyG4bTS2aFKJ077fbpTqNEx7Yw1cK37EtuNY8QbASkjbSbO59jABsSjk71vr9aTRWIy0kAYAVJUVQskq4PUHodcoZY0MBve+I/+aviN1Dy6q5N1eCcNYOttgMJT+vaDA/OIqtmLbEJbW0OoLlPOsct25yU9nTFCZI+kmANPmWsbC1ByEtAg+EsVmZAvfZ3+hqIBDbM4NtUQiMUhJ575fkDGMnIKCFylGPs9BU12FPJaApkVYdFoMDLxGOk3QDEBJSOE+QUwUAzYqw2iJEQlOi092L4yOCSh347ADuMkQPNHV45tvFgKl8X0hupIpe4hIIXBa7EbDGF8PwS8SxFRqmHovwGa0QB72oYkR4RGoa1+IORznOsGIl+dZjTIJBlIpgTOPA82TQSZXYSMhQBP0IQgxOCkId9YCAT5DsB4K8Vw+J4+z+V0JkssUJcO41GSCvqIUX+3TCIcjMLccpTf6+1kfz0e+TEx8zBAAwGyQH9ca6u7SnFy2t8GEvscPYe3sQKmag8PpSp0730NYhSIZDoV2bKOjLw/chZ2w/ylC/itjJF59D8gHAFl+weaSZ3V5aHj4fkVZSe2Ca+kN/lfHWlt7fF5vklJKAxsbi7euX/twEEcOE6x5PAucSnXW6/HmOmZm6OTU1HOX2+3I5v4AuDsT2N5aTFUAAAAASUVORK5CYII=)](https://ci.pl3x.net/job/VS-LiveMap/)
-[![Downloads](https://vs.pl3x.net/shields.io/livemap)](https://mods.vintagestory.at/livemap)
+[![Downloads](https://img.shields.io/endpoint?url=https://vs.pl3x.net/shields.io/vintagestory/livemap)](https://mods.vintagestory.at/livemap)
 [![Join us on Discord](https://img.shields.io/discord/171810209197457408.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/JXra7N4)
 
 [![MIT License](https://img.shields.io/github/license/BillyGalbreath/VS-LiveMap?&logo=github&color)](LICENSE)
