@@ -33,7 +33,7 @@ A live demo of LiveMap can be accessed at:
 
 [https://vs.pl3x.net/map](https://vs.pl3x.net/map)
 
-![Screenshot of markers on map](https://mods.vintagestory.at/files/asset/11347/markers.png)
+![Screenshot of markers on map](https://i.imgur.com/W7xXdMj.png)
 
 ## For Developers
 
