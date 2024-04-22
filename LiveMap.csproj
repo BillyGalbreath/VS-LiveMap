@@ -13,7 +13,8 @@
         <PackageIcon>modicon.png</PackageIcon>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <RepositoryUrl>https://github.com/BillyGalbreath/VS-LiveMap</RepositoryUrl>
+        <ProjectUrl>https://mods.vintagestory.at/livemap</ProjectUrl>
+        <RepositoryUrl>https://github.com/billygalbreath/vs-livemap</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <RepositoryBranch>master</RepositoryBranch>
         <PackageType>Dependency</PackageType>
