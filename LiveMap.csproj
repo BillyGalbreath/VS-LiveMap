@@ -4,7 +4,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <PackageId>LiveMap</PackageId>
         <Ver>0.0.4</Ver>
-        <Version Condition="'$(BUILD_NUMBER)' != ''">$(Ver)+$(BUILD_NUMBER)</Version>
+        <Version Condition="'$(BUILD_NUMBER)' != ''">$(Ver)-b$(BUILD_NUMBER)</Version>
         <Version Condition="'$(BUILD_NUMBER)' == ''">$(Ver)-SNAPSHOT</Version>
         <Authors>BillyGalbreath</Authors>
         <Company>Pl3x</Company>
