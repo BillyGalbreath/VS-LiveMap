@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <PackageId>LiveMap</PackageId>
-        <Ver>0.0.4</Ver>
+        <Ver>0.0.5</Ver>
         <Version Condition="'$(BUILD_NUMBER)' != ''">$(Ver)-b$(BUILD_NUMBER)</Version>
         <Version Condition="'$(BUILD_NUMBER)' == ''">$(Ver)-SNAPSHOT</Version>
         <Authors>BillyGalbreath</Authors>
