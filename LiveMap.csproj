@@ -43,10 +43,10 @@
         <Reference Include="Newtonsoft.Json" HintPath="$(VINTAGE_STORY)/Lib/Newtonsoft.Json.dll" Private="false" />
         <Reference Include="protobuf-net" HintPath="$(VINTAGE_STORY)/Lib/protobuf-net.dll" Private="false" />
         <Reference Include="SkiaSharp" HintPath="$(VINTAGE_STORY)/Lib/SkiaSharp.dll" Private="false" />
-        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" IncludeAssets="compile" />
-        <PackageReference Include="NuGet.Build.Tasks.Pack" Version="6.7.0" IncludeAssets="compile" />
-        <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" IncludeAssets="compile;runtime" />
-        <PackageReference Include="YamlDotNet" Version="13.7.1" IncludeAssets="compile;runtime" />
+        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" IncludeAssets="compile" PrivateAssets="all" />
+        <PackageReference Include="NuGet.Build.Tasks.Pack" Version="6.7.0" IncludeAssets="compile" PrivateAssets="all" />
+        <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" IncludeAssets="compile;runtime" PrivateAssets="all" />
+        <PackageReference Include="YamlDotNet" Version="13.7.1" IncludeAssets="compile;runtime" PrivateAssets="all" />
         <None Include="LICENSE;README.md;resources/**" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="">
             <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
         </None>
