@@ -11,3 +11,4 @@ LICENSE
 *.md
 *.csproj
 *.sln
+*.conf
