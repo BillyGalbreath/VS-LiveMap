@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using LiveMap.Client;
-using LiveMap.Server;
+using livemap.client;
+using livemap.server;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
 
-namespace LiveMap;
+namespace livemap;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public sealed class LiveMapMod : ModSystem {

@@ -4,7 +4,7 @@
   "modid": "livemap",
   "version": "{version}",
   "description": "{description}",
-  "website": "https://github.com/BillyGalbreath/VS-LiveMap",
+  "website": "https://github.com/billygalbreath/vs-livemap",
   "authors": [ "BillyGalbreath" ],
   "side": "Universal",
   "requiredOnClient": false,
