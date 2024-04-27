@@ -1,6 +1,17 @@
 import * as L from 'leaflet';
 import {LiveMap} from '../LiveMap';
 
+
+// https://stackoverflow.com/a/75848002/3530727
+navigator.serviceWorker.register("noerr.js")
+    .then((_: ServiceWorkerRegistration): void => {
+            navigator.serviceWorker.controller
+                ? window.dispatchEvent(new CustomEvent("swready"))
+                : navigator.serviceWorker.ready
+                    .then((_: ServiceWorkerRegistration) => location.reload());
+        }
+    );
+
 export class LiveTileLayer extends L.TileLayer {
     constructor(livemap: LiveMap) {
         super('tiles/{z}/{x}_{y}.webp', {

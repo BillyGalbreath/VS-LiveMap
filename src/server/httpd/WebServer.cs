@@ -95,7 +95,7 @@ public sealed class WebServer {
         } else {
             response.ContentType = MediaTypeNames.Text.Html;
             buffer = File.ReadAllBytes(Path.Combine(FileUtil.WebDir, "404.html"));
-            response.StatusCode = urlLoc.StartsWith("tiles") && (urlLoc.EndsWith(".png") || urlLoc.EndsWith(".webp")) ? 200 : 404;
+            response.StatusCode = 404;
         }
 
         response.AddHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With");
