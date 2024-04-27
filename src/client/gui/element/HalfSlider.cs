@@ -1,7 +1,6 @@
 using System.Numerics;
 using ImGuiNET;
 using livemap.common.extensions;
-using livemap.common.util;
 using VSImGui;
 
 namespace livemap.client.gui.element;
@@ -60,7 +59,7 @@ public class HalfSlider {
         pos = ImGui.GetCursorScreenPos();
         ImGui.SetCursorScreenPos(pos with { X = x + width + style.ItemSpacing.X + 2f });
 
-        ImGui.Text(Lang.Get(id));
+        ImGui.Text(id.ToLang());
         ImGui.SameLine();
         Editors.DrawHint($"{id}.hint");
     }

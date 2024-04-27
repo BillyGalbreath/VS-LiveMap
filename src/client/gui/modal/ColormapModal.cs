@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using ImGuiNET;
 using livemap.client.util;
-using livemap.common.util;
+using livemap.common.extensions;
 
 namespace livemap.client.gui.modal;
 
@@ -26,7 +26,7 @@ public class ColormapModal : Gui {
 
     public void Open() {
         _colormapModalOpen = true;
-        ImGui.OpenPopup(Lang.Get("colormap-generate"));
+        ImGui.OpenPopup("colormap-generate".ToLang());
     }
 
     public override void Draw() {
@@ -39,14 +39,14 @@ public class ColormapModal : Gui {
         }
 
         bool wasOpen = _colormapModalOpen;
-        if (!ImGui.BeginPopupModal(Lang.Get("colormap-generate"), ref _colormapModalOpen, ImGuiWindowFlags.AlwaysAutoResize)) {
+        if (!ImGui.BeginPopupModal("colormap-generate".ToLang(), ref _colormapModalOpen, ImGuiWindowFlags.AlwaysAutoResize)) {
             if (wasOpen) {
                 Close?.Invoke();
             }
             return;
         }
 
-        Text(Lang.Get("colormap-generate.hint"), true);
+        Text("colormap-generate.hint".ToLang(), true);
 
         ImGui.Spacing();
 

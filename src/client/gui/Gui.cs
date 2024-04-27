@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Reflection;
 using ConfigLib;
 using ImGuiNET;
-using livemap.common.util;
+using livemap.common.extensions;
 using VSImGui;
 
 namespace livemap.client.gui;
@@ -14,8 +14,8 @@ public abstract class Gui {
     public virtual void OnClose() { }
 
     protected bool Header(string id, bool defaultOpen) {
-        bool open = ImGui.CollapsingHeader($"{Lang.Get(id)}##{id}", defaultOpen ? ImGuiTreeNodeFlags.DefaultOpen : ImGuiTreeNodeFlags.None);
-        Editors.DrawHint($"{Lang.Get($"{id}.hint")}##{id}.hint");
+        bool open = ImGui.CollapsingHeader($"{id.ToLang()}##{id}", defaultOpen ? ImGuiTreeNodeFlags.DefaultOpen : ImGuiTreeNodeFlags.None);
+        Editors.DrawHint($"{$"{id}.hint".ToLang()}##{id}.hint");
         return open;
     }
 
@@ -50,7 +50,7 @@ public abstract class Gui {
     }
 
     protected void Button(string id, float width, Action action) {
-        if (ImGui.Button($"{Lang.Get(id)}##{id}", new Vector2(width, 0))) {
+        if (ImGui.Button($"{id.ToLang()}##{id}", new Vector2(width, 0))) {
             action.Invoke();
         }
     }
@@ -65,7 +65,7 @@ public abstract class Gui {
             ImGui.Dummy(new Vector2(10f, 1f));
 
             ImGui.SameLine();
-            ImGui.Text(Lang.Get(id));
+            ImGui.Text(id.ToLang());
             ImGui.SameLine();
             Editors.DrawHint($"{id}.hint");
         }

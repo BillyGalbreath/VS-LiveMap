@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using ConfigLib;
 using livemap.client.gui.settings;
+using livemap.common.extensions;
 using livemap.common.network;
 using livemap.common.util;
 using Vintagestory.API.Server;
@@ -36,12 +37,12 @@ public class ConfigGui : Gui {
 
     private ControlButtons Draw(ControlButtons controlButtons) {
         if (!_client.Api.World.Player.HasPrivilege(Privilege.root)) {
-            Text($"\n{Lang.Get("access-denied.")}", true, 0xFFFF4040);
+            Text($"\n{"access-denied".ToLang()}", true, 0xFFFF4040);
             return new ControlButtons(false);
         }
 
         if (_client.Config == null) {
-            Text($"{Lang.Get("no-data-to-display")}", true, 0xFFFF4040);
+            Text($"{"no-data-to-display".ToLang()}", true, 0xFFFF4040);
             // ReSharper disable once InvertIf
             if (!_alreadyRequestedConfig) {
                 _client.NetworkHandler.SendPacket(new ConfigPacket());

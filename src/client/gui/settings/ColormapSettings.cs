@@ -1,7 +1,7 @@
 using System.Numerics;
 using ImGuiNET;
 using livemap.client.gui.modal;
-using livemap.common.util;
+using livemap.common.extensions;
 using VSImGui;
 
 namespace livemap.client.gui.settings;
@@ -24,15 +24,15 @@ public class ColormapSettings : Gui {
 
         ImGui.Indent();
 
-        if (ImGui.Button(Lang.Get("colormap-generate"), new Vector2 { X = 150f })) {
+        if (ImGui.Button("colormap-generate".ToLang(), new Vector2 { X = 150f })) {
             _modal.Open();
         }
 
         ImGui.SameLine();
-        ImGui.Text(Lang.Get("colormap-generate.text"));
+        ImGui.Text("colormap-generate.text".ToLang());
 
         ImGui.SameLine();
-        Editors.DrawHint(Lang.Get("colormap-generate.hint"));
+        Editors.DrawHint("colormap-generate.hint".ToLang());
 
         ImGui.Unindent();
 

@@ -20,7 +20,7 @@ public class OpacityJsonConverter : JsonConverter {
         Console.WriteLine(reader.TokenType);
 
         if (reader.TokenType == JsonToken.Bytes) {
-            return (Opacity)JToken.Load(reader).ToObject<byte>()!;
+            return (Opacity)JToken.Load(reader).ToObject<byte>();
         }
 
         if (reader.TokenType != JsonToken.Float) {
