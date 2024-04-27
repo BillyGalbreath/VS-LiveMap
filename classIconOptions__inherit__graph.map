@@ -1,6 +1,0 @@
-<map id="IconOptions" name="IconOptions">
-<area shape="rect" id="node1" title="Optional settings for the Icon marker" alt="" coords="45,229,144,256"/>
-<area shape="rect" id="node2" href="$classInteractiveLayerOptions.html" title="A set of options for an interactive overlay layer on the map" alt="" coords="5,155,184,181"/>
-<area shape="rect" id="node3" href="$classLayerOptions.html" title="A set of options for an overlay layer on the map" alt="" coords="41,80,149,107"/>
-<area shape="rect" id="node4" href="$interfaceBaseOptions.html" title="A set of base options for markers and overlays" alt="" coords="43,5,147,32"/>
-</map>

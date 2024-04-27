@@ -1,8 +1,0 @@
-<map id="DivOverlayOptions" name="DivOverlayOptions">
-<area shape="rect" id="node1" title="Optional settings for TooltipOptions and PopupOptions overlays" alt="" coords="57,229,202,256"/>
-<area shape="rect" id="node5" href="$classPopupOptions.html" title="Optional settings for popup overlays" alt="" coords="5,304,117,331"/>
-<area shape="rect" id="node6" href="$classTooltipOptions.html" title="Optional settings for tooltip overlays" alt="" coords="141,304,256,331"/>
-<area shape="rect" id="node2" href="$classInteractiveLayerOptions.html" title="A set of options for an interactive overlay layer on the map" alt="" coords="40,155,219,181"/>
-<area shape="rect" id="node3" href="$classLayerOptions.html" title="A set of options for an overlay layer on the map" alt="" coords="75,80,183,107"/>
-<area shape="rect" id="node4" href="$interfaceBaseOptions.html" title="A set of base options for markers and overlays" alt="" coords="77,5,181,32"/>
-</map>

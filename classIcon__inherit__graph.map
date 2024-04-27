@@ -1,4 +1,0 @@
-<map id="Icon" name="Icon">
-<area shape="rect" id="node1" title="The icon marker is used to display clickable/draggable icons on the map" alt="" coords="41,80,91,107"/>
-<area shape="rect" id="node2" href="$classAbstractMarker.html" title="Represents a marker on the map" alt="" coords="5,5,127,32"/>
-</map>

@@ -1,9 +1,0 @@
-<map id="PolylineOptions" name="PolylineOptions">
-<area shape="rect" id="node1" title="Optional settings for the Polyline marker" alt="" coords="83,304,207,331"/>
-<area shape="rect" id="node6" href="$classPolygonOptions.html" title="Optional settings for the Polygon marker" alt="" coords="5,379,129,405"/>
-<area shape="rect" id="node7" href="$classRectangleOptions.html" title="Optional settings for the Rectangle marker" alt="" coords="153,379,291,405"/>
-<area shape="rect" id="node2" href="$classPathOptions.html" title="A set of options shared between vector overlays &#160;(Polygon, Polyline, Circle, etc.)" alt="" coords="95,229,195,256"/>
-<area shape="rect" id="node3" href="$classInteractiveLayerOptions.html" title="A set of options for an interactive overlay layer on the map" alt="" coords="55,155,234,181"/>
-<area shape="rect" id="node4" href="$classLayerOptions.html" title="A set of options for an overlay layer on the map" alt="" coords="91,80,199,107"/>
-<area shape="rect" id="node5" href="$interfaceBaseOptions.html" title="A set of base options for markers and overlays" alt="" coords="93,5,197,32"/>
-</map>

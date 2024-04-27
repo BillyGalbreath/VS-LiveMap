@@ -1,7 +1,0 @@
-<map id="TooltipOptions" name="TooltipOptions">
-<area shape="rect" id="node1" title="Optional settings for tooltip overlays" alt="" coords="37,304,152,331"/>
-<area shape="rect" id="node2" href="$classDivOverlayOptions.html" title="Optional settings for TooltipOptions and PopupOptions overlays" alt="" coords="22,229,167,256"/>
-<area shape="rect" id="node3" href="$classInteractiveLayerOptions.html" title="A set of options for an interactive overlay layer on the map" alt="" coords="5,155,184,181"/>
-<area shape="rect" id="node4" href="$classLayerOptions.html" title="A set of options for an overlay layer on the map" alt="" coords="41,80,149,107"/>
-<area shape="rect" id="node5" href="$interfaceBaseOptions.html" title="A set of base options for markers and overlays" alt="" coords="43,5,147,32"/>
-</map>
