@@ -21,9 +21,9 @@ public abstract partial class LoggerImpl : LoggerBase {
         { "m", 9 }, { "n", 4 }, { "o", 3 }, { "r", 0 }
     };
 
-    protected abstract bool ColorConsole();
-    protected abstract bool DebugToConsole();
-    protected abstract bool DebugToEventFile();
+    protected abstract bool ColorConsole { get; }
+    protected abstract bool DebugToConsole { get; }
+    protected abstract bool DebugToEventFile { get; }
 
     private bool _canUseColor = true;
 
@@ -64,7 +64,7 @@ public abstract partial class LoggerImpl : LoggerBase {
                 parent.LogToFile(parent.getLogFile(EnumLogType.Event), logType, stripped, args);
                 break;
             case EnumLogType.Event:
-            case EnumLogType.Debug when DebugToEventFile():
+            case EnumLogType.Debug when DebugToEventFile:
                 parent.LogToFile(parent.getLogFile(EnumLogType.Notification), logType, stripped, args);
                 break;
         }
@@ -73,7 +73,7 @@ public abstract partial class LoggerImpl : LoggerBase {
             return;
         }
 
-        if (logType == EnumLogType.Debug && !DebugToConsole()) {
+        if (logType == EnumLogType.Debug && !DebugToConsole) {
             return;
         }
 
@@ -81,7 +81,7 @@ public abstract partial class LoggerImpl : LoggerBase {
             Trace.WriteLine(parent.FormatLogEntry(logType, stripped, args));
         }
 
-        if (ColorConsole() && _canUseColor) {
+        if (ColorConsole && _canUseColor) {
             try {
                 Console.ForegroundColor = logType switch {
                     EnumLogType.Debug => ConsoleColor.Yellow,
@@ -100,7 +100,7 @@ public abstract partial class LoggerImpl : LoggerBase {
             }
         }
 
-        if (!ColorConsole() || !_canUseColor) {
+        if (!ColorConsole || !_canUseColor) {
             Console.WriteLine(parent.FormatLogEntry(logType, stripped, args));
             return;
         }

@@ -2,7 +2,8 @@
 
 namespace livemap.common.network;
 
-[ProtoContract(ImplicitFields = ImplicitFields.AllFields)]
+[ProtoContract]
 public sealed class ColormapPacket : Packet {
+    [ProtoMember(1)]
     public string? RawColormap;
 }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
 using livemap.common;
+using livemap.common.api;
 using livemap.common.api.layer;
+using livemap.common.configuration;
 using livemap.common.util;
-using livemap.server.command;
-using livemap.server.configuration;
 using livemap.server.httpd;
 using livemap.server.network;
 using livemap.server.render;
@@ -18,7 +18,6 @@ namespace livemap.server;
 public sealed class LiveMapServer : LiveMapCore, LiveMap {
     public override ICoreServerAPI Api { get; }
 
-    protected override ServerCommandHandler CommandHandler { get; }
     public override ServerNetworkHandler NetworkHandler { get; }
     public WebServer WebServer { get; }
 
@@ -29,24 +28,33 @@ public sealed class LiveMapServer : LiveMapCore, LiveMap {
 
     public Colormap Colormap = new();
 
+    public Config Config { get; private set; } = null!;
+
     public LiveMapServer(ICoreServerAPI api) : base(api, new ServerLoggerImpl()) {
         Api = api;
+        LiveMap.Api = this;
 
-        Config.Reload();
+        ReloadConfig();
 
         FileUtil.ExtractWebFiles(Api);
 
-        CommandHandler = new ServerCommandHandler(this);
         NetworkHandler = new ServerNetworkHandler(this);
 
         RenderTask = new RenderTask(this);
-        WebServer = new WebServer();
+        WebServer = new WebServer(this);
 
         Api.Event.ChunkDirty += OnChunkDirty;
         Api.Event.GameWorldSave += OnGameWorldSave;
+        Api.Event.PlayerJoin += OnPlayerJoin;
 
         _firstTick = true;
         _gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
+    }
+
+    public void ReloadConfig() {
+        string filename = $"{LiveMapMod.Id}.json";
+        Config = Api.LoadModConfig<Config>(filename) ?? new Config();
+        Api.StoreModConfig(Config, filename);
     }
 
     private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
@@ -58,6 +66,12 @@ public sealed class LiveMapServer : LiveMapCore, LiveMap {
     private void OnGameWorldSave() {
         // delay to ensure chunks actually save to disk first
         Api.Event.RegisterCallback(_ => RenderTask.ProcessQueue(), 1000);
+    }
+
+    private void OnPlayerJoin(IServerPlayer player) {
+        //if (player.HasPrivilege(Privilege.root)) {
+        //    NetworkHandler.SendPacket(new ConfigPacket { Config = Config }, player);
+        //}
     }
 
     // this method ticks every 1000ms on the game thread
@@ -91,8 +105,6 @@ public sealed class LiveMapServer : LiveMapCore, LiveMap {
         base.Dispose();
 
         Colormap.Dispose();
-
-        Config.Dispose();
     }
 
     public T RegisterLayer<T>(T layer) where T : Layer {

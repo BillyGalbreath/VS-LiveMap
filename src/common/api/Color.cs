@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace livemap.common.api;
 
 /// <summary>
-/// Represents a 24 bit color
+/// Represents a 24 bit Color
 /// </summary>
 [PublicAPI]
 [JsonConverter(typeof(ColorJsonConverter))]
@@ -17,23 +17,23 @@ public readonly struct Color {
     /// <summary>
     /// Create a new Color from string
     /// </summary>
-    /// <param name="value">the uint value of the color (<c>"#RRGGBB"</c>)</param>
+    /// <param name="value">the uint value of the Color (<c>"#RRGGBB"</c>)</param>
     public Color(string value) : this(Parse(value)) { }
 
     /// <summary>
     /// Create a new Color from uint
     /// </summary>
-    /// <param name="value">the uint value of the color (<c>0xRRGGBB</c>)</param>
+    /// <param name="value">the uint value of the Color (<c>0xRRGGBB</c>)</param>
     public Color(uint value) => _value = value;
 
     /// <summary>
-    /// Returns the uint value of this color
+    /// Returns the uint value of this Color
     /// </summary>
-    /// <returns>uint color value</returns>
+    /// <returns>uint Color value</returns>
     public uint ToUInt() => _value;
 
     /// <summary>
-    /// Returns the string hex value of this color
+    /// Returns the string hex value of this Color
     /// </summary>
     /// <returns>string hex value</returns>
     public override string ToString() => $"#{_value:X6}";
@@ -56,22 +56,22 @@ public readonly struct Color {
     /// Implicit cast Color to string
     /// </summary>
     /// <param name="color">the Color to cast</param>
-    /// <returns>string representation of this color in the format of <c>"#RRGGBB"</c></returns>
+    /// <returns>string representation of this Color in the format of <c>"#RRGGBB"</c></returns>
     public static implicit operator string(Color color) => color.ToString();
 
     /// <summary>
     /// Implicit cast Color to uint
     /// </summary>
     /// <param name="color">the Color to cast</param>
-    /// <returns>uint representation of this color in the format of <c>0xRRGGBB</c></returns>
+    /// <returns>uint representation of this Color in the format of <c>0xRRGGBB</c></returns>
     public static implicit operator uint(Color color) => color._value;
 
     /// <summary>
-    /// Parse a string representation of a color into a uint value
+    /// Parse a string representation of a Color into a uint value
     /// </summary>
     /// <param name="value"></param>
-    /// <returns></returns>
-    private static uint Parse(string value) {
+    /// <returns>Color parsed from string</returns>
+    public static uint Parse(string value) {
         string stripped;
         if (value.StartsWith("#")) {
             stripped = value[1..];

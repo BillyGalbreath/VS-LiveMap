@@ -9,11 +9,9 @@ public sealed class ClientNetworkHandler : NetworkHandler {
     public ClientNetworkHandler(LiveMapClient client) {
         _channel = client.Api.Network.RegisterChannel(LiveMapMod.Id)
             .RegisterMessageType<ColormapPacket>()
-            .SetMessageHandler<ColormapPacket>(ClientReceivePacket);
-    }
-
-    private static void ClientReceivePacket(ColormapPacket packet) {
-        // do nothing
+            .RegisterMessageType<ConfigPacket>()
+            .SetMessageHandler<ColormapPacket>(_ => { })
+            .SetMessageHandler<ConfigPacket>(client.ReceiveConfig);
     }
 
     public void SendPacket<T>(T packet) {

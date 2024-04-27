@@ -30,6 +30,7 @@
         <DebugSymbols>true</DebugSymbols>
         <ExcludeGeneratedDebugSymbol>false</ExcludeGeneratedDebugSymbol>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <OutputPath>bin\mods\mod</OutputPath>
     </PropertyGroup>
 
     <ItemGroup>
@@ -45,12 +46,18 @@
         <Reference Include="Newtonsoft.Json" HintPath="$(VINTAGE_STORY)/Lib/Newtonsoft.Json.dll" Private="false" />
         <Reference Include="protobuf-net" HintPath="$(VINTAGE_STORY)/Lib/protobuf-net.dll" Private="false" />
         <Reference Include="SkiaSharp" HintPath="$(VINTAGE_STORY)/Lib/SkiaSharp.dll" Private="false" />
+        <Reference Include="ConfigLib" HintPath="../libs/configlib-1.3.9.dll" Private="false" />
+        <PackageReference Include="VSImGui" Version="0.0.6" IncludeAssets="compile" PrivateAssets="all" />
+        <PackageReference Include="ImGui.NET" Version="1.89.9.2" IncludeAssets="compile" PrivateAssets="all" />
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" IncludeAssets="compile" PrivateAssets="all" />
         <PackageReference Include="NuGet.Build.Tasks.Pack" Version="6.7.0" IncludeAssets="compile" PrivateAssets="all" />
         <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" IncludeAssets="compile;runtime" PrivateAssets="all" />
-        <PackageReference Include="YamlDotNet" Version="13.7.1" IncludeAssets="compile;runtime" PrivateAssets="all" />
         <None Include="LICENSE;README.md;resources/**" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" Link="%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
+
+    <Target Name="_ResolveCopyLocalNuGetPkgXmls" AfterTargets="ResolveReferences">
+        <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).xml')" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)'!='' and Exists('%(RootDir)%(Directory)%(Filename).xml')" />
+    </Target>
 
     <Target Name="InstallAndRunNpm" AfterTargets="PostBuildEvent">
         <Exec Command="npm install" WorkingDirectory="web" />
@@ -76,6 +83,7 @@
     </Target>
 
     <Target Name="PackZip" AfterTargets="FilterModInfo">
+        <MakeDir Directories="bin\mods\mod" />
         <ZipDirectory DestinationFile="bin/livemap-$(Version).zip" SourceDirectory="$(TargetDir)" Overwrite="true" />
     </Target>
 

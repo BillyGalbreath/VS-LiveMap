@@ -4,17 +4,22 @@ using System.Net;
 using System.Net.Mime;
 using System.Threading;
 using livemap.common.util;
-using livemap.server.configuration;
 using MimeTypes;
 
 namespace livemap.server.httpd;
 
 public sealed class WebServer {
+    private readonly LiveMapServer _server;
+
     private HttpListener? _listener;
     private Thread? _thread;
     private bool _running;
     private bool _stopped;
     private bool _reload;
+
+    public WebServer(LiveMapServer server) {
+        _server = server;
+    }
 
     public void Reload() {
         _reload = true;
@@ -23,7 +28,7 @@ public sealed class WebServer {
     }
 
     public void Run() {
-        if (!Config.Instance.WebServer.Enabled) {
+        if (!_server.Config.Httpd.Enabled) {
             return;
         }
 
@@ -36,16 +41,16 @@ public sealed class WebServer {
         _running = true;
 
         (_thread = new Thread(_ => {
-            int port = Config.Instance.WebServer.Port;
+            int port = _server.Config.Httpd.Port;
 
             if (_listener == null) {
-                Logger.Info(Lang.Get("logger.info.webserver-started", port));
+                Logger.Info($"&aInternal webserver starting on port &e{port}");
             }
 
             try {
                 (_listener = new HttpListener { Prefixes = { $"http://*:{port}/" } }).Start();
             } catch (Exception e) {
-                Logger.Error(Lang.Get("logger.error.webserver-start-failed"));
+                Logger.Error("&cInternal webserver has failed to start");
                 Logger.Error(e.ToString());
                 _running = false;
                 _stopped = true;
@@ -58,7 +63,7 @@ public sealed class WebServer {
                     HandleRequest(_listener!.GetContext());
                 } catch (Exception) {
                     if (_stopped) {
-                        Logger.Info(Lang.Get("logger.info.webserver-stopped"));
+                        Logger.Info("&cInternal webserver has stopped");
                         if (_reload) {
                             _reload = false;
                             _stopped = false;

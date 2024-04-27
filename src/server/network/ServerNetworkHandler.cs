@@ -18,21 +18,23 @@ public sealed class ServerNetworkHandler : NetworkHandler {
 
         _channel = server.Api.Network.RegisterChannel(LiveMapMod.Id)
             .RegisterMessageType<ColormapPacket>()
-            .SetMessageHandler<ColormapPacket>(ServerReceivePacket);
+            .RegisterMessageType<ConfigPacket>()
+            .SetMessageHandler<ColormapPacket>(ReceiveColormap)
+            .SetMessageHandler<ConfigPacket>(ReceiveConfigRequest);
     }
 
-    private void ServerReceivePacket(IServerPlayer player, ColormapPacket packet) {
+    private void ReceiveColormap(IServerPlayer player, ColormapPacket packet) {
         if (!player.Privileges.Contains("root")) {
-            Logger.Warn(Lang.Get("logger.warning.packet-from-non-admin", player.PlayerName));
+            Logger.Warn($"Ignoring colormap packet from non-privileged user {player.PlayerName}");
             return;
         }
 
         if (packet.RawColormap == null) {
-            Logger.Warn(Lang.Get("logger.warning.received-null-colormap", player.PlayerName));
+            Logger.Warn($"Received null colormap from {player.PlayerName}");
             return;
         }
 
-        Logger.Info(Lang.Get("logger.info.server-received-colormap", player.PlayerName));
+        Logger.Info($"&dColormap packet was received from &n{player.PlayerName}");
 
         new Thread(_ => {
             try {
@@ -44,6 +46,16 @@ public sealed class ServerNetworkHandler : NetworkHandler {
                 // ignored
             }
         }).Start();
+    }
+
+    private void ReceiveConfigRequest(IServerPlayer player, ConfigPacket packet) {
+        if (!player.Privileges.Contains("root")) {
+            Logger.Warn($"Ignoring config request packet from non-privileged user {player.PlayerName}");
+            return;
+        }
+
+        Logger.Info($"&dConfig request packet was received from &n{player.PlayerName}");
+        SendPacket(new ConfigPacket { Config = _server.Config }, player);
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Global")]

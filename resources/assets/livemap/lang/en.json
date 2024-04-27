@@ -15,13 +15,33 @@
 
   "command.reload.finished": "LiveMap config and services were successfully reloaded.",
 
-  "logger.info.server-loaded-colormap": "&dColormap loaded from disk.",
-  "logger.info.server-received-colormap": "&dColormap packet was received from &n{0}",
+  "livemap:no-data-to-display": "\nNo data to display.\n\nIs the mod disabled?",
+  "livemap:access-denied": "Sorry. Access Denied.",
 
-  "logger.info.webserver-started": "&aInternal webserver starting on port &e{0}",
-  "logger.info.webserver-stopped": "&cInternal webserver has stopped",
-  "logger.error.webserver-start-failed": "&cInternal webserver has failed to start",
+  "livemap:stop": "Stop",
+  "livemap:start": "Start",
+  "livemap:cancel": "Cancel",
+  "livemap:close": "Close",
 
-  "logger.warning.packet-from-non-admin": "Ignoring colormap packet from non-privileged user {0}",
-  "logger.warning.received-null-colormap": "Received null colormap from {0}"
+  "livemap:colormap-settings": "Colormap Settings",
+  "livemap:colormap-settings.hint": "Settings about block colors that the\nclient knows but the server doesn't.",
+  "livemap:colormap-generate": "Generate",
+  "livemap:colormap-generate.text": "Generate a new Colormap",
+  "livemap:colormap-generate.hint": "Generates a new Colormap of all the\nblocks in the game (including modded\nones) and then sends it to the server.\n\nUse this first if this is a fresh install\nor when you change your mod list.",
+
+  "livemap:httpd-settings": "Web Server Settings",
+  "livemap:httpd-settings.hint": "Settings regarding the built-in httpd web server.\nThis is just a basic httpd web server, if you need/want\nsomething better just disable this and run your own.",
+  "livemap:httpd-enabled": "Enabled",
+  "livemap:httpd-enabled.hint": "Enable the built-in http web server.\nDisable this if you want to manually use a\nstandalone web server such as apache or nginx.",
+  "livemap:httpd-port": "Port",
+  "livemap:httpd-port.hint": "The port the built-in web server listens to. Make\nsure the port is allocated if using a game web panel.",
+
+  "livemap:zoom-settings": "Zoom Settings",
+  "livemap:zoom-settings.hint": "Settings regarding the zoom aspect of the map.\nThe more zoom levels you have the more tile sets to\ncreate which uses more drive space. So be cautious.",
+  "livemap:zoom.max-in": "Max In",
+  "livemap:zoom.max-in.hint": "Extra zoom in layers will stretch the original\ntile images so you can zoom in further without\nthe extra cost of rendering more tiles.",
+  "livemap:zoom.max-out": "Max Out",
+  "livemap:zoom.max-out.hint": "The maximum zoom out you can do on the map.\nEach additional level requires a new set of tiles\nto be rendered, so don't go too wild here.",
+  "livemap:zoom.default": "Default",
+  "livemap:zoom.default.hint": "The default zoom when loading the map in browser.\nNormal sized tiles (1 pixel = 1 block) are always\nat zoom level 0, making it a good default value."
 }

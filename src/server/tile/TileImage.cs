@@ -2,14 +2,13 @@ using System;
 using System.IO;
 using System.Linq;
 using livemap.common.util;
-using livemap.server.configuration;
 using SkiaSharp;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace livemap.server.render;
+namespace livemap.server.tile;
 
 public sealed unsafe class TileImage {
     private readonly SKBitmap _png;
@@ -20,8 +19,9 @@ public sealed unsafe class TileImage {
 
     private readonly int _regionX;
     private readonly int _regionZ;
+    private readonly int _maxZoom;
 
-    public TileImage(int regionX, int regionZ) {
+    public TileImage(int regionX, int regionZ, int maxZoom) {
         _png = new SKBitmap(512, 512);
         _pngPtr = (byte*)_png.GetPixels().ToPointer();
         _shadowMap = new byte[512 << 9].Fill((byte)128);
@@ -30,6 +30,7 @@ public sealed unsafe class TileImage {
 
         _regionX = regionX;
         _regionZ = regionZ;
+        _maxZoom = maxZoom;
     }
 
     public void SetBlockColor(int blockX, int blockZ, uint argb, float yDiff) {
@@ -58,7 +59,7 @@ public sealed unsafe class TileImage {
 
     public void Save() {
         try {
-            for (int zoom = 0; zoom <= Config.Instance.Zoom.MaxOut; zoom++) {
+            for (int zoom = 0; zoom <= _maxZoom; zoom++) {
                 FileInfo fileInfo = new(Path.Combine(FileUtil.TilesDir, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.webp"));
                 GamePaths.EnsurePathExists(fileInfo.Directory!.FullName);
 

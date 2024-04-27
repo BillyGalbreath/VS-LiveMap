@@ -14,7 +14,7 @@ navigator.serviceWorker.register("noerr.js")
 
 export class LiveTileLayer extends L.TileLayer {
     constructor(livemap: LiveMap) {
-        super('tiles/{z}/{x}_{y}.webp', {
+        super(`tiles/{z}/{x}_{y}.${livemap.settings.web.tiletype}`, {
             // tile sizes match regions sizes (512 blocks x 512 blocks)
             tileSize: 512,
             // dont wrap tiles at edges

@@ -57,7 +57,7 @@ public sealed class Colormap {
             if (!string.IsNullOrEmpty(yaml)) {
                 _colorsByName.AddRange(Deserialize(yaml)._colorsByName);
                 RefreshIds(api.World);
-                Logger.Info(Lang.Get("logger.info.server-loaded-colormap"));
+                Logger.Info("&dColormap loaded from disk.");
                 return;
             }
         } catch (Exception) {

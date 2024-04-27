@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using livemap.common.extensions;
 using livemap.common.util;
+using livemap.server.tile;
 using livemap.server.util;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -132,7 +133,7 @@ public abstract class Renderer {
     }
 
     protected void AllocateImage(int regionX, int regionZ) {
-        _image = new TileImage(regionX, regionZ);
+        _image = new TileImage(regionX, regionZ, _renderTask.Server.Config.Zoom.MaxOut);
     }
 
     protected void CalculateShadows() {
