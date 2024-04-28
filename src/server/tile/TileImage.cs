@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using livemap.common.util;
-using livemap.server.util;
 using SkiaSharp;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;

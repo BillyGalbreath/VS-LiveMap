@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using ImGuiNET;
 using livemap.client.util;
-using livemap.common.extensions;
+using livemap.common.util;
 using Vintagestory.API.Client;
 
 namespace livemap.client.gui.modal;

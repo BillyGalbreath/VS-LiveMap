@@ -19,8 +19,7 @@ public sealed class RenderTask {
 
     private Thread? _thread;
     private bool _running;
-
-    public bool Stopped { get; private set; }
+    private bool _stopped;
 
     public RenderTask(LiveMapServer server, ICoreServerAPI api) {
         _server = server;
@@ -30,7 +29,7 @@ public sealed class RenderTask {
     }
 
     public void Queue(int regionX, int regionZ) {
-        if (Stopped) {
+        if (_stopped) {
             return;
         }
 
@@ -49,7 +48,7 @@ public sealed class RenderTask {
     }
 
     public void ProcessQueue() {
-        if (Stopped) {
+        if (_stopped) {
             return;
         }
 
@@ -91,9 +90,9 @@ public sealed class RenderTask {
     }
 
     public void Dispose() {
-        bool cancelled = !Stopped && _running;
+        bool cancelled = !_stopped && _running;
 
-        Stopped = true;
+        _stopped = true;
 
         _thread?.Interrupt();
         _thread = null;

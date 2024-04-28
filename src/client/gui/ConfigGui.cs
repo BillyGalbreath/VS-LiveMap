@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using ConfigLib;
 using livemap.client.gui.settings;
-using livemap.common.extensions;
 using livemap.common.network;
 using livemap.common.util;
 using Vintagestory.API.Client;

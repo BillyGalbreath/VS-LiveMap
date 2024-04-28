@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Mime;
 using System.Threading;
 using livemap.common.util;
-using livemap.server.util;
 using MimeTypes;
 
 namespace livemap.server.httpd;

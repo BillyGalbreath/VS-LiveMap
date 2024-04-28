@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using livemap.common.network;
 using livemap.common.util;
@@ -57,7 +56,6 @@ public sealed class ServerNetworkHandler : NetworkHandler {
         SendPacket(new ConfigPacket { Config = _server.Config }, player);
     }
 
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public void SendPacket<T>(T packet, IServerPlayer receiver) {
         _channel?.SendPacket(packet, receiver);
     }

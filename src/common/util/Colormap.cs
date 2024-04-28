@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading;
-using livemap.server.util;
 using Vintagestory.API.Common;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -80,7 +79,7 @@ public sealed class Colormap {
         File.WriteAllText(Files.ColormapFile, Serialize(), Encoding.UTF8);
     }
 
-    public void RefreshIds(IWorldAccessor world) {
+    private void RefreshIds(IWorldAccessor world) {
         _colorsById.Clear();
 
         foreach ((string code, uint[] colors) in _colorsByName) {

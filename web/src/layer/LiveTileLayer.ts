@@ -3,14 +3,13 @@ import {LiveMap} from '../LiveMap';
 
 
 // https://stackoverflow.com/a/75848002/3530727
-navigator.serviceWorker.register("noerr.js")
-    .then((_: ServiceWorkerRegistration): void => {
-            navigator.serviceWorker.controller
-                ? window.dispatchEvent(new CustomEvent("swready"))
-                : navigator.serviceWorker.ready
-                    .then((_: ServiceWorkerRegistration) => location.reload());
-        }
-    );
+navigator.serviceWorker.register("noerr.js").then((): void => {
+        navigator.serviceWorker.controller
+            ? window.dispatchEvent(new CustomEvent("swready"))
+            : navigator.serviceWorker.ready
+                .then((): void => location.reload());
+    }
+);
 
 export class LiveTileLayer extends L.TileLayer {
     constructor(livemap: LiveMap) {

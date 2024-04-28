@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using livemap.common.extensions;
 using livemap.common.registry;
 using livemap.common.util;
 using livemap.server;

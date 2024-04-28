@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Reflection;
 using ConfigLib;
 using ImGuiNET;
-using livemap.common.extensions;
+using livemap.common.util;
 using VSImGui;
 
 namespace livemap.client.gui;

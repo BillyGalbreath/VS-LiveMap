@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using livemap.common.extensions;
+using livemap.common.util;
 using Microsoft.Data.Sqlite;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;

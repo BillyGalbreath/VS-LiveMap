@@ -1,5 +1,5 @@
 using JetBrains.Annotations;
-using livemap.common.api.layer;
+using livemap.common.layer;
 
 namespace livemap.common.registry;
 
