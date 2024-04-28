@@ -3,6 +3,7 @@ using System.Numerics;
 using ImGuiNET;
 using livemap.client.util;
 using livemap.common.extensions;
+using Vintagestory.API.Client;
 
 namespace livemap.client.gui.modal;
 
@@ -13,8 +14,8 @@ public class ColormapModal : Gui {
 
     public event Action? Close;
 
-    public ColormapModal(LiveMapClient client) {
-        _generator = new ColormapGenerator(client);
+    public ColormapModal(LiveMapClient client, ICoreClientAPI api) {
+        _generator = new ColormapGenerator(client, api);
 
         Close += OnClose;
     }

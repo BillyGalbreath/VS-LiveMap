@@ -11,6 +11,7 @@ using livemap.server.tile;
 using livemap.server.util;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Server;
 using Vintagestory.Common.Database;
 using Vintagestory.GameContent;
 using Vintagestory.Server;
@@ -20,6 +21,7 @@ namespace livemap.common.render;
 [PublicAPI]
 public abstract class Renderer : Keyed {
     public string Id { get; }
+    public ICoreServerAPI Api { get; }
     public LiveMapServer Server { get; }
 
     protected ChunkLoader ChunkLoader { get; }
@@ -31,15 +33,16 @@ public abstract class Renderer : Keyed {
 
     protected bool Cancelled { get; set; }
 
-    protected Renderer(LiveMapServer server, string id) {
+    protected Renderer(LiveMapServer server, ICoreServerAPI api, string id) {
         Id = id;
+        Api = api;
         Server = server;
 
-        ChunkLoader = new ChunkLoader(server.Api);
+        ChunkLoader = new ChunkLoader(Api);
 
-        LandBlock = server.Api.World.GetBlock(new AssetLocation("game", "soil-low-normal")).Id;
+        LandBlock = Api.World.GetBlock(new AssetLocation("game", "soil-low-normal")).Id;
 
-        MicroBlocks = server.Api.World.Blocks
+        MicroBlocks = Api.World.Blocks
             .Where(block => block.Code != null)
             .Where(block =>
                 block.Code.Path.StartsWith("chiseledblock") ||
@@ -47,7 +50,7 @@ public abstract class Renderer : Keyed {
             .Select(block => block.Id)
             .ToHashSet();
 
-        BlocksToIgnore = server.Api.World.Blocks
+        BlocksToIgnore = Api.World.Blocks
             .Where(block => block.Code != null)
             .Where(block =>
                 (block.Code.Path.EndsWith("-snow") && !MicroBlocks.Contains(block.Id)) ||
@@ -146,7 +149,7 @@ public abstract class Renderer : Keyed {
         }
 
         // load the actual chunks slices from game save
-        ServerChunk?[] chunkSlices = new ServerChunk?[Server.Api.WorldManager.MapSizeY >> 5];
+        ServerChunk?[] chunkSlices = new ServerChunk?[Api.WorldManager.MapSizeY >> 5];
         foreach (int y in chunkIndexesToLoad) {
             chunkSlices[y] = ChunkLoader.GetServerChunk(chunkPos.X, y, chunkPos.Z);
         }
@@ -234,7 +237,7 @@ public abstract class Renderer : Keyed {
 
     protected int GetTopBlockY(ServerMapChunk? mapChunk, int x, int z, int def = 0) {
         ushort? blockY = mapChunk?.RainHeightMap[Mathf.AsIndex(x, z)];
-        return GameMath.Clamp(blockY ?? def, 0, Server.Api.WorldManager.MapSizeY - 1);
+        return GameMath.Clamp(blockY ?? def, 0, Api.WorldManager.MapSizeY - 1);
     }
 
     public void Dispose() {
@@ -246,9 +249,9 @@ public abstract class Renderer : Keyed {
 
     public class Builder : Keyed {
         public string Id { get; }
-        public System.Func<LiveMapServer, Renderer> Func { get; }
+        public System.Func<LiveMapServer, ICoreServerAPI, Renderer> Func { get; }
 
-        public Builder(string id, System.Func<LiveMapServer, Renderer> func) {
+        public Builder(string id, System.Func<LiveMapServer, ICoreServerAPI, Renderer> func) {
             Id = id;
             Func = func;
         }

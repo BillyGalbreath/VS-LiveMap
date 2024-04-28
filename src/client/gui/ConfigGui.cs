@@ -5,21 +5,24 @@ using livemap.client.gui.settings;
 using livemap.common.extensions;
 using livemap.common.network;
 using livemap.common.util;
+using Vintagestory.API.Client;
 using Vintagestory.API.Server;
 
 namespace livemap.client.gui;
 
 public class ConfigGui : Gui {
+    private readonly ICoreClientAPI _api;
     private readonly LiveMapClient _client;
 
     private readonly List<Gui> _guis = new();
 
     private bool _alreadyRequestedConfig;
 
-    public ConfigGui(LiveMapClient client) {
+    public ConfigGui(LiveMapClient client, ICoreClientAPI api) {
+        _api = api;
         _client = client;
 
-        ConfigLibModSystem? configlib = _client.Api.ModLoader.GetModSystem<ConfigLibModSystem>();
+        ConfigLibModSystem? configlib = api.ModLoader.GetModSystem<ConfigLibModSystem>();
         configlib.ConfigWindowClosed += OnClose;
         configlib.RegisterCustomConfig(LiveMapMod.Id, (_, controlButtons) => {
             try {
@@ -30,13 +33,13 @@ public class ConfigGui : Gui {
             }
         });
 
-        _guis.Add(new ColormapSettings(client));
+        _guis.Add(new ColormapSettings(client, api));
         _guis.Add(new HttpdSettings(client));
         _guis.Add(new ZoomSettings(client));
     }
 
     private ControlButtons Draw(ControlButtons controlButtons) {
-        if (!_client.Api.World.Player.HasPrivilege(Privilege.root)) {
+        if (!_api.World.Player.HasPrivilege(Privilege.root)) {
             Text($"\n{"access-denied".ToLang()}", true, 0xFFFF4040);
             return new ControlButtons(false);
         }

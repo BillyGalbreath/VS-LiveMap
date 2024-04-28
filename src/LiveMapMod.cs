@@ -14,36 +14,26 @@ public sealed class LiveMapMod : ModSystem {
     public static string Id => _instance!.Mod.Info.ModID;
     public static ILogger VanillaLogger => _instance!.Mod.Logger;
 
-    private LiveMapClient? Client { get; set; }
-    public LiveMapServer? Server { get; private set; }
-
-
-    // todo remove all this api stuff
-    public static ICoreAPI Api => _instance!._api!;
-    private ICoreAPI? _api;
-    // todo end
+    private LiveMapClient? _client;
+    private LiveMapServer? _server;
 
     public LiveMapMod() {
         _instance = this;
     }
 
     public override void StartClientSide(ICoreClientAPI api) {
-        _api = api;
-        Client = new LiveMapClient(api);
+        _client = new LiveMapClient(api);
     }
 
     public override void StartServerSide(ICoreServerAPI api) {
-        _api = api;
-        Server = new LiveMapServer(api);
+        _server = new LiveMapServer(api);
     }
 
     public override void Dispose() {
-        Client?.Dispose();
-        Client = null;
+        _client?.Dispose();
+        _client = null;
 
-        Server?.Dispose();
-        Server = null;
-
-        _api = null;
+        _server?.Dispose();
+        _server = null;
     }
 }

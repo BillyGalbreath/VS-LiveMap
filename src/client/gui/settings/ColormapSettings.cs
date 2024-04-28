@@ -2,6 +2,7 @@ using System.Numerics;
 using ImGuiNET;
 using livemap.client.gui.modal;
 using livemap.common.extensions;
+using Vintagestory.API.Client;
 using VSImGui;
 
 namespace livemap.client.gui.settings;
@@ -9,8 +10,8 @@ namespace livemap.client.gui.settings;
 public class ColormapSettings : Gui {
     private readonly ColormapModal _modal;
 
-    public ColormapSettings(LiveMapClient client) {
-        _modal = new ColormapModal(client);
+    public ColormapSettings(LiveMapClient client, ICoreClientAPI api) {
+        _modal = new ColormapModal(client, api);
     }
 
     public override void OnClose() {

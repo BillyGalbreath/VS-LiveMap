@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using livemap.common.api;
 using livemap.common.configuration;
 using livemap.common.network;
@@ -17,20 +16,19 @@ using Vintagestory.API.Server;
 namespace livemap.server;
 
 public sealed class LiveMapServer : LiveMap {
-    public ICoreServerAPI Api { get; }
-
+    public Config Config { get; private set; } = null!;
     public Colormap Colormap { get; }
     public NetworkHandler NetworkHandler { get; }
     public RendererRegistry RendererRegistry { get; }
-    public RenderTask RenderTask { get; }
-    public WebServer WebServer { get; }
 
-    public Config Config { get; private set; } = null!;
+    private readonly ICoreServerAPI _api;
+    private readonly RenderTask _renderTask;
+    private readonly WebServer _webServer;
 
     private readonly long _gameTickTaskId;
 
     public LiveMapServer(ICoreServerAPI api) {
-        Api = api;
+        _api = api;
         LiveMap.Api = this;
 
         Logger.LoggerImpl = new ServerLoggerImpl();
@@ -45,36 +43,36 @@ public sealed class LiveMapServer : LiveMap {
         ReloadConfig();
 
         Colormap = new Colormap();
-        NetworkHandler = new ServerNetworkHandler(this);
+        NetworkHandler = new ServerNetworkHandler(this, api);
 
-        RendererRegistry = new RendererRegistry(this);
+        RendererRegistry = new RendererRegistry(this, api);
         RendererRegistry.RegisterBuiltIns();
 
-        RenderTask = new RenderTask(this);
-        WebServer = new WebServer(this);
+        _renderTask = new RenderTask(this, api);
+        _webServer = new WebServer(this);
 
         api.Event.ChunkDirty += OnChunkDirty;
         api.Event.GameWorldSave += OnGameWorldSave;
 
-        api.Event.RegisterCallback(_ => Colormap.LoadFromDisk(Api), 1);
+        api.Event.RegisterCallback(_ => Colormap.LoadFromDisk(_api), 1);
 
         _gameTickTaskId = api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
     }
 
     public void ReloadConfig() {
         string filename = $"{LiveMapMod.Id}.json";
-        Config = Api.LoadModConfig<Config>(filename) ?? new Config();
-        Api.StoreModConfig(Config, filename);
+        Config = _api.LoadModConfig<Config>(filename) ?? new Config();
+        _api.StoreModConfig(Config, filename);
     }
 
     private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
         // queue it up, it will process when the game saves
-        RenderTask.Queue(chunkCoord.X >> 4, chunkCoord.Z >> 4);
+        _renderTask.Queue(chunkCoord.X >> 4, chunkCoord.Z >> 4);
     }
 
     private void OnGameWorldSave() {
         // delay a bit to ensure chunks actually save to disk first
-        Api.Event.RegisterCallback(_ => RenderTask.ProcessQueue(), 1000);
+        _api.Event.RegisterCallback(_ => _renderTask.ProcessQueue(), 1000);
     }
 
     // this method ticks every 1000ms on the game thread
@@ -83,20 +81,20 @@ public sealed class LiveMapServer : LiveMap {
         //RenderTask.Run();
 
         // ensure web server is still running
-        WebServer.Run();
+        _webServer.Run();
 
         // todo - update player positions, public waypoints, etc
     }
 
     public void Dispose() {
-        Api.Event.ChunkDirty -= OnChunkDirty;
-        Api.Event.GameWorldSave -= OnGameWorldSave;
+        _api.Event.ChunkDirty -= OnChunkDirty;
+        _api.Event.GameWorldSave -= OnGameWorldSave;
 
-        Api.Event.UnregisterGameTickListener(_gameTickTaskId);
+        _api.Event.UnregisterGameTickListener(_gameTickTaskId);
 
         // order matters here
-        RenderTask.Dispose();
-        WebServer.Dispose();
+        _renderTask.Dispose();
+        _webServer.Dispose();
         NetworkHandler.Dispose();
         RendererRegistry.Dispose();
         Colormap.Dispose();

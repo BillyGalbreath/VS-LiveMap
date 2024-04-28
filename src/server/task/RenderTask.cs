@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using livemap.common.render;
 using livemap.common.util;
+using Vintagestory.API.Server;
 
 namespace livemap.server.task;
 
@@ -21,10 +22,10 @@ public sealed class RenderTask {
 
     public bool Stopped { get; private set; }
 
-    public RenderTask(LiveMapServer server) {
+    public RenderTask(LiveMapServer server, ICoreServerAPI api) {
         _server = server;
         foreach ((string? id, Renderer.Builder? builder) in server.RendererRegistry) {
-            _renderers.Add(id, builder.Func.Invoke(server));
+            _renderers.Add(id, builder.Func.Invoke(server, api));
         }
     }
 

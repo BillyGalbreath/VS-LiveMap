@@ -9,13 +9,15 @@ namespace livemap.server.network;
 
 public sealed class ServerNetworkHandler : NetworkHandler {
     private readonly LiveMapServer _server;
+    private readonly ICoreServerAPI _api;
 
     private IServerNetworkChannel? _channel;
 
-    public ServerNetworkHandler(LiveMapServer server) {
+    public ServerNetworkHandler(LiveMapServer server, ICoreServerAPI api) {
         _server = server;
+        _api = api;
 
-        _channel = server.Api.Network.RegisterChannel(LiveMapMod.Id)
+        _channel = api.Network.RegisterChannel(LiveMapMod.Id)
             .RegisterMessageType<ColormapPacket>()
             .RegisterMessageType<ConfigPacket>()
             .SetMessageHandler<ColormapPacket>(ReceiveColormap)
@@ -36,7 +38,7 @@ public sealed class ServerNetworkHandler : NetworkHandler {
         Logger.Info($"&dColormap packet was received from &n{player.PlayerName}");
 
         new Thread(_ => {
-            if (_server.Colormap.Deserialize(_server.Api, packet.RawColormap)) {
+            if (_server.Colormap.Deserialize(_api, packet.RawColormap)) {
                 _server.Colormap.SaveToDisk();
                 Logger.Info("&dColormap saved to disk.");
             } else {

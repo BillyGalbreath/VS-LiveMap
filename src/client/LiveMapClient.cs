@@ -12,8 +12,6 @@ using Vintagestory.Common;
 namespace livemap.client;
 
 public sealed class LiveMapClient {
-    public ICoreClientAPI Api { get; }
-
     private readonly Harmony _harmony;
     private readonly ConfigGui? _gui;
 
@@ -22,8 +20,6 @@ public sealed class LiveMapClient {
     public Config? Config { get; private set; }
 
     public LiveMapClient(ICoreClientAPI api) {
-        Api = api;
-
         Logger.LoggerImpl = new ClientLoggerImpl();
 
         _harmony = new Harmony(LiveMapMod.Id);
@@ -32,10 +28,10 @@ public sealed class LiveMapClient {
 
         if (api.ModLoader.IsModEnabled("configlib")) {
             Logger.Info("Found ConfigLib. Registering gui for settings.");
-            _gui = new ConfigGui(this);
+            _gui = new ConfigGui(this, api);
         }
 
-        NetworkHandler = new ClientNetworkHandler(this);
+        NetworkHandler = new ClientNetworkHandler(this, api);
     }
 
     public void ReceiveConfig(ConfigPacket packet) {
