@@ -78,38 +78,9 @@ public abstract partial class LoggerImpl : LoggerBase {
             Trace.WriteLine(parent.FormatLogEntry(logType, stripped, args));
         }
 
-        if (ColorConsole && _canUseColor) {
-            try {
-                Console.ForegroundColor = logType switch {
-                    EnumLogType.Debug => ConsoleColor.Yellow,
-                    EnumLogType.Warning => ConsoleColor.DarkYellow,
-                    EnumLogType.Error or EnumLogType.Fatal => ConsoleColor.Red,
-                    _ => Console.ForegroundColor
-                };
-            } catch (Exception) {
-                try {
-                    Console.ResetColor();
-                } catch (Exception) {
-                    // ignore
-                }
+        SetupColorsOrNot(logType);
 
-                _canUseColor = false;
-            }
-        }
-
-        if (!ColorConsole || !_canUseColor) {
-            Console.WriteLine(parent.FormatLogEntry(logType, stripped, args));
-            return;
-        }
-
-        Console.WriteLine(parent.FormatLogEntry(logType, Parse(
-            $"[&3{LiveMapMod.Id}{logType switch {
-                EnumLogType.Debug => "&e",
-                EnumLogType.Error or EnumLogType.Fatal => "&c",
-                EnumLogType.Warning => "&6",
-                _ => "&r"
-            }}] {format}&r"
-        ), args));
+        WriteToLog(parent, logType, format, stripped, args);
 
         Console.ResetColor();
     }
@@ -135,5 +106,43 @@ public abstract partial class LoggerImpl : LoggerBase {
                 parent.LogToFile(parent.getLogFile(EnumLogType.Notification), logType, stripped, args);
                 break;
         }
+    }
+
+    private void SetupColorsOrNot(EnumLogType logType) {
+        if (!ColorConsole || !_canUseColor) {
+            return;
+        }
+        try {
+            Console.ForegroundColor = logType switch {
+                EnumLogType.Debug => ConsoleColor.Yellow,
+                EnumLogType.Warning => ConsoleColor.DarkYellow,
+                EnumLogType.Error or EnumLogType.Fatal => ConsoleColor.Red,
+                _ => Console.ForegroundColor
+            };
+        } catch (Exception) {
+            try {
+                Console.ResetColor();
+            } catch (Exception) {
+                // ignore
+            }
+
+            _canUseColor = false;
+        }
+    }
+
+    private void WriteToLog(Vintagestory.Logger parent, EnumLogType logType, string format, string stripped, params object[] args) {
+        if (!ColorConsole || !_canUseColor) {
+            Console.WriteLine(parent.FormatLogEntry(logType, stripped, args));
+            return;
+        }
+
+        Console.WriteLine(parent.FormatLogEntry(logType, Parse(
+            $"[&3{LiveMapMod.Id}{logType switch {
+                EnumLogType.Debug => "&e",
+                EnumLogType.Error or EnumLogType.Fatal => "&c",
+                EnumLogType.Warning => "&6",
+                _ => "&r"
+            }}] {format}&r"
+        ), args));
     }
 }
