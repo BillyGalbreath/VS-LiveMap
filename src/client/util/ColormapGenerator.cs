@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
-using livemap.common.network;
+using livemap.common.network.packet;
 using livemap.common.util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;

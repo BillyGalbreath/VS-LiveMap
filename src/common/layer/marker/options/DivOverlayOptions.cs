@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace livemap.common.layer.options;
+namespace livemap.common.layer.marker.options;
 
 /// <summary>
 /// Optional settings for <see cref="TooltipOptions"/> and <see cref="PopupOptions"/> overlays

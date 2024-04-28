@@ -1,8 +1,7 @@
 using JetBrains.Annotations;
-using livemap.common.layer.marker;
 using Newtonsoft.Json;
 
-namespace livemap.common.layer.options;
+namespace livemap.common.layer.marker.options;
 
 /// <summary>
 /// A set of options shared between vector overlays<br/>

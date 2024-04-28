@@ -1,5 +1,5 @@
 using System;
 
-namespace livemap.server.exception;
+namespace livemap.common.exception;
 
 public class RenderCancelledException : Exception { }

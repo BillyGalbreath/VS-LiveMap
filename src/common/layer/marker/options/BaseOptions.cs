@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace livemap.common.layer.options;
+namespace livemap.common.layer.marker.options;
 
 /// <summary>
 /// A set of base options for markers and overlays<br/>

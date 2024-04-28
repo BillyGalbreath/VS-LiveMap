@@ -1,7 +1,6 @@
 using JetBrains.Annotations;
-using livemap.common.layer.marker;
 
-namespace livemap.common.layer.options.marker;
+namespace livemap.common.layer.marker.options.type;
 
 /// <summary>
 /// Optional settings for the <see cref="Rectangle"/> marker

@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace livemap.common.layer.options;
+namespace livemap.common.layer.marker.options;
 
 /// <summary>
 /// A set of options for an interactive overlay layer on the map<br/>

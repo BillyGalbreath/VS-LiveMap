@@ -8,7 +8,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace livemap.server.tile;
+namespace livemap.common.tile;
 
 public sealed unsafe class TileImage {
     private readonly SKBitmap _png;

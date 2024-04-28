@@ -4,7 +4,7 @@ using livemap.client.gui;
 using livemap.client.network;
 using livemap.client.util;
 using livemap.common.configuration;
-using livemap.common.network;
+using livemap.common.network.packet;
 using livemap.common.util;
 using Vintagestory.API.Client;
 using Vintagestory.Common;

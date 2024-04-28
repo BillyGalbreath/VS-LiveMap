@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using livemap.common.layer.marker;
-using livemap.common.layer.options;
+using livemap.common.layer.marker.options;
 using livemap.common.registry;
 using Newtonsoft.Json;
 

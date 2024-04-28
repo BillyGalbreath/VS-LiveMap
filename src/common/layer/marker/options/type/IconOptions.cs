@@ -1,8 +1,7 @@
 using JetBrains.Annotations;
-using livemap.common.layer.marker;
 using Newtonsoft.Json;
 
-namespace livemap.common.layer.options.marker;
+namespace livemap.common.layer.marker.options.type;
 
 /// <summary>
 /// Optional settings for the <see cref="Icon"/> marker

@@ -1,4 +1,5 @@
 ﻿using livemap.common.network;
+using livemap.common.network.packet;
 using Vintagestory.API.Client;
 
 namespace livemap.client.network;

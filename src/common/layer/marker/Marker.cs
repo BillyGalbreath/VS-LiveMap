@@ -1,6 +1,6 @@
 using System;
 using JetBrains.Annotations;
-using livemap.common.layer.options;
+using livemap.common.layer.marker.options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
