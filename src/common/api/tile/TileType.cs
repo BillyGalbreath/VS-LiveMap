@@ -1,8 +1,10 @@
+using JetBrains.Annotations;
 using ProtoBuf;
 using SkiaSharp;
 
 namespace livemap.common.api.tile;
 
+[PublicAPI]
 [ProtoContract]
 public class TileType {
     public static readonly TileType Png = new("png", SKEncodedImageFormat.Png);

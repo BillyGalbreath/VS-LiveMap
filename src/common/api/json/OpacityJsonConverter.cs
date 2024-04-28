@@ -17,8 +17,6 @@ public class OpacityJsonConverter : JsonConverter {
 
     /// <inheritdoc/>
     public override object? ReadJson(JsonReader reader, Type type, object? existingValue, JsonSerializer serializer) {
-        Console.WriteLine(reader.TokenType);
-
         if (reader.TokenType == JsonToken.Bytes) {
             return (Opacity)JToken.Load(reader).ToObject<byte>();
         }

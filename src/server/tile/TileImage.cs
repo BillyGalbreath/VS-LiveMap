@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using livemap.common.util;
+using livemap.server.util;
 using SkiaSharp;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
@@ -60,7 +61,7 @@ public sealed unsafe class TileImage {
     public void Save() {
         try {
             for (int zoom = 0; zoom <= _maxZoom; zoom++) {
-                FileInfo fileInfo = new(Path.Combine(FileUtil.TilesDir, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.webp"));
+                FileInfo fileInfo = new(Path.Combine(Files.TilesDir, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.webp"));
                 GamePaths.EnsurePathExists(fileInfo.Directory!.FullName);
 
                 if (zoom > 0) {
@@ -126,5 +127,9 @@ public sealed unsafe class TileImage {
         }
 
         return c == 0 ? 0 : (a / c) << 24 | (r / c) << 16 | (g / c) << 8 | (b / c);
+    }
+
+    public void Dispose() {
+        _png.Dispose();
     }
 }

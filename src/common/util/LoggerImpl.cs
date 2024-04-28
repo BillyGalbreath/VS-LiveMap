@@ -44,7 +44,7 @@ public abstract partial class LoggerImpl : LoggerBase {
     protected override void LogImpl(EnumLogType logType, string format, params object[] args) {
         string stripped = $"[{LiveMapMod.Id}] {Strip(format)}";
 
-        Vintagestory.Logger? parent = (Vintagestory.Logger)((ModLogger)LiveMapMod.Instance.Mod.Logger).Parent;
+        Vintagestory.Logger? parent = (Vintagestory.Logger)((ModLogger)LiveMapMod.VanillaLogger).Parent;
 
         // print to the correct log file
         string? logFile = parent.getLogFile(logType);

@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
-using livemap.common.api.layer;
+using livemap.common.network;
+using livemap.common.registry;
 
 namespace livemap.common.api;
 
@@ -7,7 +8,6 @@ namespace livemap.common.api;
 public interface LiveMap {
     public static LiveMap Api { get; internal set; } = null!;
 
-    public T RegisterLayer<T>(T layer) where T : Layer;
-
-    public T UnregisterLayer<T>(T layer) where T : Layer;
+    public NetworkHandler NetworkHandler { get; }
+    public RendererRegistry RendererRegistry { get; }
 }

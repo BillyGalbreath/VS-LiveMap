@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -11,12 +12,12 @@ using Vintagestory.Server;
 
 namespace livemap.server.util;
 
-public class DataLoader {
+public class ChunkLoader {
     private readonly ServerMain _server;
     private readonly SqliteConnection _sqliteConn;
     private readonly ChunkDataPool _chunkDataPool;
 
-    public DataLoader(ICoreServerAPI api) {
+    public ChunkLoader(ICoreServerAPI api) {
         _server = (api.World as ServerMain)!;
         string filename = _server
             .GetField<ChunkServerThread>("chunkThread")!
@@ -88,5 +89,14 @@ public class DataLoader {
         dbParameter.DbType = dbType;
         dbParameter.Value = value;
         return dbParameter;
+    }
+
+    public void Dispose() {
+        try {
+            _chunkDataPool.SlowDispose();
+            _sqliteConn.Close();
+        } catch (Exception) {
+            // ignore
+        }
     }
 }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
+using System.Threading;
+using livemap.server.util;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
-using Vintagestory.API.Util;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -25,6 +25,8 @@ public sealed class Colormap {
         return _colorsById.TryGetValue(id, out colors);
     }
 
+    public int Count => _colorsById.Count;
+
     public string Serialize() {
         return new SerializerBuilder()
             .WithQuotingNecessaryStrings()
@@ -34,43 +36,48 @@ public sealed class Colormap {
             .Serialize(_colorsByName);
     }
 
-    public static Colormap Deserialize(string yaml) {
-        Dictionary<string, uint[]> data = new DeserializerBuilder()
-            .IgnoreUnmatchedProperties()
-            .WithNamingConvention(NullNamingConvention.Instance)
-            .Build().Deserialize<Dictionary<string, uint[]>>(yaml);
-
-        Colormap colormap = new();
-        foreach ((string? key, uint[]? colors) in data) {
-            colormap._colorsByName.TryAdd(key, colors);
-        }
-
-        return colormap;
-    }
-
-    public void Reload(ICoreAPI api) {
+    public bool Deserialize(ICoreAPI api, string? yaml) {
         _colorsByName.Clear();
-        _colorsById.Clear();
+
+        if (string.IsNullOrEmpty(yaml)) {
+            return false;
+        }
 
         try {
-            string yaml = File.ReadAllText(FileUtil.ColormapFile, Encoding.UTF8);
-            if (!string.IsNullOrEmpty(yaml)) {
-                _colorsByName.AddRange(Deserialize(yaml)._colorsByName);
-                RefreshIds(api.World);
-                Logger.Info("&dColormap loaded from disk.");
-                return;
+            Dictionary<string, uint[]> data = new DeserializerBuilder()
+                .IgnoreUnmatchedProperties()
+                .WithNamingConvention(NullNamingConvention.Instance)
+                .Build().Deserialize<Dictionary<string, uint[]>>(yaml);
+            foreach ((string? key, uint[]? colors) in data) {
+                _colorsByName.TryAdd(key, colors);
             }
-        } catch (Exception) {
-            // ignore
+            return true;
+        } catch (Exception e) {
+            Logger.Error(e.ToString());
+            return false;
         }
-
-        Logger.Warn("Could not load colormap from disk.");
-        Logger.Warn("An admin needs to send the colormap from their client.");
+        finally {
+            RefreshIds(api.World);
+        }
     }
 
-    public void Write() {
-        GamePaths.EnsurePathExists(FileUtil.DataDir);
-        File.WriteAllText(FileUtil.ColormapFile, Serialize(), Encoding.UTF8);
+    public void LoadFromDisk(ICoreAPI api) {
+        new Thread(_ => {
+            string? yaml = null;
+            if (File.Exists(Files.ColormapFile)) {
+                yaml = File.ReadAllText(Files.ColormapFile, Encoding.UTF8);
+            }
+            if (Deserialize(api, yaml)) {
+                Logger.Info("&dColormap loaded from disk.");
+            } else {
+                Logger.Warn("Could not load colormap from disk.");
+                Logger.Warn("An admin needs to send the colormap from their client.");
+            }
+        }).Start();
+    }
+
+    public void SaveToDisk() {
+        File.WriteAllText(Files.ColormapFile, Serialize(), Encoding.UTF8);
     }
 
     public void RefreshIds(IWorldAccessor world) {

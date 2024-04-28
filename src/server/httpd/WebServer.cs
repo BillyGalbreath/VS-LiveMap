@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Mime;
 using System.Threading;
 using livemap.common.util;
+using livemap.server.util;
 using MimeTypes;
 
 namespace livemap.server.httpd;
@@ -90,7 +91,7 @@ public sealed class WebServer {
         }
 
         using HttpListenerResponse response = context.Response;
-        string filePath = Path.Combine(FileUtil.WebDir, urlLoc);
+        string filePath = Path.Combine(Files.WebDir, urlLoc);
 
         byte[] buffer;
         if (File.Exists(filePath)) {
@@ -99,7 +100,7 @@ public sealed class WebServer {
             response.StatusCode = 200;
         } else {
             response.ContentType = MediaTypeNames.Text.Html;
-            buffer = File.ReadAllBytes(Path.Combine(FileUtil.WebDir, "404.html"));
+            buffer = File.ReadAllBytes(Path.Combine(Files.WebDir, "404.html"));
             response.StatusCode = 404;
         }
 

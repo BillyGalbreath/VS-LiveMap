@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using livemap.common.network;
@@ -37,13 +36,11 @@ public sealed class ServerNetworkHandler : NetworkHandler {
         Logger.Info($"&dColormap packet was received from &n{player.PlayerName}");
 
         new Thread(_ => {
-            try {
-                Colormap colormap = Colormap.Deserialize(packet.RawColormap);
-                colormap.RefreshIds(player.Entity.World);
-                colormap.Write();
-                _server.Colormap = colormap;
-            } catch (Exception) {
-                // ignored
+            if (_server.Colormap.Deserialize(_server.Api, packet.RawColormap)) {
+                _server.Colormap.SaveToDisk();
+                Logger.Info("&dColormap saved to disk.");
+            } else {
+                Logger.Warn("Could not save colormap to disk.");
             }
         }).Start();
     }

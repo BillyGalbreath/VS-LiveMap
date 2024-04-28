@@ -2,12 +2,13 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using livemap.common.api.layer.marker;
 using livemap.common.api.layer.options;
+using livemap.common.registry;
 using Newtonsoft.Json;
 
 namespace livemap.common.api.layer;
 
 [PublicAPI]
-public abstract class Layer {
+public abstract class Layer : Keyed {
     [JsonProperty(Order = -10)]
     public string Id { get; }
 
