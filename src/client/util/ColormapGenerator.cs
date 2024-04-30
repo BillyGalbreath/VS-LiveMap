@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using HarmonyLib;
+using livemap.common;
 using livemap.common.network.packet;
 using livemap.common.util;
-using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using Vintagestory.Common;
 
 namespace livemap.client.util;
 
+[HarmonyPatch]
 public class ColormapGenerator {
     private static BlockPos? _overridePos;
 
-    private readonly ICoreClientAPI _api;
     private readonly LiveMapClient _client;
 
     private Thread? _thread;
@@ -23,8 +25,7 @@ public class ColormapGenerator {
     private int _total;
     private int _count;
 
-    public ColormapGenerator(LiveMapClient client, ICoreClientAPI api) {
-        _api = api;
+    public ColormapGenerator(LiveMapClient client) {
         _client = client;
     }
 
@@ -62,7 +63,7 @@ public class ColormapGenerator {
         _running = true;
 
         // who are we and what do we want?!
-        IPlayer player = _api.World.Player;
+        IPlayer player = _client.Api.World.Player;
         EntityPlayer entity = player.Entity;
         IList<Block> blocks = entity.World.Blocks;
 
@@ -92,8 +93,7 @@ public class ColormapGenerator {
 
             // todo - remove this in production
             // slow the process down to test the gui progress bar
-            // ReSharper disable once InvertIf
-            if (_count % 5 == 0) {
+            if (_count % 10 == 0) {
                 try {
                     Thread.Sleep(1);
                 } catch (Exception) {
@@ -114,13 +114,13 @@ public class ColormapGenerator {
 
     private void ProcessBlock(Block block, BlockPos pos, Colormap colormap) {
         // get the base color of this block - game stores these in reverse byte order for some reason
-        int argb = Color.Reverse(block.GetColor(_api, pos));
+        int argb = Color.Reverse(block.GetColor(_client.Api, pos));
 
         // get 30 color samples for this block
         uint[] colors = new uint[30];
         for (int i = 0; i < 30; i++) {
             // blend the base color with a random color
-            colors[i] = (uint)Color.Blend(argb, block.GetRandomColor(_api, pos, BlockFacing.UP, i));
+            colors[i] = (uint)Color.Blend(argb, block.GetRandomColor(_client.Api, pos, BlockFacing.UP, i));
         }
 
         // store sample colors in the colormap
@@ -130,6 +130,8 @@ public class ColormapGenerator {
         _count++;
     }
 
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(GameCalendar), "get_YearRel")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static bool PreYearRel(IGameCalendar __instance, ref float __result) {

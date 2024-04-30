@@ -1,22 +1,20 @@
 using JetBrains.Annotations;
 using livemap.common.render;
 using livemap.server;
-using Vintagestory.API.Server;
 
 namespace livemap.common.registry;
 
 [PublicAPI]
 public class RendererRegistry : Registry<Renderer.Builder> {
     private readonly LiveMapServer _server;
-    private readonly ICoreServerAPI _api;
 
-    public RendererRegistry(LiveMapServer server, ICoreServerAPI api) : base("renderers") {
+    public RendererRegistry(LiveMapServer server) : base("renderers") {
         _server = server;
-        _api = api;
     }
 
     public void RegisterBuiltIns() {
-        Register(new Renderer.Builder("basic", (server, api) => new BasicRenderer(server, api)));
+        Register(new Renderer.Builder("basic", server => new BasicRenderer(server)));
+        Register(new Renderer.Builder("medieval", server => new MedievalRenderer(server)));
     }
 
     public Renderer? Create(string id) {
@@ -24,6 +22,6 @@ public class RendererRegistry : Registry<Renderer.Builder> {
     }
 
     public Renderer Create(Renderer.Builder builder) {
-        return builder.Func.Invoke(_server, _api);
+        return builder.Func.Invoke(_server);
     }
 }

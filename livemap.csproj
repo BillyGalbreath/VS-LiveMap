@@ -55,6 +55,10 @@
         <None Include="LICENSE;README.md;resources/**" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" Link="%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="web\public\tiles\basic\" />
+    </ItemGroup>
+
     <Target Name="_ResolveCopyLocalNuGetPkgXmls" AfterTargets="ResolveReferences">
         <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).xml')" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)'!='' and Exists('%(RootDir)%(Directory)%(Filename).xml')" />
     </Target>

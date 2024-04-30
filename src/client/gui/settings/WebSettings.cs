@@ -4,8 +4,8 @@ using livemap.common.configuration;
 
 namespace livemap.client.gui.settings;
 
-public class HttpdSettings : Gui {
-    public HttpdSettings(LiveMapClient client) : base(client) { }
+public class WebSettings : Gui {
+    public WebSettings(LiveMapClient client) : base(client) { }
 
     public override void Draw() {
         if (!Header("httpd-settings", true)) {

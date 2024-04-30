@@ -5,14 +5,10 @@ using livemap.common.configuration;
 namespace livemap.client.gui.settings;
 
 public class ZoomSettings : Gui {
-    private readonly LiveMapClient _client;
-
     private readonly HalfSlider _sliderMaxIn;
     private readonly HalfSlider _sliderMaxOut;
 
-    public ZoomSettings(LiveMapClient client) {
-        _client = client;
-
+    public ZoomSettings(LiveMapClient client) : base(client) {
         _sliderMaxIn = new HalfSlider();
         _sliderMaxOut = new HalfSlider();
     }

@@ -57,10 +57,10 @@ public sealed unsafe class TileImage {
         }
     }
 
-    public void Save() {
+    public void Save(string rendererId) {
         try {
             for (int zoom = 0; zoom <= _maxZoom; zoom++) {
-                FileInfo fileInfo = new(Path.Combine(Files.TilesDir, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.webp"));
+                FileInfo fileInfo = new(Path.Combine(Files.TilesDir, rendererId, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.webp"));
                 GamePaths.EnsurePathExists(fileInfo.Directory!.FullName);
 
                 if (zoom > 0) {

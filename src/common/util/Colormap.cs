@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading;
+using livemap.common.network.packet;
 using Vintagestory.API.Common;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -35,7 +36,7 @@ public sealed class Colormap {
             .Serialize(_colorsByName);
     }
 
-    public bool Deserialize(ICoreAPI api, string? yaml) {
+    public bool Deserialize(string? yaml) {
         _colorsByName.Clear();
 
         if (string.IsNullOrEmpty(yaml)) {
@@ -55,18 +56,28 @@ public sealed class Colormap {
             Logger.Error(e.ToString());
             return false;
         }
-        finally {
-            RefreshIds(api.World);
-        }
     }
 
-    public void LoadFromDisk(ICoreAPI api) {
+    public void LoadFromPacket(IWorldAccessor world, ColormapPacket packet) {
+        new Thread(_ => {
+            if (Deserialize(packet.RawColormap)) {
+                SaveToDisk();
+                RefreshIds(world);
+                Logger.Info("&dColormap saved to disk.");
+            } else {
+                Logger.Warn("Could not save colormap to disk.");
+            }
+        }).Start();
+    }
+
+    public void LoadFromDisk(IWorldAccessor world) {
         new Thread(_ => {
             string? yaml = null;
             if (File.Exists(Files.ColormapFile)) {
                 yaml = File.ReadAllText(Files.ColormapFile, Encoding.UTF8);
             }
-            if (Deserialize(api, yaml)) {
+            if (Deserialize(yaml)) {
+                RefreshIds(world);
                 Logger.Info("&dColormap loaded from disk.");
             } else {
                 Logger.Warn("Could not load colormap from disk.");
@@ -79,7 +90,7 @@ public sealed class Colormap {
         File.WriteAllText(Files.ColormapFile, Serialize(), Encoding.UTF8);
     }
 
-    private void RefreshIds(IWorldAccessor world) {
+    public void RefreshIds(IWorldAccessor world) {
         _colorsById.Clear();
 
         foreach ((string code, uint[] colors) in _colorsByName) {

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using livemap.common.render;
 using livemap.common.util;
-using Vintagestory.API.Server;
 
 namespace livemap.server.task;
 
@@ -21,10 +20,14 @@ public sealed class RenderTask {
     private bool _running;
     private bool _stopped;
 
-    public RenderTask(LiveMapServer server, ICoreServerAPI api) {
+    public RenderTask(LiveMapServer server) {
         _server = server;
-        foreach ((string? id, Renderer.Builder? builder) in server.RendererRegistry) {
-            _renderers.Add(id, builder.Func.Invoke(server, api));
+    }
+
+    public void Init() {
+        _renderers.Clear();
+        foreach ((string? id, Renderer.Builder? builder) in _server.RendererRegistry) {
+            _renderers.Add(id, builder.Func.Invoke(_server));
         }
     }
 
@@ -44,7 +47,7 @@ public sealed class RenderTask {
         // queue it up to the buffer, so it doesn't get process immediately
         _bufferQueue.Enqueue(index);
 
-        Logger.Debug($"##### Queueing region {regionX},{regionZ} (total in queue: {_bufferQueue.Count}+{_processQueue.Count}={_bufferQueue.Count + _processQueue.Count}) {Environment.CurrentManagedThreadId}");
+        Logger.Debug($"Queueing region {regionX},{regionZ} (buffer: {_bufferQueue.Count} process:{_processQueue.Count})");
     }
 
     public void ProcessQueue() {

@@ -16,7 +16,7 @@
   "command.reload.finished": "LiveMap config and services were successfully reloaded.",
 
   "livemap:no-data-to-display": "\nNo data to display.\n\nIs the mod disabled?",
-  "livemap:access-denied": "Sorry. Access Denied.",
+  "livemap:access-denied": "\nSorry. Access Denied.",
 
   "livemap:stop": "Stop",
   "livemap:start": "Start",

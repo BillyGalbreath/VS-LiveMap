@@ -1,7 +1,9 @@
 ﻿using System.IO;
+using System.Linq;
 using livemap.common;
 using livemap.common.configuration;
 using livemap.common.network;
+using livemap.common.network.packet;
 using livemap.common.registry;
 using livemap.common.util;
 using livemap.server.httpd;
@@ -16,53 +18,57 @@ using Vintagestory.API.Server;
 namespace livemap.server;
 
 public sealed class LiveMapServer : LiveMap {
+    public ICoreServerAPI Api { get; }
     public Config Config { get; private set; } = null!;
     public Colormap Colormap { get; }
     public NetworkHandler NetworkHandler { get; }
     public RendererRegistry RendererRegistry { get; }
 
-    private readonly ICoreServerAPI _api;
     private readonly RenderTask _renderTask;
     private readonly WebServer _webServer;
 
     private readonly long _gameTickTaskId;
 
     public LiveMapServer(ICoreServerAPI api) {
-        _api = api;
+        Api = api;
         LiveMap.Api = this;
 
         Logger.LoggerImpl = new ServerLoggerImpl();
 
-        Files.DataDir = Path.Combine(GamePaths.DataPath, "ModData", api.World.SavegameIdentifier, "LiveMap");
+        Files.DataDir = Path.Combine(GamePaths.DataPath, "ModData", Api.World.SavegameIdentifier, "LiveMap");
         Files.ColormapFile = Path.Combine(Files.DataDir, "colormap.yaml");
         Files.WebDir = Path.Combine(Files.DataDir, "web");
         Files.TilesDir = Path.Combine(Files.WebDir, "tiles");
 
-        Files.ExtractWebFiles(api);
-
         ReloadConfig();
 
+        Files.ExtractWebFiles(this);
+
         Colormap = new Colormap();
-        NetworkHandler = new ServerNetworkHandler(this, api);
+        NetworkHandler = new ServerNetworkHandler(this);
 
-        RendererRegistry = new RendererRegistry(this, api);
-        RendererRegistry.RegisterBuiltIns();
+        RendererRegistry = new RendererRegistry(this);
 
-        _renderTask = new RenderTask(this, api);
+        _renderTask = new RenderTask(this);
         _webServer = new WebServer(this);
 
-        api.Event.ChunkDirty += OnChunkDirty;
-        api.Event.GameWorldSave += OnGameWorldSave;
+        Api.Event.ChunkDirty += OnChunkDirty;
+        Api.Event.GameWorldSave += OnGameWorldSave;
 
-        api.Event.RegisterCallback(_ => Colormap.LoadFromDisk(_api), 1);
+        // things to do on first game tick
+        Api.Event.RegisterCallback(_ => {
+            Colormap.LoadFromDisk(Api.World);
+            RendererRegistry.RegisterBuiltIns();
+            _renderTask.Init();
+        }, 1);
 
-        _gameTickTaskId = api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
+        _gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
     }
 
     public void ReloadConfig() {
         string filename = $"{LiveMapMod.Id}.json";
-        Config = _api.LoadModConfig<Config>(filename) ?? new Config();
-        _api.StoreModConfig(Config, filename);
+        Config = Api.LoadModConfig<Config>(filename) ?? new Config();
+        Api.StoreModConfig(Config, filename);
     }
 
     private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
@@ -72,7 +78,7 @@ public sealed class LiveMapServer : LiveMap {
 
     private void OnGameWorldSave() {
         // delay a bit to ensure chunks actually save to disk first
-        _api.Event.RegisterCallback(_ => _renderTask.ProcessQueue(), 1000);
+        Api.Event.RegisterCallback(_ => _renderTask.ProcessQueue(), 1000);
     }
 
     // this method ticks every 1000ms on the game thread
@@ -86,11 +92,36 @@ public sealed class LiveMapServer : LiveMap {
         // todo - update player positions, public waypoints, etc
     }
 
-    public void Dispose() {
-        _api.Event.ChunkDirty -= OnChunkDirty;
-        _api.Event.GameWorldSave -= OnGameWorldSave;
+    public void ReceiveColormap(IServerPlayer player, ColormapPacket packet) {
+        if (!player.Privileges.Contains("root")) {
+            Logger.Warn($"Ignoring colormap packet from non-privileged user {player.PlayerName}");
+            return;
+        }
 
-        _api.Event.UnregisterGameTickListener(_gameTickTaskId);
+        if (packet.RawColormap == null) {
+            Logger.Warn($"Received null colormap from {player.PlayerName}");
+            return;
+        }
+
+        Logger.Info($"&dColormap packet was received from &n{player.PlayerName}");
+        Colormap.LoadFromPacket(Api.World, packet);
+    }
+
+    public void ReceiveConfigRequest(IServerPlayer player, ConfigPacket _) {
+        if (!player.Privileges.Contains("root")) {
+            Logger.Warn($"Ignoring config request packet from non-privileged user {player.PlayerName}");
+            return;
+        }
+
+        Logger.Info($"&dConfig request packet was received from &n{player.PlayerName}");
+        NetworkHandler.SendPacket(new ConfigPacket { Config = Config }, player);
+    }
+
+    public void Dispose() {
+        Api.Event.ChunkDirty -= OnChunkDirty;
+        Api.Event.GameWorldSave -= OnGameWorldSave;
+
+        Api.Event.UnregisterGameTickListener(_gameTickTaskId);
 
         // order matters here
         _renderTask.Dispose();

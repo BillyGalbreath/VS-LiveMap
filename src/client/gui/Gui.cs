@@ -9,7 +9,15 @@ using VSImGui;
 namespace livemap.client.gui;
 
 public abstract class Gui {
+    protected readonly LiveMapClient _client;
+
+    protected Gui(LiveMapClient client) {
+        _client = client;
+    }
+
     public abstract void Draw();
+
+    public virtual void OnOpen() { }
 
     public virtual void OnClose() { }
 

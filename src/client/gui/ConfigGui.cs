@@ -2,54 +2,60 @@ using System;
 using System.Collections.Generic;
 using ConfigLib;
 using livemap.client.gui.settings;
-using livemap.common.network.packet;
 using livemap.common.util;
-using Vintagestory.API.Client;
 using Vintagestory.API.Server;
 
 namespace livemap.client.gui;
 
 public class ConfigGui : Gui {
-    private readonly ICoreClientAPI _api;
-    private readonly LiveMapClient _client;
-
     private readonly List<Gui> _guis = new();
 
-    private bool _alreadyRequestedConfig;
-
-    public ConfigGui(LiveMapClient client, ICoreClientAPI api) {
-        _api = api;
-        _client = client;
-
-        ConfigLibModSystem? configlib = api.ModLoader.GetModSystem<ConfigLibModSystem>();
+    public ConfigGui(LiveMapClient client) : base(client) {
+        ConfigLibModSystem? configlib = _client.Api.ModLoader.GetModSystem<ConfigLibModSystem>();
+        configlib.ConfigWindowOpened += OnOpen;
         configlib.ConfigWindowClosed += OnClose;
         configlib.RegisterCustomConfig(LiveMapMod.Id, (_, controlButtons) => {
             try {
                 return Draw(controlButtons);
-            } catch (Exception e) {
-                Logger.Error(e.ToString());
+            } catch (Exception) {
                 return new ControlButtons(false);
             }
         });
 
-        _guis.Add(new ColormapSettings(client, api));
+        _guis.Add(new ColormapSettings(client));
         _guis.Add(new HttpdSettings(client));
+        _guis.Add(new WebSettings(client));
         _guis.Add(new ZoomSettings(client));
     }
 
+    public override void OnOpen() {
+        if (_client.Api.World.Player.HasPrivilege(Privilege.root)) {
+            _client.RequestConfig();
+        }
+        _guis.ForEach(gui => gui.OnOpen());
+    }
+
+    public override void OnClose() {
+        _guis.ForEach(gui => gui.OnClose());
+    }
+
+    public override void Draw() {
+        _guis.ForEach(gui => gui.Draw());
+    }
+
+    public void Dispose() {
+        _guis.Clear();
+    }
+
     private ControlButtons Draw(ControlButtons controlButtons) {
-        if (!_api.World.Player.HasPrivilege(Privilege.root)) {
-            Text($"\n{"access-denied".ToLang()}", true, 0xFFFF4040);
+        if (!_client.Api.World.Player.HasPrivilege(Privilege.root)) {
+            Text($"{"access-denied".ToLang()}", true, 0xFFFF4040);
             return new ControlButtons(false);
         }
 
         if (_client.Config == null) {
             Text($"{"no-data-to-display".ToLang()}", true, 0xFFFF4040);
-            // ReSharper disable once InvertIf
-            if (!_alreadyRequestedConfig) {
-                _client.NetworkHandler.SendPacket(new ConfigPacket());
-                _alreadyRequestedConfig = true;
-            }
+            _client.RequestConfig();
             return new ControlButtons(false);
         }
 
@@ -80,17 +86,5 @@ public class ConfigGui : Gui {
         Draw();
 
         return new ControlButtons(true) { Reload = false };
-    }
-
-    public override void Draw() {
-        _guis.ForEach(gui => gui.Draw());
-    }
-
-    public override void OnClose() {
-        _guis.ForEach(gui => gui.OnClose());
-    }
-
-    public void Dispose() {
-        _guis.Clear();
     }
 }

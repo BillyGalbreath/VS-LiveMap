@@ -1,9 +1,7 @@
-using System;
 using System.Numerics;
 using ImGuiNET;
 using livemap.client.util;
 using livemap.common.util;
-using Vintagestory.API.Client;
 
 namespace livemap.client.gui.modal;
 
@@ -12,12 +10,8 @@ public class ColormapModal : Gui {
 
     private bool _colormapModalOpen;
 
-    public event Action? Close;
-
-    public ColormapModal(LiveMapClient client, ICoreClientAPI api) {
-        _generator = new ColormapGenerator(client, api);
-
-        Close += OnClose;
+    public ColormapModal(LiveMapClient client) : base(client) {
+        _generator = new ColormapGenerator(client);
     }
 
     public override void OnClose() {
@@ -42,7 +36,7 @@ public class ColormapModal : Gui {
         bool wasOpen = _colormapModalOpen;
         if (!ImGui.BeginPopupModal("colormap-generate".ToLang(), ref _colormapModalOpen, ImGuiWindowFlags.AlwaysAutoResize)) {
             if (wasOpen) {
-                Close?.Invoke();
+                OnClose();
             }
             return;
         }
@@ -76,7 +70,7 @@ public class ColormapModal : Gui {
         ImGui.SameLine();
         Button(_generator.Running() ? "cancel" : "close", 140, () => {
             ImGui.CloseCurrentPopup();
-            Close?.Invoke();
+            OnClose();
         });
         ImGui.SameLine();
         ImGui.Spacing();
