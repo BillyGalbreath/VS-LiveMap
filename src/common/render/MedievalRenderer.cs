@@ -77,7 +77,7 @@ public class MedievalRenderer : Renderer {
         }
     }
 
-    protected override void PostProcessRegion(int regionX, int regionZ, BlockData blockData) {
+    public override void PostProcessRegion(int regionX, int regionZ, BlockData blockData) {
         if (TileImage == null) {
             return;
         }

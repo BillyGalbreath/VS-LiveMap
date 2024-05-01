@@ -8,7 +8,7 @@ namespace livemap.common.render;
 public class BasicRenderer : Renderer {
     public BasicRenderer(LiveMapServer server) : base(server, "basic") { }
 
-    protected override void PostProcessRegion(int regionX, int regionZ, BlockData blockData) {
+    public override void PostProcessRegion(int regionX, int regionZ, BlockData blockData) {
         if (TileImage == null) {
             return;
         }

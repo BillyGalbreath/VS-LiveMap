@@ -26,10 +26,9 @@ public sealed class LiveMapServer : LiveMap {
     public Colormap Colormap { get; }
     public NetworkHandler NetworkHandler { get; }
     public RendererRegistry RendererRegistry { get; }
+    public RenderTaskManager RenderTaskManager { get; }
 
-    private readonly RenderTask _renderTask;
     private readonly WebServer _webServer;
-
     private readonly long _gameTickTaskId;
 
     public LiveMapServer(ICoreServerAPI api) {
@@ -52,7 +51,7 @@ public sealed class LiveMapServer : LiveMap {
 
         RendererRegistry = new RendererRegistry(this);
 
-        _renderTask = new RenderTask(this);
+        RenderTaskManager = new RenderTaskManager(this);
         _webServer = new WebServer(this);
 
         Api.Event.ChunkDirty += OnChunkDirty;
@@ -62,7 +61,7 @@ public sealed class LiveMapServer : LiveMap {
         Api.Event.RegisterCallback(_ => {
             Colormap.LoadFromDisk(Api.World);
             RendererRegistry.RegisterBuiltIns();
-            _renderTask.Init();
+            RenderTaskManager.Init();
         }, 1);
 
         Api.ChatCommands.Create("livemap")
@@ -74,7 +73,7 @@ public sealed class LiveMapServer : LiveMap {
                     // queue up all existing chunks
                     ImmutableList<ChunkPos> chunks = new ChunkLoader(Api).GetAllMapChunkPositions().ToImmutableList();
                     foreach (ChunkPos chunk in chunks) {
-                        _renderTask.Queue(chunk.X >> 4, chunk.Z >> 4);
+                        RenderTaskManager.Queue(chunk.X >> 4, chunk.Z >> 4);
                     }
 
                     // trigger world save to process the queue now
@@ -97,12 +96,12 @@ public sealed class LiveMapServer : LiveMap {
 
     private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
         // queue it up, it will process when the game saves
-        _renderTask.Queue(chunkCoord.X >> 4, chunkCoord.Z >> 4);
+        RenderTaskManager.Queue(chunkCoord.X >> 4, chunkCoord.Z >> 4);
     }
 
     private void OnGameWorldSave() {
         // delay a bit to ensure chunks actually save to disk first
-        Api.Event.RegisterCallback(_ => _renderTask.ProcessQueue(), 1000);
+        Api.Event.RegisterCallback(_ => RenderTaskManager.ProcessQueue(), 1000);
     }
 
     // this method ticks every 1000ms on the game thread
@@ -148,7 +147,7 @@ public sealed class LiveMapServer : LiveMap {
         Api.Event.UnregisterGameTickListener(_gameTickTaskId);
 
         // order matters here
-        _renderTask.Dispose();
+        RenderTaskManager.Dispose();
         _webServer.Dispose();
         NetworkHandler.Dispose();
         RendererRegistry.Dispose();

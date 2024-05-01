@@ -1,115 +1,149 @@
-﻿using System;
-using System.Collections.Concurrent;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using livemap.common.render;
 using livemap.common.util;
+using livemap.server.util;
+using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
+using Vintagestory.Common.Database;
+using Vintagestory.GameContent;
+using Vintagestory.Server;
 
 namespace livemap.server.task;
 
 public sealed class RenderTask {
+    // let's not create too many of these, so we don't kill the GC
+    private readonly BlockPos _mutableBlockPos = new(0);
+
     private readonly LiveMapServer _server;
+    private readonly ChunkLoader _chunkLoader;
 
-    private readonly ConcurrentQueue<long> _bufferQueue = new();
-    private readonly BlockingCollection<long> _processQueue = new();
+    public HashSet<int> MicroBlocks { get; }
+    public HashSet<int> BlocksToIgnore { get; }
 
-    private readonly Dictionary<string, Renderer> _renderers = new();
-
-    private Thread? _thread;
-    private bool _running;
-    private bool _stopped;
+    private readonly int _landBlock;
 
     public RenderTask(LiveMapServer server) {
         _server = server;
+
+        _chunkLoader = new ChunkLoader(_server.Api);
+
+        MicroBlocks = _server.Api.World.Blocks
+            .Where(block => block.Code != null)
+            .Where(block =>
+                block.Code.Path.StartsWith("chiseledblock") ||
+                block.Code.Path.StartsWith("microblock"))
+            .Select(block => block.Id)
+            .ToHashSet();
+
+        BlocksToIgnore = _server.Api.World.Blocks
+            .Where(block => block.Code != null)
+            .Where(block =>
+                (block.Code.Path.EndsWith("-snow") && !MicroBlocks.Contains(block.Id)) ||
+                block.Code.Path.EndsWith("-snow2") ||
+                block.Code.Path.EndsWith("-snow3") ||
+                block.Code.Path.Equals("snowblock") ||
+                block.Code.Path.Contains("snowlayer-") ||
+                block is BlockRequireSolidGround)
+            .Select(block => block.Id).ToHashSet();
+
+        _landBlock = _server.Api.World.GetBlock(new AssetLocation("game", "soil-low-normal")).Id;
     }
 
-    public void Init() {
-        _renderers.Clear();
-        foreach ((string? id, Renderer.Builder? builder) in _server.RendererRegistry) {
-            _renderers.Add(id, builder.Func.Invoke(_server));
-        }
-    }
-
-    public void Queue(int regionX, int regionZ) {
-        if (_stopped) {
-            return;
-        }
-
-        // convert region coordinates to long
-        long index = Mathf.AsLong(regionX, regionZ);
-
-        // ensure this region hasn't already been queued up
-        if (_bufferQueue.Contains(index) || _processQueue.Contains(index)) {
-            return;
-        }
-
-        // queue it up to the buffer, so it doesn't get process immediately
-        _bufferQueue.Enqueue(index);
-
-        Logger.Debug($"Queueing region {regionX},{regionZ} (buffer: {_bufferQueue.Count} process:{_processQueue.Count})");
-    }
-
-    public void ProcessQueue() {
-        if (_stopped) {
-            return;
-        }
-
-        // we need a colormap
-        if (_server.Colormap.Count == 0) {
-            Logger.Warn("Cannot process render queue. No colormap loaded.");
-            return;
-        }
-
-        // pass all regions from buffer queue to the process queue
-        while (_bufferQueue.TryDequeue(out long region)) {
-            _processQueue.Add(region);
-        }
-
-        if (_running) {
-            // this task is still running, no need to restart it
-            return;
-        }
-
-        _running = true;
-
-        (_thread = new Thread(_ => {
-            try {
-                while (_running) {
-                    // wait until we have a region to process
-                    long region = _processQueue.Take();
-
-                    // process the region through all the renderers
-                    foreach ((string? _, Renderer? renderer) in _renderers) {
-                        renderer.ScanRegion(region);
-                    }
-                }
-            } catch (Exception) {
-                // ignore
+    public BlockData? ScanRegion(int regionX, int regionZ) {
+        try {
+            // check for existing chunks only in this region
+            int x1 = regionX << 4;
+            int z1 = regionZ << 4;
+            int x2 = x1 + 16;
+            int z2 = z1 + 16;
+            IEnumerable<ChunkPos> chunks = _chunkLoader.GetAllMapChunkPositions()
+                .Where(pos => pos.X >= x1 && pos.Z >= z1 && pos.X < x2 && pos.Z < z2);
+            BlockData blockData = new();
+            foreach (ChunkPos chunkPos in chunks) {
+                ScanChunkColumn(chunkPos, blockData);
             }
+            return blockData;
+        } catch (Exception e) {
+            Logger.Warn(e.ToString());
+        }
+        return null;
+    }
 
-            _running = false;
-        })).Start();
+    private void ScanChunkColumn(ChunkPos chunkPos, BlockData blockData) {
+        // get chunkmap from game save
+        // this is just basic info about a chunk column, like heightmaps
+        ServerMapChunk? mapChunk = _chunkLoader.GetServerMapChunk(chunkPos);
+        if (mapChunk == null) {
+            return;
+        }
+
+        int startX = chunkPos.X << 5;
+        int startZ = chunkPos.Z << 5;
+        int endX = startX + 32;
+        int endZ = startZ + 32;
+
+        // check which chunk slices need to be loaded to get the top surface block
+        List<int> chunkIndexesToLoad = new();
+        for (int x = startX; x < endX; x++) {
+            for (int z = startZ; z < endZ; z++) {
+                chunkIndexesToLoad.AddIfNotExists(GetTopBlockY(mapChunk, x, z) >> 5);
+            }
+        }
+
+        // load the actual chunks slices from game save
+        ServerChunk?[] chunkSlices = new ServerChunk?[_server.Api.WorldManager.MapSizeY >> 5];
+        foreach (int y in chunkIndexesToLoad) {
+            chunkSlices[y] = _chunkLoader.GetServerChunk(chunkPos.X, y, chunkPos.Z);
+        }
+
+        // scan every block column in the chunk
+        for (int x = startX; x < endX; x++) {
+            for (int z = startZ; z < endZ; z++) {
+                blockData.Set(x & 511, z & 511, ScanBlockColumn(x & 31, z & 31, mapChunk, chunkSlices));
+            }
+        }
+    }
+
+    private BlockData.Data ScanBlockColumn(int x, int z, ServerMapChunk? mapChunk, ServerChunk?[] chunkSlices) {
+        int y = 0;
+        int top = 0;
+        int under = 0;
+
+        try {
+            y = GetTopBlockY(mapChunk, x, z);
+            ServerChunk? serverChunk = chunkSlices[y >> 5];
+            if (serverChunk != null) {
+                top = serverChunk.Data[Mathf.BlockIndex(x, y, z)];
+                CheckForMicroBlocks(x, y, z, serverChunk, ref top);
+
+                under = serverChunk.Data[Mathf.BlockIndex(x, y - 1, z)];
+                CheckForMicroBlocks(x, y - 1, z, serverChunk, ref under);
+            }
+        } catch (Exception) {
+            // ignore
+        }
+
+        return new BlockData.Data(y, top, under);
+    }
+
+    private void CheckForMicroBlocks(int x, int y, int z, ServerChunk serverChunk, ref int top) {
+        if (!MicroBlocks.Contains(top)) {
+            return;
+        }
+        serverChunk.BlockEntities.TryGetValue(_mutableBlockPos.Set(x, y, z), out BlockEntity? be);
+        top = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _landBlock;
+    }
+
+    private int GetTopBlockY(ServerMapChunk? mapChunk, int x, int z, int def = 0) {
+        ushort? blockY = mapChunk?.RainHeightMap[Mathf.BlockIndex(x, z)];
+        return GameMath.Clamp(blockY ?? def, 0, _server.Api.WorldManager.MapSizeY - 1);
     }
 
     public void Dispose() {
-        bool cancelled = !_stopped && _running;
-
-        _stopped = true;
-
-        _thread?.Interrupt();
-        _thread = null;
-
-        _bufferQueue.Clear();
-        while (_processQueue.TryTake(out _)) { }
-
-        foreach ((string? _, Renderer renderer) in _renderers) {
-            renderer.Dispose();
-        }
-        _renderers.Clear();
-
-        if (cancelled) {
-            Logger.Warn("Render task cancelled!");
-        }
+        _chunkLoader.Dispose();
+        MicroBlocks.Clear();
+        BlocksToIgnore.Clear();
     }
 }
