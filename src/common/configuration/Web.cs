@@ -1,19 +1,16 @@
+using livemap.common.json;
 using livemap.common.tile;
-using ProtoBuf;
+using Newtonsoft.Json;
 
 namespace livemap.common.configuration;
 
-[ProtoContract]
 public class Web {
-    [ProtoMember(1)]
     public string Path { get; set; } = "web/";
 
-    [ProtoMember(2)]
     public bool ReadOnly { get; set; }
 
-    [ProtoMember(3)]
+    [JsonConverter(typeof(TileTypeJsonConverter))]
     public TileType TileType { get; set; } = TileType.Webp;
 
-    [ProtoMember(4)]
     public int TileQuality { get; set; } = 100;
 }

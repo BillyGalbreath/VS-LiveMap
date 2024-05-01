@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
 namespace livemap.common.render;
@@ -15,56 +14,30 @@ public class BlockData {
     private Data? _southeast;
     private Data? _southwest;
 
-    [SuppressMessage("ReSharper", "ConvertIfStatementToSwitchStatement")]
     public Data? Get(int x, int z) {
-        if (x < 0 && z < 0) {
-            return _northwest;
-        }
-        if (x > 511 && z < 0) {
-            return _northeast;
-        }
-        if (x > 511 && z > 511) {
-            return _southeast;
-        }
-        if (x < 0 && z > 511) {
-            return _southwest;
-        }
-        if (z < 0) {
-            return _north.GetValue(x) as Data;
-        }
-        if (x > 511) {
-            return _east.GetValue(z) as Data;
-        }
-        if (z > 511) {
-            return _south.GetValue(x) as Data;
-        }
-        if (x < 0) {
-            return _west.GetValue(z) as Data;
-        }
+        // ReSharper disable once ConvertIfStatementToSwitchStatement
+        if (x < 0 && z < 0) return _northwest;
+        if (x > 511 && z < 0) return _northeast;
+        if (x > 511 && z > 511) return _southeast;
+        if (x < 0 && z > 511) return _southwest;
+        if (z < 0) return _north.GetValue(x) as Data;
+        if (x > 511) return _east.GetValue(z) as Data;
+        if (z > 511) return _south.GetValue(x) as Data;
+        if (x < 0) return _west.GetValue(z) as Data;
         return _data.GetValue(Index(x, z)) as Data;
     }
 
-    [SuppressMessage("ReSharper", "ConvertIfStatementToSwitchStatement")]
     public void Set(int x, int z, Data data) {
-        if (x < 0 && z < 0) {
-            _northwest = data;
-        } else if (x > 511 && z < 0) {
-            _northeast = data;
-        } else if (x > 511 && z > 511) {
-            _southeast = data;
-        } else if (x < 0 && z > 511) {
-            _southwest = data;
-        } else if (z < 0) {
-            _north[x] = data;
-        } else if (x > 511) {
-            _east[z] = data;
-        } else if (z > 511) {
-            _south[x] = data;
-        } else if (x < 0) {
-            _west[z] = data;
-        } else {
-            _data[Index(x, z)] = data;
-        }
+        // ReSharper disable once ConvertIfStatementToSwitchStatement
+        if (x < 0 && z < 0) _northwest = data;
+        else if (x > 511 && z < 0) _northeast = data;
+        else if (x > 511 && z > 511) _southeast = data;
+        else if (x < 0 && z > 511) _southwest = data;
+        else if (z < 0) _north[x] = data;
+        else if (x > 511) _east[z] = data;
+        else if (z > 511) _south[x] = data;
+        else if (x < 0) _west[z] = data;
+        else _data[Index(x, z)] = data;
     }
 
     private static int Index(int x, int z) {

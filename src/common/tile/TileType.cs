@@ -1,19 +1,23 @@
+using System.Collections.Generic;
 using JetBrains.Annotations;
-using ProtoBuf;
 using SkiaSharp;
 
 namespace livemap.common.tile;
 
 [PublicAPI]
-[ProtoContract]
 public class TileType {
-    public static readonly TileType Png = new("png", SKEncodedImageFormat.Png);
-    public static readonly TileType Webp = new("webp", SKEncodedImageFormat.Webp);
+    public static readonly Dictionary<string, TileType> Types = new();
 
-    [ProtoMember(1)]
+    public static readonly TileType Png = Register(new TileType("png", SKEncodedImageFormat.Png));
+    public static readonly TileType Webp = Register(new TileType("webp", SKEncodedImageFormat.Webp));
+
+    private static TileType Register(TileType tileType) {
+        Types.Add(tileType.Type, tileType);
+        return tileType;
+    }
+
     public string Type { get; }
 
-    [ProtoMember(2)]
     public SKEncodedImageFormat Format { get; }
 
     private TileType(string type, SKEncodedImageFormat format) {

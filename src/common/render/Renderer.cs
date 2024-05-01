@@ -68,7 +68,7 @@ public abstract class Renderer : Keyed {
     }
 
     protected virtual void AllocateImage(int regionX, int regionZ) {
-        TileImage = new TileImage(regionX, regionZ, Server.Config.Zoom.MaxOut);
+        TileImage = new TileImage(Server, regionX, regionZ);
     }
 
     protected virtual void SaveImage() {
@@ -119,9 +119,9 @@ public abstract class Renderer : Keyed {
             CheckIfCancelled();
         }
 
-        CheckIfCancelled();
-
         PostProcessRegion(regionX, regionZ, blockData);
+
+        CheckIfCancelled();
 
         CalculateShadows();
 
@@ -138,29 +138,10 @@ public abstract class Renderer : Keyed {
             return;
         }
 
-        // get neighboring chunkmaps from game save
-        // we'll use these to calculate heightmap on north/west chunk edge blocks
-        Dictionary<string, ServerMapChunk?> mapChunkArray = new() {
-            ["northwest"] = ChunkLoader.GetServerMapChunk(chunkPos.X - 1, chunkPos.Y, chunkPos.Z - 1),
-            ["northeast"] = ChunkLoader.GetServerMapChunk(chunkPos.X + 1, chunkPos.Y, chunkPos.Z - 1),
-            ["southeast"] = ChunkLoader.GetServerMapChunk(chunkPos.X + 1, chunkPos.Y, chunkPos.Z + 1),
-            ["southwest"] = ChunkLoader.GetServerMapChunk(chunkPos.X - 1, chunkPos.Y, chunkPos.Z + 1),
-            ["north"] = ChunkLoader.GetServerMapChunk(chunkPos.X, chunkPos.Y, chunkPos.Z - 1),
-            ["east"] = ChunkLoader.GetServerMapChunk(chunkPos.X + 1, chunkPos.Y, chunkPos.Z),
-            ["south"] = ChunkLoader.GetServerMapChunk(chunkPos.X, chunkPos.Y, chunkPos.Z + 1),
-            ["west"] = ChunkLoader.GetServerMapChunk(chunkPos.X - 1, chunkPos.Y, chunkPos.Z)
-        };
-
-
         int startX = chunkPos.X << 5;
         int startZ = chunkPos.Z << 5;
         int endX = startX + 32;
         int endZ = startZ + 32;
-
-        bool north = ((chunkPos.Z - ((chunkPos.Z >> 4) << 4)) & 16) == 0;
-        bool east = ((chunkPos.X - ((chunkPos.X >> 4) << 4)) & 16) == 15;
-        bool south = ((chunkPos.Z - ((chunkPos.Z >> 4) << 4)) & 16) == 15;
-        bool west = ((chunkPos.X - ((chunkPos.X >> 4) << 4)) & 16) == 0;
 
         // check which chunk slices need to be loaded to get the top surface block
         List<int> chunkIndexesToLoad = new();
@@ -170,36 +151,11 @@ public abstract class Renderer : Keyed {
             }
         }
 
-        // check the region's neighbor chunks
-        for (int n = 0; n < 32; n++) {
-            if (north) chunkIndexesToLoad.AddIfNotExists(GetTopBlockY(mapChunkArray["north"], n, 31) >> 5);
-            if (south) chunkIndexesToLoad.AddIfNotExists(GetTopBlockY(mapChunkArray["south"], n, 0) >> 5);
-            if (west) chunkIndexesToLoad.AddIfNotExists(GetTopBlockY(mapChunkArray["west"], 31, n) >> 5);
-            if (east) chunkIndexesToLoad.AddIfNotExists(GetTopBlockY(mapChunkArray["east"], 0, n) >> 5);
-        }
-        if (north && west) chunkIndexesToLoad.AddIfNotExists(GetTopBlockY(mapChunkArray["northwest"], 31, 31) >> 5);
-        if (north && east) chunkIndexesToLoad.AddIfNotExists(GetTopBlockY(mapChunkArray["northeast"], 0, 31) >> 5);
-        if (south && east) chunkIndexesToLoad.AddIfNotExists(GetTopBlockY(mapChunkArray["southeast"], 0, 0) >> 5);
-        if (south && west) chunkIndexesToLoad.AddIfNotExists(GetTopBlockY(mapChunkArray["southwest"], 31, 0) >> 5);
-
-
         // load the actual chunks slices from game save
         ServerChunk?[] chunkSlices = new ServerChunk?[Server.Api.WorldManager.MapSizeY >> 5];
         foreach (int y in chunkIndexesToLoad) {
             chunkSlices[y] = ChunkLoader.GetServerChunk(chunkPos.X, y, chunkPos.Z);
         }
-
-        // get the neighbor rows
-        for (int n = 0; n < 32; n++) {
-            if (north) blockData.Set((startX + n) & 511, -1, ScanBlockColumn(n, 31, mapChunkArray["north"], chunkSlices));
-            if (east) blockData.Set(512, (startZ + n) & 511, ScanBlockColumn(0, n, mapChunkArray["east"], chunkSlices));
-            if (south) blockData.Set((startX + n) & 511, 512, ScanBlockColumn(n, 0, mapChunkArray["south"], chunkSlices));
-            if (west) blockData.Set(-1, (startZ + n) & 511, ScanBlockColumn(31, n, mapChunkArray["west"], chunkSlices));
-        }
-        if (north && west) blockData.Set(-1, -1, ScanBlockColumn(31, 31, mapChunkArray["northwest"], chunkSlices));
-        if (north && east) blockData.Set(512, -1, ScanBlockColumn(0, 31, mapChunkArray["northeast"], chunkSlices));
-        if (south && east) blockData.Set(512, 512, ScanBlockColumn(0, 0, mapChunkArray["southeast"], chunkSlices));
-        if (south && west) blockData.Set(-1, 512, ScanBlockColumn(31, 0, mapChunkArray["southwest"], chunkSlices));
 
         // scan every block column in the chunk
         for (int x = startX; x < endX; x++) {
@@ -209,7 +165,7 @@ public abstract class Renderer : Keyed {
         }
     }
 
-    protected virtual BlockData.Data ScanBlockColumn(int x, int z, ServerMapChunk? mapChunk, IReadOnlyList<ServerChunk?> chunkSlices) {
+    protected virtual BlockData.Data ScanBlockColumn(int x, int z, ServerMapChunk? mapChunk, ServerChunk?[] chunkSlices) {
         CheckIfCancelled();
 
         int y = 0;

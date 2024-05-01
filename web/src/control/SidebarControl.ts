@@ -31,7 +31,7 @@ export class SidebarControl {
         const fieldPlayers: HTMLFieldSetElement = L.DomUtil.create('fieldset', 'players', this._dom);
         this._playersLegend = L.DomUtil.create('legend', '', fieldPlayers);
 
-        this.tick(0);
+        this.tick();
 
         this._dom.onmouseleave = (): void => {
             if (!pin.pinned) {
@@ -53,7 +53,7 @@ export class SidebarControl {
         this._dom.classList.add('show');
     }
 
-    public tick(_: number): void {
+    public tick(): void {
         this._playersLegend.textContent = this._livemap.settings.lang.players
             .replace(/{cur}/g, this._livemap.playersControl.cur.toString())
             .replace(/{max}/g, this._livemap.playersControl.max.toString())

@@ -42,4 +42,8 @@ public static class Extensions {
         int a = (int)(vec.W * 0xFF);
         return (uint)(a << 24 | r << 16 | g << 8 | b);
     }
+
+    public static Direction Next(this Direction direction) {
+        return (Direction)(((int)direction + 1) & 3);
+    }
 }

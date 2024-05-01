@@ -126,7 +126,6 @@ public class MedievalRenderer : Renderer {
         return ColorsByCode.GetValueAtIndex(_block2Color[block]);
     }
 
-
     private static bool IsLake(Block block) {
         return block.BlockMaterial == EnumBlockMaterial.Liquid || (block.BlockMaterial == EnumBlockMaterial.Ice && block.Code.Path != "glacierice");
     }

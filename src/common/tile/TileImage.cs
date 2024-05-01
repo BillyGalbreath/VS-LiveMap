@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using livemap.common.util;
+using livemap.server;
 using SkiaSharp;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
@@ -11,33 +12,35 @@ using Vintagestory.GameContent;
 namespace livemap.common.tile;
 
 public sealed unsafe class TileImage {
-    private readonly SKBitmap _png;
-    private readonly byte* _pngPtr;
+    private readonly LiveMapServer _server;
+
+    private readonly SKBitmap _bitmap;
+    private readonly byte* _bitmapPtr;
     private readonly byte[] _shadowMap;
 
-    private readonly int _pngRowBytes;
+    private readonly int _bitmapRowBytes;
 
     private readonly int _regionX;
     private readonly int _regionZ;
-    private readonly int _maxZoom;
 
-    public TileImage(int regionX, int regionZ, int maxZoom) {
-        _png = new SKBitmap(512, 512);
-        _pngPtr = (byte*)_png.GetPixels().ToPointer();
+    public TileImage(LiveMapServer server, int regionX, int regionZ) {
+        _server = server;
+
+        _bitmap = new SKBitmap(512, 512);
+        _bitmapPtr = (byte*)_bitmap.GetPixels().ToPointer();
         _shadowMap = new byte[512 << 9].Fill((byte)128);
 
-        _pngRowBytes = _png.RowBytes;
+        _bitmapRowBytes = _bitmap.RowBytes;
 
         _regionX = regionX;
         _regionZ = regionZ;
-        _maxZoom = maxZoom;
     }
 
     public void SetBlockColor(int blockX, int blockZ, uint argb, float yDiff) {
         int imgX = blockX & 511;
         int imgZ = blockZ & 511;
 
-        ((uint*)(_pngPtr + (imgZ * _pngRowBytes)))[imgX] = argb;
+        ((uint*)(_bitmapPtr + (imgZ * _bitmapRowBytes)))[imgX] = argb;
 
         _shadowMap[(imgZ << 9) + imgX] = (byte)(_shadowMap[(imgZ << 9) + imgX] * yDiff);
     }
@@ -52,33 +55,33 @@ public sealed unsafe class TileImage {
             int imgX = i & 511;
             int imgZ = i >> 9;
 
-            uint* row = (uint*)(_pngPtr + (imgZ * _pngRowBytes));
+            uint* row = (uint*)(_bitmapPtr + (imgZ * _bitmapRowBytes));
             row[imgX] = (uint)(row[imgX] == 0 ? 0 : ColorUtil.ColorMultiply3Clamped((int)row[imgX], (shadow * 1.4F) + 1F));
         }
     }
 
     public void Save(string rendererId) {
         try {
-            for (int zoom = 0; zoom <= _maxZoom; zoom++) {
-                FileInfo fileInfo = new(Path.Combine(Files.TilesDir, rendererId, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.webp"));
+            for (int zoom = 0; zoom <= _server.Config.Zoom.MaxOut; zoom++) {
+                FileInfo fileInfo = new(Path.Combine(Files.TilesDir, rendererId, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.{_server.Config.Web.TileType.Type}"));
                 GamePaths.EnsurePathExists(fileInfo.Directory!.FullName);
 
                 if (zoom > 0) {
                     using FileStream inStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                    SKBitmap png = SKBitmap.Decode(inStream) ?? new SKBitmap(512, 512);
+                    SKBitmap bitmap = SKBitmap.Decode(inStream) ?? new SKBitmap(512, 512);
 
-                    WritePixels(png, zoom);
+                    WritePixels(bitmap, zoom);
 
                     using FileStream outStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                    png.Encode(SKEncodedImageFormat.Webp, 100).SaveTo(outStream);
-                    png.Dispose();
+                    bitmap.Encode(_server.Config.Web.TileType.Format, _server.Config.Web.TileQuality).SaveTo(outStream);
+                    bitmap.Dispose();
                 } else {
                     using FileStream outStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                    _png.Encode(SKEncodedImageFormat.Webp, 100).SaveTo(outStream);
+                    _bitmap.Encode(_server.Config.Web.TileType.Format, _server.Config.Web.TileQuality).SaveTo(outStream);
                 }
             }
 
-            _png.Dispose();
+            _bitmap.Dispose();
         } catch (Exception e) {
             Logger.Error(e.ToString());
         }
@@ -92,7 +95,7 @@ public sealed unsafe class TileImage {
         int pngRowBytes = png.RowBytes;
         for (int x = 0; x < 512; x += step) {
             for (int z = 0; z < 512; z += step) {
-                uint argb = ((uint*)(_pngPtr + (z * _pngRowBytes)))[x];
+                uint argb = ((uint*)(_bitmapPtr + (z * _bitmapRowBytes)))[x];
                 if (argb == 0) {
                     // skipping 0 prevents overwrite existing
                     // parts of the buffer of existing images
@@ -114,7 +117,7 @@ public sealed unsafe class TileImage {
         for (int i = 0; i < step; i++) {
             for (int j = 0; j < step; j++) {
                 if (i != 0 && j != 0) {
-                    argb = ((uint*)(_pngPtr + ((z + j) * _pngRowBytes)))[x + i];
+                    argb = ((uint*)(_bitmapPtr + ((z + j) * _bitmapRowBytes)))[x + i];
                 }
 
                 a += argb >> 24 & 0xFF;
@@ -129,6 +132,6 @@ public sealed unsafe class TileImage {
     }
 
     public void Dispose() {
-        _png.Dispose();
+        _bitmap.Dispose();
     }
 }

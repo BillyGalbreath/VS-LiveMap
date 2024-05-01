@@ -52,10 +52,6 @@ img.leaflet-tile {
       position: static;
     }
 
-    .leaflet-center {
-      display: grid;
-    }
-
     .leaflet-top {
       align-content: flex-start;
     }
@@ -73,6 +69,7 @@ img.leaflet-tile {
     }
 
     .leaflet-center {
+      display: grid;
       justify-content: center;
     }
 

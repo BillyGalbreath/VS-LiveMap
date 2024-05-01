@@ -23,7 +23,7 @@ export class PlayersControl {
         return this._players.list;
     }
 
-    public tick(_: number): void {
+    public tick(): void {
         window.fetchJson<Players>('data/players.json')
             .then((json: Players): void => {
                 this._players = json;

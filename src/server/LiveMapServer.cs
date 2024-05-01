@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using livemap.common;
 using livemap.common.configuration;
 using livemap.common.network;
@@ -14,6 +16,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.Common.Database;
 
 namespace livemap.server;
 
@@ -61,6 +64,27 @@ public sealed class LiveMapServer : LiveMap {
             RendererRegistry.RegisterBuiltIns();
             _renderTask.Init();
         }, 1);
+
+        Api.ChatCommands.Create("livemap")
+            .WithDescription(Lang.Get("command.livemap.description"))
+            .RequiresPrivilege("root")
+            .WithArgs(new WordArgParser("command", false, new[] { "fullrender" }))
+            .HandleWith(args => {
+                new Thread(_ => {
+                    // queue up all existing chunks
+                    ImmutableList<ChunkPos> chunks = new ChunkLoader(Api).GetAllMapChunkPositions().ToImmutableList();
+                    foreach (ChunkPos chunk in chunks) {
+                        _renderTask.Queue(chunk.X >> 4, chunk.Z >> 4);
+                    }
+
+                    // trigger world save to process the queue now
+                    Api.Event.RegisterCallback(_ => {
+                        // do this back on the main thread
+                        Api.ChatCommands.Get("autosavenow").Execute(args);
+                    }, 1);
+                }).Start();
+                return TextCommandResult.Success("command.fullrender.started");
+            });
 
         _gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
     }
