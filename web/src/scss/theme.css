@@ -1,0 +1,71 @@
+:root {
+  --text-color: #000000;
+  --text-color-hover: #333333;
+  --text-color-attribution: #666666;
+  --background: #EFEFDF;
+  --background-color-hover: #EFEFDF;
+  --border: 1px outset #BFBFBF;
+  --border-hover: 1px outset #BFBFBF;
+  --text-shadow: 1px 1px 2px #00000080;
+  --drop-shadow: 1px 1px 1px #00000080;
+  --box-shadow: 2px 2px 2px #00000080;
+  --filter-shadow: drop-shadow(1px 1px 1px #00000080);
+  --blur: none;
+
+  --sidebar-text-color: #000000;
+  --sidebar-background: #EFEFDF;
+  --sidebar-background-color-hover: #EFEFDF;
+  --sidebar-border: 1px solid #BFBFBF;
+  --sidebar-border-hover: 1px solid #BFBFBF;
+  --sidebar-fieldset-border: 1px solid #808080;
+  --sidebar-text-shadow: 1px 1px 2px #00000080;
+  --sidebar-blur: none;
+}
+
+html[theme="dark"] {
+  --text-color: #FFFFFFC8;
+  --text-color-hover: #EEEEEE;
+  --text-color-attribution: #888888;
+  --background: #222222;
+  --background-color-hover: #333333;
+  --border: 1px solid #333333;
+  --border-hover: 1px solid #333333;
+  --text-shadow: 1px 1px 2px #000000;
+  --drop-shadow: 1px 1px 1px #000000;
+  --box-shadow: 2px 2px 2px #00000080;
+  --filter-shadow: drop-shadow(1px 1px 1px #000000);
+  --blur: none;
+
+  --sidebar-text-color: #FFFFFFC8;
+  --sidebar-background: #222222;
+  --sidebar-background-color-hover: #222222;
+  --sidebar-border: 1px solid #333333;
+  --sidebar-border-hover: 1px solid #333333;
+  --sidebar-fieldset-border: 1px solid #333333;
+  --sidebar-text-shadow: 1px 1px 2px #000000;
+  --sidebar-blur: none;
+}
+
+html[theme="glass"] {
+  --text-color: #FFFFFFE5;
+  --text-color-hover: #EEEEEE;
+  --text-color-attribution: #FFFFFF80;
+  --background: linear-gradient(135deg, #FFFFFF19, #FFFFFF00);
+  --background-color-hover: #FFFFFF10;
+  --border: 1px outset #FFFFFF33;
+  --border-hover: 1px outset #FFFFFF43;
+  --text-shadow: 1px 1px 2px #000000E5;
+  --drop-shadow: 1px 1px 1px #000000E5;
+  --box-shadow: 2px 2px 2px #00000080;
+  --filter-shadow: drop-shadow(1px 1px 1px #000000E5);
+  --blur: blur(2px);
+
+  --sidebar-text-color: #FFFFFFE5;
+  --sidebar-background: linear-gradient(135deg, #FFFFFF19, #FFFFFF00);
+  --sidebar-background-color-hover: #FFFFFF10;
+  --sidebar-border: 1px outset #FFFFFF33;
+  --sidebar-border-hover: 1px outset #FFFFFF43;
+  --sidebar-fieldset-border: 1px solid #FFFFFF33;
+  --sidebar-text-shadow: 1px 1px 2px #000000E5;
+  --sidebar-blur: blur(2px);
+}

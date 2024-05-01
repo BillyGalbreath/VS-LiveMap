@@ -1,6 +1,8 @@
 import {Point} from "./Point";
 import {Zoom} from './Zoom';
 import {Web} from "./Web";
+import {UI} from "./UI";
+import {Lang} from "./Lang";
 
 export class Settings {
     private readonly _attribution: string;
@@ -9,6 +11,8 @@ export class Settings {
     private readonly _spawn: Point;
     private readonly _web: Web;
     private readonly _zoom: Zoom;
+    private readonly _ui: UI;
+    private readonly _lang: Lang;
     private readonly _markers: string[];
 
     constructor(json: Settings) {
@@ -16,8 +20,10 @@ export class Settings {
         this._interval = json.interval ?? 30;
         this._size = json.size ? Point.of(json.size) : Point.of(1024000, 1024000);
         this._spawn = json.spawn ? Point.of(json.spawn) : this.size.divide(2);
-        this._web =- json.web ? new Web(json.web) : new Web();
+        this._web = json.web ? new Web(json.web) : new Web();
         this._zoom = json.zoom ? new Zoom(json.zoom) : new Zoom();
+        this._ui = json.ui ? new UI(json.ui) : new UI();
+        this._lang = json.lang ? new Lang(json.lang) : new Lang();
         this._markers = json.markers ?? [];
     }
 
@@ -43,6 +49,14 @@ export class Settings {
 
     get zoom(): Zoom {
         return this._zoom;
+    }
+
+    get ui(): UI {
+        return this._ui;
+    }
+
+    get lang(): Lang {
+        return this._lang;
     }
 
     get markers(): string[] {

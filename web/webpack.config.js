@@ -7,6 +7,13 @@ module.exports = {
   devServer: {
     headers: {
       'Cache-Control': 'no-store'
+    },
+    static: {
+      directory: path.join(__dirname, 'public'),
+      watch: {
+        ignored: '**/*.json',
+        usePolling: false,
+      },
     }
   },
   devtool: 'source-map',

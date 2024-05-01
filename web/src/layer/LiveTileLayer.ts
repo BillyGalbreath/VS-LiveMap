@@ -12,8 +12,12 @@ navigator.serviceWorker.register("noerr.js").then((): void => {
 );
 
 export class LiveTileLayer extends L.TileLayer {
-    constructor(livemap: LiveMap, renderer: string) {
-        super(`tiles/${renderer}/{z}/{x}_{y}.${livemap.settings.web.tiletype}`, {
+    declare _url: string;
+
+    private readonly _livemap: LiveMap;
+
+    constructor(livemap: LiveMap) {
+        super(`tiles/{renderer}/{zoom}/{x}_{z}.{ext}`, {
             // tile sizes match regions sizes (512 blocks x 512 blocks)
             tileSize: 512,
             // dont wrap tiles at edges
@@ -41,6 +45,8 @@ export class LiveTileLayer extends L.TileLayer {
             zoomOffset: -livemap.settings.zoom.maxin
         });
 
+        this._livemap = livemap;
+
         // push this layer to the back (leaflet defaults it to 1)
         this.setZIndex(0);
     }
@@ -48,6 +54,17 @@ export class LiveTileLayer extends L.TileLayer {
     // reverse zoom controls here instead of the flag in options
     _getZoomForUrl(): number {
         return (this.options.maxZoom! - this._tileZoom!) + this.options.zoomOffset!;
+    }
+
+    getTileUrl(coords: L.Coords): string {
+        const data: { renderer: string; ext: string; x: number; z: number; zoom: number } = {
+            renderer: this._livemap.rendererType,
+            ext: this._livemap.settings.web.tiletype,
+            x: coords.x,
+            z: coords.y,
+            zoom: this._getZoomForUrl()
+        };
+        return L.Util.template(this._url, L.Util.extend(data, this.options));
     }
 
     // @method createTile(coords: Object, done?: Function): HTMLElement

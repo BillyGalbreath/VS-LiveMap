@@ -24,7 +24,7 @@ export class Notifications {
             }, 2500);
         };
         div.addEventListener('transitionend', handler, {passive: true});
-        setTimeout((): void => div.classList.add('show'), 1);
+        setTimeout((): void => div.classList.add('show'), 50);
     }
 
     public info(text: string): void {

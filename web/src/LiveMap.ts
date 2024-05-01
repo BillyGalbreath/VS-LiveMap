@@ -9,6 +9,15 @@ import {ContextMenu} from "./layer/menu/ContextMenu";
 import {Notifications} from "./layer/Notifications";
 import './scss/styles';
 import './svg'
+import {SidebarControl} from "./control/SidebarControl";
+import {PlayersControl} from "./control/PlayersControl";
+
+//const prefersDarkScheme: MediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
+const theme: string | null = localStorage.getItem("theme") ?? "glass";
+//console.log(theme);
+document.querySelector("html")!.setAttribute("theme", theme);
+//localStorage.setItem("theme", theme);
+//localStorage.removeItem("theme");
 
 // update map size when window size, scale, or orientation changes
 "orientationchange resize".split(' ').forEach((event: string): void => {
@@ -26,8 +35,13 @@ window.onload = (): void => {
             // create the map itself
             window.livemap = new LiveMap(new Settings(json));
 
-            // center the map on url coordinates or spawn (0, 0); this initializes the map
+            // get url params
             const url: URLSearchParams = new URLSearchParams(window.location.search);
+
+            // select the renderer
+            window.livemap.rendererType = url.get('renderer') ?? 'basic';
+
+            // center the map on url coordinates or spawn (0, 0); this initializes the map
             window.livemap.centerOn(
                 Point.of(url.get('x') ?? 0, url.get('z') ?? 0),
                 url.get('zoom') ?? window.livemap.settings.zoom.def
@@ -74,11 +88,15 @@ export class LiveMap extends L.Map {
     private readonly _layersControl: LayersControl;
     private readonly _linkControl: LinkControl;
     private readonly _coordsControl: CoordsControl;
+    private readonly _playersControl: PlayersControl;
+    private readonly _sidebarControl: SidebarControl;
 
     private readonly _contextMenu: ContextMenu;
     private readonly _notifications: Notifications;
 
     private readonly _scale: number;
+
+    private _rendererType: string = "basic";
 
     constructor(settings: Settings) {
         super('map', {
@@ -111,11 +129,15 @@ export class LiveMap extends L.Map {
 
         this._settings = settings;
 
+        document.title = settings.lang.title ?? 'Vintage Story LiveMap';
+
         // set up the controllers
         this._tileLayerControl = new TileLayerControl(this);
         this._layersControl = new LayersControl(this);
         this._coordsControl = new CoordsControl(this);
         this._linkControl = new LinkControl(this);
+        this._playersControl = new PlayersControl(this);
+        this._sidebarControl = new SidebarControl(this);
 
         // the fancy context menu and stuff
         this._contextMenu = new ContextMenu(this);
@@ -129,7 +151,6 @@ export class LiveMap extends L.Map {
     }
 
     onLoad(): void {
-        console.log('onLoad')
         const container: HTMLElement = this.getContainer();
         container.classList.remove('loading');
         container.addEventListener('transitionend', (e: TransitionEvent): void => {
@@ -157,7 +178,7 @@ export class LiveMap extends L.Map {
         });
 
         // start the tick loop
-        //this.loop(0);
+        this.loop(0);
     }
 
     // https://stackoverflow.com/a/60391674/3530727
@@ -181,8 +202,16 @@ export class LiveMap extends L.Map {
         createRow('bottom');
     }
 
-    get contextMenu(): ContextMenu {
-        return this._contextMenu;
+    get settings(): Settings {
+        return this._settings;
+    }
+
+    get tileLayerControl(): TileLayerControl {
+        return this._tileLayerControl;
+    }
+
+    get layersControl(): LayersControl {
+        return this._layersControl;
     }
 
     get coordsControl(): CoordsControl {
@@ -193,27 +222,41 @@ export class LiveMap extends L.Map {
         return this._linkControl
     }
 
-    get layersControl(): LayersControl {
-        return this._layersControl;
+    get playersControl(): PlayersControl {
+        return this._playersControl;
+    }
+
+    get sidebarControl(): SidebarControl {
+        return this._sidebarControl;
+    }
+
+    get contextMenu(): ContextMenu {
+        return this._contextMenu;
     }
 
     get notifications(): Notifications {
         return this._notifications;
     }
 
-    get settings(): Settings {
-        return this._settings;
-    }
-
     get scale(): number {
         return this._scale;
+    }
+
+    get rendererType(): string {
+        return this._rendererType;
+    }
+
+    set rendererType(renderer: string) {
+        this._rendererType = renderer;
     }
 
     private loop(count: number): void {
         try {
             if (document.visibilityState === 'visible') {
-                this._tileLayerControl.tick(count);
-                this._layersControl.tick(count);
+                this.tileLayerControl.tick(count);
+                this.layersControl.tick(count);
+                this.playersControl.tick(count);
+                this.sidebarControl.tick(count);
             }
         } catch (e) {
             console.error(`Error processing tick (${count})\n`, e);
@@ -244,7 +287,7 @@ export class LiveMap extends L.Map {
         const point: Point = Point.of(this.getCenter())
             .floor()
             .subtract(this.settings.spawn);
-        return `?x=${point.x}&z=${point.z}&zoom=${this.currentZoom()}`;
+        return `?renderer=${this.rendererType}&x=${point.x}&z=${point.z}&zoom=${this.currentZoom()}`;
     }
 
     public updateSizeToWindow(): void {

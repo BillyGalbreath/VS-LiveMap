@@ -16,8 +16,6 @@ export class LinkControl extends ControlBox {
         this._dom.onclick = (e: MouseEvent): void => {
             e.preventDefault();
             window.history.replaceState({}, 'LiveMap', this._dom.href);
-
-
             this._livemap.contextMenu.share(
                 Point.of(this._livemap.getCenter())
                     .floor()

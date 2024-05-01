@@ -13,17 +13,15 @@
   }
 
   .contextmenu {
-    color: #CCCCCC;
-    background: #0A0A0AE5;
-    box-shadow: 5px 5px 7px #000000B2;
+    border: var(--border);
+    border-radius: 10px;
+    background: var(--background);
+    backdrop-filter: var(--blur);
+    color: var(--text-color);
+    text-shadow: var(--text-shadow);
+    box-shadow: var(--box-shadow);
 
     padding: 2px;
-    border-radius: 10px;
-
-    border-top: 1px #444444 solid;
-    border-left: 1px #444444 solid;
-    border-right: 1px #222222 solid;
-    border-bottom: 1px #222222 solid;
 
     font-family: 'Inter', sans-serif;
     font-optical-sizing: auto;
@@ -44,14 +42,16 @@
     hr {
       margin: 2px 10px;
       border: 0;
-      border-top: 1px #444444 solid;
+      border-top: var(--border);
     }
 
     svg {
+      color: var(--text-color);
       margin-left: 5px;
       width: 16px;
       height: 16px;
       vertical-align: middle;
+      filter: var(--filter-shadow);
     }
 
     div {
@@ -61,17 +61,19 @@
       vertical-align: middle;
 
       &:first-child {
-        border-radius: 7px 7px 0 0;
+        border-top-left-radius: 7px;
+        border-top-right-radius: 7px;
         font-weight: 700;
       }
 
       &:last-child {
-        border-radius: 0 0 7px 7px;
+        border-bottom-left-radius: 7px;
+        border-bottom-right-radius: 7px;
       }
 
       &:not(:first-child):hover {
-        color: #EEEEEE;
-        background: #FFFFFF19;
+        color: var(--text-color-hover);
+        background: var(--background-color-hover);
         transition: background-color .25s;
       }
 
@@ -93,7 +95,7 @@
         &:last-child {
           margin-right: 10px;
           text-align: right;
-          color: #AAAAAA;
+          color: var(--text-color-attribution);
           font-size: 11px;
         }
       }

@@ -11,12 +11,9 @@ export class TileLayerControl {
     constructor(livemap: LiveMap) {
         this._livemap = livemap;
 
-        // hardcode for now - implementation subject to change
-        const renderer: string = "basic";
-
         // we need 2 tile layers to swap between for seamless refreshing
-        livemap.addLayer(this._layers[0] = this.createTileLayer(livemap, renderer));
-        livemap.addLayer(this._layers[1] = this.createTileLayer(livemap, renderer));
+        livemap.addLayer(this._layers[0] = this.createTileLayer(livemap));
+        livemap.addLayer(this._layers[1] = this.createTileLayer(livemap));
     }
 
     public tick(count: number): void {
@@ -25,8 +22,8 @@ export class TileLayerControl {
         }
     }
 
-    private createTileLayer(livemap: LiveMap, renderer: string): LiveTileLayer {
-        return new LiveTileLayer(livemap, renderer)
+    private createTileLayer(livemap: LiveMap): LiveTileLayer {
+        return new LiveTileLayer(livemap)
             .addEventListener('load', (): void => {
                 // switch layers when all tiles are loaded
                 this.switchTileLayer();

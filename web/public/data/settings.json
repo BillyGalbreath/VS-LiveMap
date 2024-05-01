@@ -3,10 +3,25 @@
   "interval": 30,
   "size": [1024000, 1024000],
   "spawn": [512000, 512000],
+  "web": {
+    "tiletype": "webp"
+  },
   "zoom": {
     "def": 0,
     "maxin": 3,
     "maxout": 8
+  },
+  "ui": {
+    "sidebar": {
+      "pinned": false
+    }
+  },
+  "lang": {
+    "title": "Vintage Story LiveMap",
+    "pinned": "Pinned",
+    "unpinned": "Unpinned",
+    "players": "Players ({cur}/{max})",
+    "renderers": "Map Types"
   },
   "markers": [
     "players",
