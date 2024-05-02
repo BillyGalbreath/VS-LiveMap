@@ -1,5 +1,4 @@
 import * as L from 'leaflet';
-import '../scss/notification';
 
 export class Notifications {
     private readonly _dom: HTMLElement;

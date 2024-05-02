@@ -1,81 +1,16 @@
 import * as L from 'leaflet';
 import {TileLayerControl} from './control/TileLayerControl';
 import {LayersControl} from './control/LayersControl';
-import {CoordsControl} from './control/CoordsControl';
 import {LinkControl} from './control/LinkControl';
-import {Point} from "./data/Point";
+import {CoordsControl} from './control/CoordsControl';
+import {PlayersControl} from './control/PlayersControl';
+import {SidebarControl} from './control/SidebarControl';
+import {ContextMenu} from './layer/menu/ContextMenu';
+import {Notifications} from './layer/Notifications';
 import {Settings} from './data/Settings';
-import {ContextMenu} from "./layer/menu/ContextMenu";
-import {Notifications} from "./layer/Notifications";
+import {Point} from './data/Point';
 import './scss/styles';
 import './svg'
-import {SidebarControl} from "./control/SidebarControl";
-import {PlayersControl} from "./control/PlayersControl";
-
-//const prefersDarkScheme: MediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
-const theme: string | null = localStorage.getItem("theme") ?? "glass";
-//console.log(theme);
-document.querySelector("html")!.setAttribute("theme", theme);
-//localStorage.setItem("theme", theme);
-//localStorage.removeItem("theme");
-
-// update map size when window size, scale, or orientation changes
-"orientationchange resize".split(' ').forEach((event: string): void => {
-    window.addEventListener(event, (): void => {
-        window.livemap?.updateSizeToWindow();
-    }, {passive: true});
-});
-
-window.onload = (): void => {
-    window.fetchJson<Settings>('data/settings.json')
-        .then((json: Settings): void => {
-            // create the map div element
-            L.DomUtil.create('div', 'loading', document.body).id = 'map';
-
-            // create the map itself
-            window.livemap = new LiveMap(new Settings(json));
-
-            // get url params
-            const url: URLSearchParams = new URLSearchParams(window.location.search);
-
-            // select the renderer
-            window.livemap.rendererType = url.get('renderer') ?? 'basic';
-
-            // center the map on url coordinates or spawn (0, 0); this initializes the map
-            window.livemap.centerOn(
-                Point.of(url.get('x') ?? 0, url.get('z') ?? 0),
-                url.get('zoom') ?? window.livemap.settings.zoom.def
-            );
-        })
-        .catch((err: unknown): void => {
-            console.error(`Error creating map\n`, err);
-        });
-};
-
-window.fetchJson = async <T>(url: string): Promise<T> => {
-    const res: Response = await fetch(url, {
-        headers: {
-            "Content-Disposition": "inline"
-        }
-    });
-    if (res.ok) {
-        return await res.json();
-    }
-    throw (res.statusText);
-}
-
-window.createSVGIcon = (icon: string): DocumentFragment => {
-    const template: HTMLTemplateElement = L.DomUtil.create('template');
-    template.innerHTML = `<svg><use href='#svg-${icon}'></use></svg>`;
-    return template.content;
-}
-
-// https://stackoverflow.com/a/3955096
-Array.prototype.remove = function <T>(obj: T, ax?: number): void {
-    while ((ax = this.indexOf(obj)) !== -1) {
-        this.splice(ax, 1);
-    }
-};
 
 export class LiveMap extends L.Map {
     declare _controlCorners: { [x: string]: HTMLDivElement; };
@@ -99,6 +34,9 @@ export class LiveMap extends L.Map {
     private _rendererType: string = "basic";
 
     constructor(settings: Settings) {
+        // create the map div element
+        L.DomUtil.create('div', 'loading', document.body).id = 'map';
+
         super('map', {
             // we need a flat and simple crs
             crs: L.Util.extend(L.CRS.Simple, {
@@ -125,11 +63,13 @@ export class LiveMap extends L.Map {
             wheelPxPerZoomLevel: L.Browser.linux && L.Browser.chrome ? 120 : 60
         });
 
-        this.on('load', (): void => this.onLoad());
-
         this._settings = settings;
 
+        // set custom page title from lang
         document.title = settings.lang.title ?? 'Vintage Story LiveMap';
+
+        // pre-calculate map's scale
+        this._scale ??= (1 / Math.pow(2, settings.zoom.maxout));
 
         // set up the controllers
         this._tileLayerControl = new TileLayerControl(this);
@@ -144,13 +84,24 @@ export class LiveMap extends L.Map {
         this._notifications = new Notifications();
 
         // replace leaflet's attribution with our own
-        this.attributionControl.setPrefix(this._settings.attribution);
+        this.attributionControl.setPrefix(settings.attribution);
 
-        // pre-calculate map's scale
-        this._scale ??= (1 / Math.pow(2, this.settings.zoom.maxout));
+        // stuff to do after the map fully loads
+        this.on('load', (): void => this.onLoad());
+
+        // center the map on url coordinates or spawn (0, 0); this initializes the map
+        setTimeout((): void => {
+            const url: URLSearchParams = new URLSearchParams(window.location.search);
+            this.rendererType = url.get('renderer');
+            this.centerOn(
+                Point.of(url.get('x') ?? 0, url.get('z') ?? 0),
+                url.get('zoom') ?? this.settings.zoom.def
+            );
+        }, 0);
     }
 
     onLoad(): void {
+        // get rid of the page logo and loading images
         const container: HTMLElement = this.getContainer();
         container.classList.remove('loading');
         container.addEventListener('transitionend', (e: TransitionEvent): void => {
@@ -246,8 +197,8 @@ export class LiveMap extends L.Map {
         return this._rendererType;
     }
 
-    set rendererType(renderer: string) {
-        this._rendererType = renderer;
+    set rendererType(renderer: string | null) {
+        this._rendererType = !renderer?.length ? 'basic' : renderer;
     }
 
     private loop(count: number): void {
@@ -297,3 +248,77 @@ export class LiveMap extends L.Map {
         this.invalidateSize();
     }
 }
+
+window.onload = (): void => {
+    window.fetchJson<Settings>('data/settings.json')
+        .then((json: Settings): void => {
+            window.livemap = new LiveMap(new Settings(json));
+        })
+        .catch((err: unknown): void => {
+            console.error(`Error creating map\n`, err);
+        });
+};
+
+// update map size when window size, scale, or orientation changes
+"orientationchange resize".split(' ').forEach((event: string): void => {
+    window.addEventListener(event, (): void => {
+        window.livemap?.updateSizeToWindow();
+    }, {passive: true});
+});
+
+window.fetchJson = async <T>(url: string): Promise<T> => {
+    const res: Response = await fetch(url, {
+        headers: {
+            "Content-Disposition": "inline"
+        }
+    });
+    if (res.ok) {
+        return await res.json();
+    }
+    throw (res.statusText);
+}
+
+window.createSVGIcon = (icon: string): DocumentFragment => {
+    const template: HTMLTemplateElement = L.DomUtil.create('template');
+    template.innerHTML = `<svg><use href='#svg-${icon}'></use></svg>`;
+    return template.content;
+}
+
+// https://stackoverflow.com/a/3955096
+Array.prototype.remove = function <T>(obj: T, ax?: number): void {
+    while ((ax = this.indexOf(obj)) !== -1) {
+        this.splice(ax, 1);
+    }
+};
+
+
+const knownThemes: string[] = [];
+
+for (let i: number = 0; i < document.styleSheets.length; i++) {
+    const css: CSSStyleSheet = document.styleSheets[i];
+    if (css.href?.endsWith('themes.css')) {
+        const rules: CSSRuleList = css.cssRules;
+        for (let j: number = 0; j < rules.length; j++) {
+            const rule: CSSStyleRule = rules[j] as CSSStyleRule;
+            const match: RegExpExecArray | null = /html\[theme="(.+)"]/.exec(rule.selectorText);
+            if (match) {
+                knownThemes.push(match[1]);
+            }
+        }
+        break;
+    }
+}
+
+window.matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', (): void => setTheme());
+
+const setTheme = (): void => {
+    const prefersDark: boolean = knownThemes.length > 1 && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme: string = localStorage.getItem('theme') ?? knownThemes[+prefersDark];
+    document.querySelector('html')!.setAttribute('theme', theme);
+    // todo
+    //localStorage.setItem("theme", theme);
+    //localStorage.removeItem("theme");
+};
+
+setTheme();

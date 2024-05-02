@@ -56,7 +56,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="web\public\tiles\basic\" />
+        <Folder Include="web\public\tiles\basic\" />
     </ItemGroup>
 
     <Target Name="_ResolveCopyLocalNuGetPkgXmls" AfterTargets="ResolveReferences">

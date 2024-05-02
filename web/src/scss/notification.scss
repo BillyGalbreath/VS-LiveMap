@@ -13,8 +13,9 @@
     padding: 10px 0;
     color: #EEEEEE;
     border-radius: 5px;
-    text-shadow: 1px 1px 2px #000000E5;
-    box-shadow: 3px 3px 10px #000000E5;
+    text-shadow: var(--text-shadow);
+    box-shadow: var(--box-shadow);
+    backdrop-filter: var(--blur);
     transition: transform .2s ease-in, opacity .2s ease-in;
     opacity: 0;
 
@@ -44,19 +45,23 @@
     }
 
     &.info {
-      background: #A3ADB2;
+      border: var(--notification-info-border);
+      background: var(--notification-info);
     }
 
     &.success {
-      background: #A4B123;
+      border: var(--notification-success-border);
+      background: var(--notification-success);
     }
 
     &.warning {
-      background: #E7B600;
+      border: var(--notification-warning-border);
+      background: var(--notification-warning);
     }
 
     &.danger {
-      background: #C20000;
+      border: var(--notification-danger-border);
+      background: var(--notification-danger);
     }
   }
 }

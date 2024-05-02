@@ -75,6 +75,11 @@
         color: var(--text-color-hover);
         background: var(--background-color-hover);
         transition: background-color .25s;
+
+        svg,
+        p:last-child {
+          color: var(--text-color-hover);
+        }
       }
 
       p {

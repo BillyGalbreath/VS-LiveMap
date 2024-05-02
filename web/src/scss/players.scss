@@ -8,9 +8,22 @@
     background: none;
     box-shadow: none;
     transition: all 0.25s;
+    pointer-events: auto;
 
     &.leaflet-tooltip {
       z-index: 10000000000;
+      color: var(--text-color);
+      background: var(--background);
+      border: var(--border);
+      border-radius: 5px;
+      box-shadow: var(--box-shadow);
+      backdrop-filter: var(--blur);
+
+      &:hover {
+        color: var(--text-color-hover);
+        background-color: var(--background-color-hover);
+        border: var(--border-hover);
+      }
     }
 
     &:before {
@@ -18,18 +31,13 @@
     }
 
     > svg {
-      filter: drop-shadow(1px 1px 2px #00000080);
+      filter: var(--filter-shadow);
       transition: all 0.25s;
     }
 
     > ul {
       padding: 3px;
-      color: #FFFFFF;
       font-weight: 700;
-      background: #336699BF;
-      border: 1px solid #000000;
-      border-radius: 5px;
-      box-shadow: 2px 2px 3px #00000080;
       vertical-align: top;
 
       > li:first-child {
@@ -40,7 +48,7 @@
           width: 32px;
           height: 32px;
           border-radius: 5px;
-          border: 1px solid #000000;
+          border: var(--border-hover);
           box-shadow: 1px 1px 1px #00000080;
         }
       }
@@ -58,7 +66,7 @@
         text-align: center;
         line-height: 15px;
         vertical-align: top;
-        text-shadow: 1px 1px 1px #000000;
+        text-shadow: var(--text-shadow);
 
         > div {
           margin: 1px auto 0;

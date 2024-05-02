@@ -1,6 +1,6 @@
 import {Point} from "./Point";
-import {Zoom} from './Zoom';
 import {Web} from "./Web";
+import {Zoom} from './Zoom';
 import {UI} from "./UI";
 import {Lang} from "./Lang";
 

@@ -2,7 +2,6 @@ import * as L from 'leaflet';
 import {ControlBox} from './ControlBox';
 import {LiveMap} from '../LiveMap';
 import {Point} from "../data/Point";
-import '../svg/link.svg';
 
 export class LinkControl extends ControlBox {
     private readonly _dom: HTMLAnchorElement;

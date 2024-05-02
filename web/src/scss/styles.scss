@@ -1,11 +1,10 @@
+@import 'contextmenu';
 @import 'font.css';
-@import 'theme';
-@import 'notification';
-@import 'sidebar';
 @import 'leaflet';
 @import 'livemap';
-
+@import 'notification';
 @import 'players';
+@import 'sidebar';
 
 * {
   margin: 0;

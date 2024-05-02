@@ -1,3 +1,4 @@
+// todo - get a better name than this
 export class Value {
     private readonly _cur: number;
     private readonly _max: number;
