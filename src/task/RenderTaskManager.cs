@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
 using livemap.logger;
-using livemap.render;
 using livemap.util;
 
 namespace livemap.task;
@@ -19,8 +17,6 @@ public sealed class RenderTaskManager {
     private readonly ConcurrentQueue<long> _bufferQueue = new();
     private readonly BlockingCollection<long> _processQueue = new();
 
-    private readonly Dictionary<string, Renderer> _renderers = new();
-
     private Thread? _thread;
     private bool _running;
     private bool _stopped;
@@ -28,13 +24,6 @@ public sealed class RenderTaskManager {
     public RenderTaskManager(LiveMapServer server) {
         _server = server;
         RenderTask = new RenderTask(server);
-    }
-
-    public void Init() {
-        _renderers.Clear();
-        foreach ((string? id, Renderer.Builder? builder) in _server.RendererRegistry) {
-            _renderers.Add(id, builder.Func.Invoke(_server));
-        }
     }
 
     public void Queue(int regionX, int regionZ) {
@@ -90,18 +79,7 @@ public sealed class RenderTaskManager {
                     int regionX = Mathf.LongToX(region);
                     int regionZ = Mathf.LongToZ(region);
 
-                    BlockData? blockData = RenderTask.ScanRegion(regionX, regionZ);
-                    if (blockData == null) {
-                        continue;
-                    }
-
-                    // process the region through all the renderers
-                    foreach ((string? _, Renderer? renderer) in _renderers) {
-                        renderer.AllocateImage(regionX, regionZ);
-                        renderer.PostProcessRegion(regionX, regionZ, blockData);
-                        renderer.CalculateShadows();
-                        renderer.SaveImage();
-                    }
+                    RenderTask.ScanRegion(regionX, regionZ);
 
                     long end = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                     Logger.Debug($"Region {regionX},{regionZ} finished ({end - start}ms) - Regions remaining: {_processQueue.Count}");
@@ -126,11 +104,6 @@ public sealed class RenderTaskManager {
 
         _bufferQueue.Clear();
         while (_processQueue.TryTake(out _)) { }
-
-        foreach ((string? _, Renderer renderer) in _renderers) {
-            renderer.Dispose();
-        }
-        _renderers.Clear();
 
         if (cancelled) {
             Logger.Warn("Render task cancelled!");

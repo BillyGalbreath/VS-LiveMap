@@ -11,6 +11,11 @@ public class RendererRegistry : Registry<Renderer.Builder> {
         _server = server;
     }
 
+    public override bool Register(string id, Renderer.Builder builder) {
+        _server.RenderTaskManager.RenderTask.Renderers.Add(id, builder.Func.Invoke(_server));
+        return base.Register(id, builder);
+    }
+
     public void RegisterBuiltIns() {
         Register(new Renderer.Builder("basic", server => new BasicRenderer(server)));
         Register(new Renderer.Builder("medieval", server => new MedievalRenderer(server)));

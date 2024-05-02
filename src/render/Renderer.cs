@@ -2,6 +2,7 @@ using System;
 using JetBrains.Annotations;
 using livemap.registry;
 using livemap.tile;
+using Vintagestory.Common.Database;
 
 namespace livemap.render;
 
@@ -28,7 +29,9 @@ public abstract class Renderer : Keyed {
         TileImage?.CalculateShadows();
     }
 
-    public virtual void PostProcessRegion(int regionX, int regionZ, BlockData blockData) { }
+    public virtual void ScanChunkColumn(ChunkPos chunkPos, BlockData blockData) { }
+
+    public virtual void ProcessBlockData(int regionX, int regionZ, BlockData blockData) { }
 
     protected (int, int) ProcessBlock(BlockData.Data? block, int defY = 0) {
         if (block == null) {

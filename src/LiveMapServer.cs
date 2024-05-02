@@ -25,6 +25,7 @@ public sealed class LiveMapServer : LiveMap {
     public ICoreServerAPI Api { get; }
     public Config Config { get; private set; } = null!;
     public Colormap Colormap { get; }
+    public SepiaColors SepiaColors { get; }
     public NetworkHandler NetworkHandler { get; }
     public RendererRegistry RendererRegistry { get; }
     public RenderTaskManager RenderTaskManager { get; }
@@ -48,6 +49,7 @@ public sealed class LiveMapServer : LiveMap {
         Files.ExtractWebFiles(this);
 
         Colormap = new Colormap();
+        SepiaColors = new SepiaColors(this);
         NetworkHandler = new ServerNetworkHandler(this);
 
         RendererRegistry = new RendererRegistry(this);
@@ -62,7 +64,6 @@ public sealed class LiveMapServer : LiveMap {
         Api.Event.RegisterCallback(_ => {
             Colormap.LoadFromDisk(Api.World);
             RendererRegistry.RegisterBuiltIns();
-            RenderTaskManager.Init();
         }, 1);
 
         Api.ChatCommands.Create("livemap")
@@ -153,5 +154,6 @@ public sealed class LiveMapServer : LiveMap {
         NetworkHandler.Dispose();
         RendererRegistry.Dispose();
         Colormap.Dispose();
+        SepiaColors.Dispose();
     }
 }

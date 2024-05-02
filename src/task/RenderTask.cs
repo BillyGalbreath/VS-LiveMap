@@ -25,7 +25,10 @@ public sealed class RenderTask {
     public HashSet<int> MicroBlocks { get; }
     public HashSet<int> BlocksToIgnore { get; }
 
+    public Dictionary<string, Renderer> Renderers { get; } = new();
+
     private readonly int _landBlock;
+
 
     public RenderTask(LiveMapServer server) {
         _server = server;
@@ -54,7 +57,7 @@ public sealed class RenderTask {
         _landBlock = _server.Api.World.GetBlock(new AssetLocation("game", "soil-low-normal")).Id;
     }
 
-    public BlockData? ScanRegion(int regionX, int regionZ) {
+    public void ScanRegion(int regionX, int regionZ) {
         try {
             // check for existing chunks only in this region
             int x1 = regionX << 4;
@@ -67,11 +70,17 @@ public sealed class RenderTask {
             foreach (ChunkPos chunkPos in chunks) {
                 ScanChunkColumn(chunkPos, blockData);
             }
-            return blockData;
+
+            // process the region through all the renderers
+            foreach ((string? _, Renderer? renderer) in Renderers) {
+                renderer.AllocateImage(regionX, regionZ);
+                renderer.ProcessBlockData(regionX, regionZ, blockData);
+                renderer.CalculateShadows();
+                renderer.SaveImage();
+            }
         } catch (Exception e) {
             Logger.Warn(e.ToString());
         }
-        return null;
     }
 
     private void ScanChunkColumn(ChunkPos chunkPos, BlockData blockData) {
@@ -82,15 +91,10 @@ public sealed class RenderTask {
             return;
         }
 
-        int startX = chunkPos.X << 5;
-        int startZ = chunkPos.Z << 5;
-        int endX = startX + 32;
-        int endZ = startZ + 32;
-
         // check which chunk slices need to be loaded to get the top surface block
         List<int> chunkIndexesToLoad = new();
-        for (int x = startX; x < endX; x++) {
-            for (int z = startZ; z < endZ; z++) {
+        for (int x = 0; x < 32; x++) {
+            for (int z = 0; z < 32; z++) {
                 int y = GetTopBlockY(mapChunk, x, z) >> 5;
                 chunkIndexesToLoad.AddIfNotExists(y);
                 if (y > 0) {
@@ -105,11 +109,21 @@ public sealed class RenderTask {
             chunkSlices[y] = _chunkLoader.GetServerChunk(chunkPos.X, y, chunkPos.Z);
         }
 
+        int startX = chunkPos.X << 5;
+        int startZ = chunkPos.Z << 5;
+        int endX = startX + 32;
+        int endZ = startZ + 32;
+
         // scan every block column in the chunk
         for (int x = startX; x < endX; x++) {
             for (int z = startZ; z < endZ; z++) {
                 blockData.Set(x & 511, z & 511, ScanBlockColumn(x & 31, z & 31, mapChunk, chunkSlices));
             }
+        }
+
+        // process the chunk through all the renderers
+        foreach ((string? _, Renderer? renderer) in Renderers) {
+            renderer.ScanChunkColumn(chunkPos, blockData);
         }
     }
 
@@ -154,5 +168,10 @@ public sealed class RenderTask {
         _chunkLoader.Dispose();
         MicroBlocks.Clear();
         BlocksToIgnore.Clear();
+
+        foreach ((string? _, Renderer renderer) in Renderers) {
+            renderer.Dispose();
+        }
+        Renderers.Clear();
     }
 }
