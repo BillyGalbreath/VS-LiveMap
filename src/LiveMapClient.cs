@@ -4,6 +4,7 @@ using livemap.gui;
 using livemap.logger;
 using livemap.network;
 using livemap.network.packet;
+using Newtonsoft.Json;
 using Vintagestory.API.Client;
 
 namespace livemap;
@@ -44,7 +45,7 @@ public sealed class LiveMapClient {
 
     internal void ReceiveConfig(ConfigPacket packet) {
         Logger.Debug("Received config packet from server");
-        Config = packet.Config;
+        Config = packet.Config != null ? JsonConvert.DeserializeObject<Config>(packet.Config) : null;
     }
 
     public void Dispose() {

@@ -11,6 +11,7 @@ using livemap.network.packet;
 using livemap.registry;
 using livemap.task;
 using livemap.util;
+using Newtonsoft.Json;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
@@ -137,7 +138,7 @@ public sealed class LiveMapServer : LiveMap {
         }
 
         Logger.Info($"&dConfig request packet was received from &n{player.PlayerName}");
-        NetworkHandler.SendPacket(new ConfigPacket { Config = Config }, player);
+        NetworkHandler.SendPacket(new ConfigPacket { Config = JsonConvert.SerializeObject(Config) }, player);
     }
 
     public void Dispose() {
