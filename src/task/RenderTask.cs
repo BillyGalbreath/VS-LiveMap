@@ -91,7 +91,11 @@ public sealed class RenderTask {
         List<int> chunkIndexesToLoad = new();
         for (int x = startX; x < endX; x++) {
             for (int z = startZ; z < endZ; z++) {
-                chunkIndexesToLoad.AddIfNotExists(GetTopBlockY(mapChunk, x, z) >> 5);
+                int y = GetTopBlockY(mapChunk, x, z) >> 5;
+                chunkIndexesToLoad.AddIfNotExists(y);
+                if (y > 0) {
+                    chunkIndexesToLoad.AddIfNotExists(y - 1);
+                }
             }
         }
 
@@ -120,7 +124,9 @@ public sealed class RenderTask {
             if (serverChunk != null) {
                 top = serverChunk.Data[Mathf.BlockIndex(x, y, z)];
                 CheckForMicroBlocks(x, y, z, serverChunk, ref top);
-
+            }
+            serverChunk = chunkSlices[(y - 1) >> 5];
+            if (serverChunk != null) {
                 under = serverChunk.Data[Mathf.BlockIndex(x, y - 1, z)];
                 CheckForMicroBlocks(x, y - 1, z, serverChunk, ref under);
             }
