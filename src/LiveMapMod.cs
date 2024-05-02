@@ -1,13 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using livemap.client;
-using livemap.server;
-using Vintagestory.API.Client;
+﻿using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
 
 namespace livemap;
 
-[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public sealed class LiveMapMod : ModSystem {
     private static LiveMapMod? _instance;
     internal static ILogger VanillaLogger => _instance!.Mod.Logger;
