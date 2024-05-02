@@ -3,13 +3,13 @@
 namespace livemap.render;
 
 [PublicAPI]
-public class MedievalRenderer : Renderer {
+public class SepiaRenderer : Renderer {
     protected bool IsWater(int? id) => id == null || Server.SepiaColors.BlockIsWater[(int)id];
     protected byte GetIndex(int id) => Server.SepiaColors.Block2Color[id];
     protected uint GetColor(int id) => Server.SepiaColors.ColorsByCode.GetValueAtIndex(id);
     protected uint GetColor(string id) => Server.SepiaColors.ColorsByCode[id];
 
-    public MedievalRenderer(LiveMapServer server) : base(server, "medieval") { }
+    public SepiaRenderer(LiveMapServer server) : base(server, "sepia") { }
 
     public override void ProcessBlockData(int regionX, int regionZ, BlockData blockData) {
         if (TileImage == null) {

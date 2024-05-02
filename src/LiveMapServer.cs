@@ -40,7 +40,7 @@ public sealed class LiveMapServer : LiveMap {
         Logger.LoggerImpl = new ServerLoggerImpl();
 
         Files.DataDir = Path.Combine(GamePaths.DataPath, "ModData", Api.World.SavegameIdentifier, "LiveMap");
-        Files.ColormapFile = Path.Combine(Files.DataDir, "colormap.yaml");
+        Files.ColormapFile = Path.Combine(Files.DataDir, "colormap.json");
         Files.WebDir = Path.Combine(Files.DataDir, "web");
         Files.TilesDir = Path.Combine(Files.WebDir, "tiles");
 

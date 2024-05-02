@@ -29,7 +29,6 @@ public sealed class RenderTask {
 
     private readonly int _landBlock;
 
-
     public RenderTask(LiveMapServer server) {
         _server = server;
 

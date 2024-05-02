@@ -8,15 +8,13 @@ using JetBrains.Annotations;
 using livemap.logger;
 using livemap.network.packet;
 using livemap.util;
+using Newtonsoft.Json;
 using Vintagestory.API.Common;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace livemap.data;
 
 [PublicAPI]
 public sealed class Colormap {
-    [YamlMember]
     private readonly Dictionary<string, uint[]> _colorsByName = new();
 
     private readonly Dictionary<int, uint[]> _colorsById = new();
@@ -32,26 +30,18 @@ public sealed class Colormap {
     public int Count => _colorsById.Count;
 
     public string Serialize() {
-        return new SerializerBuilder()
-            .WithQuotingNecessaryStrings()
-            .WithNamingConvention(NullNamingConvention.Instance)
-            .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
-            .Build()
-            .Serialize(_colorsByName);
+        return JsonConvert.SerializeObject(_colorsByName);
     }
 
-    public bool Deserialize(string? yaml) {
+    public bool Deserialize(string? json) {
         _colorsByName.Clear();
 
-        if (string.IsNullOrEmpty(yaml)) {
+        if (string.IsNullOrEmpty(json)) {
             return false;
         }
 
         try {
-            Dictionary<string, uint[]> data = new DeserializerBuilder()
-                .IgnoreUnmatchedProperties()
-                .WithNamingConvention(NullNamingConvention.Instance)
-                .Build().Deserialize<Dictionary<string, uint[]>>(yaml);
+            Dictionary<string, uint[]> data = JsonConvert.DeserializeObject<Dictionary<string, uint[]>>(json)!;
             foreach ((string? key, uint[]? colors) in data) {
                 _colorsByName.TryAdd(key, colors);
             }
@@ -76,11 +66,11 @@ public sealed class Colormap {
 
     public void LoadFromDisk(IWorldAccessor world) {
         new Thread(_ => {
-            string? yaml = null;
+            string? json = null;
             if (File.Exists(Files.ColormapFile)) {
-                yaml = File.ReadAllText(Files.ColormapFile, Encoding.UTF8);
+                json = File.ReadAllText(Files.ColormapFile, Encoding.UTF8);
             }
-            if (Deserialize(yaml)) {
+            if (Deserialize(json)) {
                 RefreshIds(world);
                 Logger.Info("&dColormap loaded from disk.");
             } else {

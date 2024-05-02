@@ -18,7 +18,7 @@ public class RendererRegistry : Registry<Renderer.Builder> {
 
     public void RegisterBuiltIns() {
         Register(new Renderer.Builder("basic", server => new BasicRenderer(server)));
-        Register(new Renderer.Builder("medieval", server => new MedievalRenderer(server)));
+        Register(new Renderer.Builder("sepia", server => new SepiaRenderer(server)));
     }
 
     public Renderer? Create(string id) {
