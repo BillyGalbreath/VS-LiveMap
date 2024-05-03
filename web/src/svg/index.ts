@@ -16,7 +16,6 @@ import './info.svg';
 import './ladder.svg';
 import './layers.svg';
 import './link.svg';
-import './logo.svg';
 import './marker.svg';
 import './mushroom.svg';
 import './paste.svg';
