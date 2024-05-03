@@ -9,7 +9,7 @@
         <Version Condition="'$(BUILD_NUMBER)' == ''">$(Ver)-SNAPSHOT</Version>
         <Authors>BillyGalbreath</Authors>
         <Company>Pl3x</Company>
-        <Description>A browser-based world map viewer for Vintage Story</Description>
+        <Description>LiveMap is a browser-based world map viewer for Vintage Story</Description>
         <Copyright>Copyright (c) 2024 William Blake Galbreath</Copyright>
         <PackageIcon>modicon.png</PackageIcon>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -87,7 +87,17 @@
         />
     </Target>
 
-    <Target Name="PackZip" AfterTargets="FilterModInfo">
+    <Target Name="FilterIndexHtml" AfterTargets="FilterModInfo">
+        <PropertyGroup>
+            <IndexHTML>$(TargetDir)/assets/livemap/config/index.html</IndexHTML>
+        </PropertyGroup>
+        <WriteLinesToFile Lines="$([System.IO.File]::ReadAllText($(IndexHTML))
+            .Replace('{description}','$(Description)')
+            )" File="$(IndexHTML)" Overwrite="true" Encoding="UTF-8"
+        />
+    </Target>
+
+    <Target Name="PackZip" AfterTargets="FilterIndexHtml">
         <MakeDir Directories="bin\mods\mod" />
         <ItemGroup>
             <FilesToDelete Include="bin\**\*.nupkg" />
