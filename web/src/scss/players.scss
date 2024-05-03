@@ -31,13 +31,11 @@
     }
 
     > svg {
-      filter: var(--filter-shadow);
       transition: all 0.25s;
     }
 
     > ul {
       padding: 3px;
-      font-weight: 700;
       vertical-align: top;
 
       > li:first-child {
@@ -49,7 +47,7 @@
           height: 32px;
           border-radius: 5px;
           border: var(--border-hover);
-          box-shadow: 1px 1px 1px #00000080;
+          box-shadow: var(--box-shadow);
         }
       }
 
@@ -66,6 +64,9 @@
         text-align: center;
         line-height: 15px;
         vertical-align: top;
+        font-size: 12px;
+        font-weight: 500;
+        font-family: "Poppins", sans-serif;
         text-shadow: var(--text-shadow);
 
         > div {
@@ -74,7 +75,7 @@
           height: var(--height);
           background: #262626;
           border-radius: calc(var(--height) / 2);
-          box-shadow: 1px 1px 1px #00000080;
+          box-shadow: var(--box-shadow);
 
           &:after {
             content: "";

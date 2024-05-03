@@ -1,4 +1,5 @@
 import './apple.svg';
+import './basic.svg';
 import './bee.svg';
 import './berries.svg';
 import './cave.svg';
@@ -24,6 +25,7 @@ import './player.svg';
 import './propick.svg';
 import './rocks.svg';
 import './ruins.svg';
+import './sepia.svg';
 import './skull_and_crossbones.svg';
 import './spiral.svg';
 import './star1.svg';

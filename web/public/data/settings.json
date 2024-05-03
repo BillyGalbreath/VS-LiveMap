@@ -11,6 +11,16 @@
     "maxin": 3,
     "maxout": 8
   },
+  "renderers": [
+    {
+      "id": "basic",
+      "icon": ""
+    },
+    {
+      "id": "sepia",
+      "icon": ""
+    }
+  ],
   "ui": {
     "sidebar": {
       "pinned": false

@@ -1,14 +1,15 @@
-#sidebar {
-  display: flex;
-  flex-flow: column;
-  position: absolute;
+aside {
+  position: fixed;
   top: 0;
-  right: -250px;
-  width: 200px;
+  right: -360px;
+  width: 260px;
   height: 100%;
-  padding: 0 50px 0 10px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 0 100px 0 10px;
   z-index: 1000000;
-  font: 12px Arial, Helvetica, sans-serif;
+  font-family: "Poppins", sans-serif;
   border-left: var(--border);
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
@@ -20,36 +21,90 @@
   background-blend-mode: color;
 
   &:hover {
+    right: -100px;
     border-left: var(--border-hover);
     background-color: var(--background-color-hover);
   }
 
   &.show {
-    right: -50px;
+    right: -100px;
+
+    #pin {
+      opacity: 1;
+    }
   }
 
-  fieldset {
-    clear: right;
-    margin: 0 10px 0 0;
-    border: none;
-    border-top: var(--border);
-    transition: all 0.25s;
-    white-space: nowrap;
+  div {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    font-size: 1.15rem;
+    font-weight: 600;
 
-    legend {
-      display: block;
-      margin: 10px 5px 10px 10px;
-      font-weight: 700;
+    svg {
+      width: 40px;
+      height: 40px;
+      margin-right: 15px;
+      filter: var(--filter-shadow);
+    }
+  }
+
+  ul {
+    list-style-type: none;
+    overflow-y: auto;
+    scrollbar-width: none;
+    margin-bottom: 10px;
+    width: 100%;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+
+    li {
+      display: flex;
+      border-radius: 5px;
+      align-items: center;
+      margin: 0 5px;
+      padding: 5px;
+
+      &:hover {
+        cursor: pointer;
+        background-color: var(--background-color-hover);
+
+        img {
+          border: var(--border-hover);
+        }
+      }
+
+      img {
+        width: 32px;
+        height: 32px;
+        border: var(--border);
+        border-radius: 5px;
+        box-shadow: var(--box-shadow);
+      }
+
+      p {
+        margin-left: 10px;
+        color: var(--text-color);
+        font-weight: 500;
+        white-space: nowrap;
+      }
     }
   }
 
   #pin {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 23px;
     height: 23px;
-    margin: 5px 5px 10px auto;
+    margin: 5px 5px 10px 6px;
     padding: 2px;
     border: 1px solid #ffffff00;
     border-radius: 4px;
+    opacity: 0;
     transition: all .2s ease-in-out;
     cursor: pointer;
 

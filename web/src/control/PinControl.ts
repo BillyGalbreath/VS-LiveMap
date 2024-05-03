@@ -20,7 +20,7 @@ export class PinControl {
         };
 
         if (livemap.settings.ui.sidebar.pinned != "hide") {
-            document.querySelector('#sidebar')!.appendChild(this._dom);
+            document.querySelector('aside')!.appendChild(this._dom);
         }
 
         this._img = L.DomUtil.create('img', '', this._dom);

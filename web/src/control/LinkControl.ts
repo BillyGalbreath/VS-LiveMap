@@ -39,9 +39,16 @@ export class LinkControl extends ControlBox {
     }
 
     update = (): void => {
-        this._dom.href = this._livemap.getUrlFromView();
+        this._dom.href = this.getUrlFromView();
 
         // todo - find out how to prevent chrome from spamming history
         window.history.replaceState({}, '', this._dom.href);
+    }
+
+    public getUrlFromView(): string {
+        const point: Point = Point.of(this._livemap.getCenter())
+            .floor()
+            .subtract(this._livemap.settings.spawn);
+        return `?renderer=${this._livemap.sidebarControl.renderersControl.rendererType}&x=${point.x}&z=${point.z}&zoom=${this._livemap.currentZoom()}`;
     }
 }

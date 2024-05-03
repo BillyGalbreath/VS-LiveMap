@@ -4,11 +4,8 @@
   "modid": "livemap",
   "version": "{version}",
   "description": "{description}",
-  "website": "https://github.com/billygalbreath/vs-livemap",
   "authors": [ "BillyGalbreath" ],
-  "side": "Universal",
   "requiredOnClient": false,
-  "requiredOnServer": true,
   "dependencies": {
     "game": "1.19.0"
   }

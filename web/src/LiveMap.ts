@@ -3,7 +3,6 @@ import {TileLayerControl} from './control/TileLayerControl';
 import {LayersControl} from './control/LayersControl';
 import {LinkControl} from './control/LinkControl';
 import {CoordsControl} from './control/CoordsControl';
-import {PlayersControl} from './control/PlayersControl';
 import {SidebarControl} from './control/SidebarControl';
 import {ContextMenu} from './layer/menu/ContextMenu';
 import {Notifications} from './layer/Notifications';
@@ -23,15 +22,12 @@ export class LiveMap extends L.Map {
     private readonly _layersControl: LayersControl;
     private readonly _linkControl: LinkControl;
     private readonly _coordsControl: CoordsControl;
-    private readonly _playersControl: PlayersControl;
     private readonly _sidebarControl: SidebarControl;
 
     private readonly _contextMenu: ContextMenu;
     private readonly _notifications: Notifications;
 
     private readonly _scale: number;
-
-    private _rendererType: string = "basic";
 
     constructor(settings: Settings) {
         // create the map div element
@@ -76,7 +72,6 @@ export class LiveMap extends L.Map {
         this._layersControl = new LayersControl(this);
         this._coordsControl = new CoordsControl(this);
         this._linkControl = new LinkControl(this);
-        this._playersControl = new PlayersControl(this);
         this._sidebarControl = new SidebarControl(this);
 
         // the fancy context menu and stuff
@@ -92,7 +87,7 @@ export class LiveMap extends L.Map {
         // center the map on url coordinates or spawn (0, 0); this initializes the map
         setTimeout((): void => {
             const url: URLSearchParams = new URLSearchParams(window.location.search);
-            this.rendererType = url.get('renderer');
+            this.sidebarControl.renderersControl.rendererType = url.get('renderer');
             this.centerOn(
                 Point.of(url.get('x') ?? 0, url.get('z') ?? 0),
                 url.get('zoom') ?? this.settings.zoom.def
@@ -173,10 +168,6 @@ export class LiveMap extends L.Map {
         return this._linkControl
     }
 
-    get playersControl(): PlayersControl {
-        return this._playersControl;
-    }
-
     get sidebarControl(): SidebarControl {
         return this._sidebarControl;
     }
@@ -193,20 +184,11 @@ export class LiveMap extends L.Map {
         return this._scale;
     }
 
-    get rendererType(): string {
-        return this._rendererType;
-    }
-
-    set rendererType(renderer: string | null) {
-        this._rendererType = !renderer?.length ? 'basic' : renderer;
-    }
-
     private loop(count: number): void {
         try {
             if (document.visibilityState === 'visible') {
                 this.tileLayerControl.tick(count);
                 this.layersControl.tick(count);
-                this.playersControl.tick();
                 this.sidebarControl.tick();
             }
         } catch (e) {
@@ -232,13 +214,6 @@ export class LiveMap extends L.Map {
 
     public currentZoom(): number {
         return this.settings.zoom.maxout - this.getZoom();
-    }
-
-    public getUrlFromView(): string {
-        const point: Point = Point.of(this.getCenter())
-            .floor()
-            .subtract(this.settings.spawn);
-        return `?renderer=${this.rendererType}&x=${point.x}&z=${point.z}&zoom=${this.currentZoom()}`;
     }
 
     public updateSizeToWindow(): void {

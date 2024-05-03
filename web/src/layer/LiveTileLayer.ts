@@ -57,7 +57,7 @@ export class LiveTileLayer extends L.TileLayer {
 
     getTileUrl(coords: L.Coords): string {
         const data: { renderer: string; ext: string; x: number; z: number; zoom: number } = {
-            renderer: this._livemap.rendererType,
+            renderer: this._livemap.sidebarControl.renderersControl.rendererType,
             ext: this._livemap.settings.web.tiletype,
             x: coords.x,
             z: coords.y,

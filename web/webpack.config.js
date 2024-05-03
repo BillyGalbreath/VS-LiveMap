@@ -22,6 +22,9 @@ module.exports = {
     './src/lib/L.ellipse.js',
     './src/lib/L.rotated.js'
   ],
+  externals: {
+    "leaflet": "L"
+  },
   mode: 'development',
   module: {
     rules: [

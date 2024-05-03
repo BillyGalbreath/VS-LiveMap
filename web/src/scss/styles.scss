@@ -1,6 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Cousine&family=Inter&family=Poppins:wght@500;600&display=swap');
+
 @import 'contextmenu';
-@import 'font.css';
-@import 'leaflet';
 @import 'livemap';
 @import 'notification';
 @import 'players';
@@ -9,6 +9,7 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: content-box;
   user-select: none;
 }
 

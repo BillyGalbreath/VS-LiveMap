@@ -9,7 +9,7 @@
         <Version Condition="'$(BUILD_NUMBER)' == ''">$(Ver)-SNAPSHOT</Version>
         <Authors>BillyGalbreath</Authors>
         <Company>Pl3x</Company>
-        <Description>A browser-based world map viewer for Vintage Story servers</Description>
+        <Description>A browser-based world map viewer for Vintage Story</Description>
         <Copyright>Copyright (c) 2024 William Blake Galbreath</Copyright>
         <PackageIcon>modicon.png</PackageIcon>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -52,6 +52,7 @@
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" IncludeAssets="compile" PrivateAssets="all" />
         <PackageReference Include="NuGet.Build.Tasks.Pack" Version="6.7.0" IncludeAssets="compile" PrivateAssets="all" />
         <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" IncludeAssets="compile;runtime" PrivateAssets="all" />
+        <None Include=".github\images\og.webp" />
         <None Include="LICENSE;README.md;resources/**" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" Link="%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
 
@@ -88,6 +89,10 @@
 
     <Target Name="PackZip" AfterTargets="FilterModInfo">
         <MakeDir Directories="bin\mods\mod" />
+        <ItemGroup>
+            <FilesToDelete Include="bin\**\*.nupkg" />
+        </ItemGroup>
+        <Delete Files="@(FilesToDelete)" />
         <ZipDirectory DestinationFile="bin/livemap-$(Version).zip" SourceDirectory="$(TargetDir)" Overwrite="true" />
     </Target>
 
