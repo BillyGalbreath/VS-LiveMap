@@ -13,7 +13,7 @@ namespace livemap.httpd;
 
 [PublicAPI]
 public partial class WebServer {
-    [GeneratedRegex(@"^.*?\/?(.+)\/([+-]?\d+)\/([+-]?\d+)\/([+-]?\d+)\/?$")]
+    [GeneratedRegex(@"^(.*\/)?(.+)\/([+-]?\d+)\/([+-]?\d+)\/([+-]?\d+)(\/.*)?")]
     private static partial Regex FriendlyUrlRegex();
 
     private readonly LiveMapServer _server;
@@ -91,19 +91,26 @@ public partial class WebServer {
     }
 
     private static void HandleRequest(HttpListenerContext context) {
-        string? urlLoc = context.Request.Url?.LocalPath[1..];
-        if (urlLoc is null or "") {
-            urlLoc = "index.html";
-        }
+        string urlLoc = context.Request.Url?.LocalPath[1..] ?? "";
 
         try {
             // friendly urls
             MatchCollection matches = FriendlyUrlRegex().Matches(urlLoc);
-            if (matches.Count > 0 && urlLoc.Equals(matches[0].Value)) {
-                urlLoc = "index.html";
+            if (matches.Count > 0) {
+                string group6 = matches[0].Groups[6].Value;
+                if (group6.Length == 0 && !matches[0].Value.EndsWith("/")) {
+                    context.Response.Redirect($"{context.Request.Url?.OriginalString}/");
+                    context.Response.Close();
+                    return;
+                }
+                urlLoc = group6[1..];
             }
         } catch (Exception) {
             // ignore
+        }
+
+        if (string.IsNullOrEmpty(urlLoc)) {
+            urlLoc = "index.html";
         }
 
         using HttpListenerResponse response = context.Response;

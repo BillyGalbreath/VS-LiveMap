@@ -19,8 +19,8 @@ module.exports = {
       publicPath: '/',
       rewrites: [
         {
-          from: /.+\/[+-]?\d+\/[+-]?\d+\/[+-]?\d+(.*)/,
-          to: ctx => ctx.match[1] ? ctx.match[1] : '/'
+          from: /(.*\/)?(.+)\/([+-]?\d+)\/([+-]?\d+)\/([+-]?\d+)(\/.*)?/,
+          to: ctx => ctx.match[6] ? ctx.match[6] : '/'
         },
         {
           from: /./,

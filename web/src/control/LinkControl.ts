@@ -67,26 +67,22 @@ export class LinkControl extends ControlBox {
 
     public centerOnUrl(): void {
         let renderer, zoom, x, z;
-        const match: RegExpExecArray | null = /(.*)?\/(.+)\/([+-]?\d+)\/([+-]?\d+)\/([+-]?\d+)\/?$/.exec(window.location.pathname);
+        const match: RegExpExecArray | null = /(.*\/)?(.+)\/([+-]?\d+)\/([+-]?\d+)\/([+-]?\d+)(\/.*)?$/.exec(window.location.pathname);
         if (match) {
             this._basePath = match[1] ?? '/';
             renderer = match[2];
             zoom = match[3];
             x = match[4];
             z = match[5];
-            console.log(window.location.pathname.replace(`${this._basePath}${renderer}/${zoom}/${x}/${z}/`, ''));
         } else {
-            this._basePath = window.location.pathname?.split('?')[0]?.replace('index.html', '') ?? '/';
             const url: URLSearchParams = new URLSearchParams(window.location.search);
+            this._basePath = window.location.pathname?.split('?')[0]?.replace('index.html', '') ?? '/';
             renderer = url.get('renderer');
             zoom = url.get('zoom');
             x = url.get('x');
             z = url.get('z');
         }
         this._livemap.sidebarControl.renderersControl.rendererType = renderer ?? this._livemap.settings.renderers[0].id;
-        this._livemap.centerOn(
-            Point.of(x ?? 0, z ?? 0),
-            zoom ?? this._livemap.settings.zoom.def
-        );
+        this._livemap.centerOn(Point.of(x ?? 0, z ?? 0), zoom ?? this._livemap.settings.zoom.def);
     }
 }
