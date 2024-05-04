@@ -289,6 +289,11 @@ const setTheme = (): void => {
     // todo
     //localStorage.setItem("theme", theme);
     //localStorage.removeItem("theme");
+
+    const icon: HTMLLinkElement | null = document.querySelector("link[rel='shortcut icon']");
+    if (icon) {
+        icon.href = prefersDark ? "favicon-white.ico" : "favicon.ico";
+    }
 };
 
 setTheme();
