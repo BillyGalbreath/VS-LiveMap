@@ -182,7 +182,7 @@ export class ContextMenu {
 
     public share(point?: Point): void {
         point ??= this._point ?? this._livemap.coordsControl.getPoint();
-        const text: string = `${window.location.origin}${window.location.pathname}?x=${point.x}&z=${point.z}&zoom=${this._livemap.currentZoom()}`;
+        const text: string = `${window.location.origin}${this._livemap.linkControl.getUrlFromPoint(point)}`;
         navigator.clipboard.writeText(text)
             .then((): void => {
                 this._livemap.notifications.success('Copied shareable url to clipboard');

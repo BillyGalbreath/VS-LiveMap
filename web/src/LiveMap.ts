@@ -85,14 +85,7 @@ export class LiveMap extends L.Map {
         this.on('load', (): void => this.onLoad());
 
         // center the map on url coordinates or spawn (0, 0); this initializes the map
-        setTimeout((): void => {
-            const url: URLSearchParams = new URLSearchParams(window.location.search);
-            this.sidebarControl.renderersControl.rendererType = url.get('renderer');
-            this.centerOn(
-                Point.of(url.get('x') ?? 0, url.get('z') ?? 0),
-                url.get('zoom') ?? this.settings.zoom.def
-            );
-        }, 0);
+        setTimeout((): void => this.linkControl.centerOnUrl(), 0);
     }
 
     onLoad(): void {

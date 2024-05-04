@@ -1,5 +1,6 @@
 {
   "attribution": "<a href=\"https://mods.vintagestory.at/livemap\" target=\"_blank\">Livemap</a> &copy;2024",
+  "friendlyUrls": true,
   "interval": 30,
   "size": [1024000, 1024000],
   "spawn": [512000, 512000],
@@ -14,11 +15,11 @@
   "renderers": [
     {
       "id": "basic",
-      "icon": ""
+      "icon": "#svg-basic"
     },
     {
       "id": "sepia",
-      "icon": ""
+      "icon": "#svg-sepia"
     }
   ],
   "ui": {

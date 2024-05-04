@@ -1,13 +1,16 @@
 aside {
+  --bounce: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
   position: fixed;
   top: 0;
-  right: -360px;
-  width: 260px;
+  /*right: -320px;*/
+  right: -320px;
+  width: 250px;
   height: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;
-  padding: 0 100px 0 10px;
+  padding: 0 100px 0 0;
   z-index: 1000000;
   font-family: "Poppins", sans-serif;
   border-left: var(--border);
@@ -17,11 +20,10 @@ aside {
   backdrop-filter: var(--blur);
   color: var(--text-color);
   text-shadow: var(--text-shadow);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.2s ease, right var(--bounce);
   background-blend-mode: color;
 
   &:hover {
-    right: -100px;
     border-left: var(--border-hover);
     background-color: var(--background-color-hover);
   }
@@ -32,18 +34,49 @@ aside {
     #pin {
       opacity: 1;
     }
+
+    div {
+      svg {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+      }
+
+      div:not(:first-child) {
+        flex: 0;
+      }
+    }
+
+    ul li img {
+      width: 32px;
+      height: 32px;
+      margin: 0 10px 0 10px;
+    }
   }
 
   div {
     display: flex;
-    align-items: center;
+    justify-content: center;
+    width: 100%;
     padding: 15px 0;
+    line-height: 40px;
     font-size: 1.15rem;
     font-weight: 600;
 
+
+    > div, svg {
+      transition: all 0.1s ease;
+    }
+
+    > div {
+      padding: 0;
+      flex: 1;
+    }
+
     svg {
-      width: 40px;
-      height: 40px;
+      width: 24px;
+      height: 24px;
+      padding: 8px 0;
       margin-right: 15px;
       filter: var(--filter-shadow);
     }
@@ -63,10 +96,11 @@ aside {
 
     li {
       display: flex;
+      margin: 0 5px 0 2px;
+      padding: 2px 0;
+      height: 34px;
+      line-height: 34px;
       border-radius: 5px;
-      align-items: center;
-      margin: 0 5px;
-      padding: 5px;
 
       &:hover {
         cursor: pointer;
@@ -78,15 +112,16 @@ aside {
       }
 
       img {
-        width: 32px;
-        height: 32px;
+        width: 24px;
+        height: 24px;
+        margin: 3px 28px 0 0;
         border: var(--border);
         border-radius: 5px;
         box-shadow: var(--box-shadow);
+        transition: all 0.2s ease;
       }
 
       p {
-        margin-left: 10px;
         color: var(--text-color);
         font-weight: 500;
         white-space: nowrap;
@@ -102,7 +137,7 @@ aside {
     height: 23px;
     margin: 5px 5px 10px 6px;
     padding: 2px;
-    border: 1px solid #ffffff00;
+    border: 1px solid transparent;
     border-radius: 4px;
     opacity: 0;
     transition: all .2s ease-in-out;

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Mime;
+using System.Text.RegularExpressions;
 using System.Threading;
 using JetBrains.Annotations;
 using livemap.logger;
@@ -11,7 +12,10 @@ using MimeTypes;
 namespace livemap.httpd;
 
 [PublicAPI]
-public class WebServer {
+public partial class WebServer {
+    [GeneratedRegex(@"^.*?\/?(.+)\/([+-]?\d+)\/([+-]?\d+)\/([+-]?\d+)\/?$")]
+    private static partial Regex FriendlyUrlRegex();
+
     private readonly LiveMapServer _server;
 
     private HttpListener? _listener;
@@ -90,6 +94,16 @@ public class WebServer {
         string? urlLoc = context.Request.Url?.LocalPath[1..];
         if (urlLoc is null or "") {
             urlLoc = "index.html";
+        }
+
+        try {
+            // friendly urls
+            MatchCollection matches = FriendlyUrlRegex().Matches(urlLoc);
+            if (matches.Count > 0 && urlLoc.Equals(matches[0].Value)) {
+                urlLoc = "index.html";
+            }
+        } catch (Exception) {
+            // ignore
         }
 
         using HttpListenerResponse response = context.Response;

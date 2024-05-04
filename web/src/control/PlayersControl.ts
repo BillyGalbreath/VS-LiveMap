@@ -53,14 +53,14 @@ export class PlayersControl {
             .replace(/{max}/g, this.max.toString());/*/
     }
 
-    private createPlayer(player: Player): HTMLLIElement {
-        const li: HTMLLIElement = L.DomUtil.create('li');
+    private createPlayer(player: Player): HTMLElement {
+        const li: HTMLElement = L.DomUtil.create('li');
         li.id = player.id;
         li.title = player.name;
 
         const img: HTMLImageElement = L.DomUtil.create('img', '', li);
         img.src = player.avatar;
-        img.alt = player.name;
+        img.alt = `${player.name}'s Avatar`;
 
         const p: HTMLParagraphElement = L.DomUtil.create('p', '', li);
         p.innerText = player.name;

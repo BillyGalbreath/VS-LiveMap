@@ -14,6 +14,10 @@ export class RenderersControl {
         this._livemap = livemap;
 
         this._dom = L.DomUtil.create('ul');
+
+        livemap.settings.renderers.forEach((renderer: Renderer): void => {
+            this._renderers.push(new Renderer(renderer))
+        });
     }
 
     get dom(): HTMLElement {
@@ -25,6 +29,6 @@ export class RenderersControl {
     }
 
     set rendererType(renderer: string | null) {
-        this._rendererType = !renderer?.length ? 'basic' : renderer;
+        this._rendererType = !renderer?.length ? this._renderers[0].id : renderer;
     }
 }

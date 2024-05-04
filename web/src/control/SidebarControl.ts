@@ -20,35 +20,33 @@ export class SidebarControl {
         this._dom = L.DomUtil.create('aside');
         document.body.prepend(this._dom);
 
-        const pin: PinControl = new PinControl(livemap);
-        if (pin.pinned) {
-            this.show();
-        } else {
-            this.hide();
-        }
+        // set up and show/hide the pin
+        const pin: PinControl = new PinControl(livemap, this._dom);
+        this.show(pin.pinned);
 
-        const div: HTMLDivElement = L.DomUtil.create('div', '', this._dom);
-        div.appendChild(window.createSVGIcon("logo"));
-        const span: HTMLSpanElement = L.DomUtil.create('span', '', div);
-        span.innerText = "LiveMap";
+        // set up the logo fancy div magic
+        const holder: HTMLElement = L.DomUtil.create('div', '', this._dom);
+        const logo: HTMLElement = L.DomUtil.create('div', '', holder);
+        L.DomUtil.create('div', '', holder); // this one is squishy :3
+        logo.appendChild(window.createSVGIcon("logo"));
+        const text: HTMLElement = L.DomUtil.create('span', '', logo);
+        text.innerText = "LiveMap";
 
-        // add these after the pin
+        // add these after the logo
         this._dom.appendChild(this.renderersControl.dom);
         this._dom.appendChild(this.playersControl.dom);
-
-        this.tick();
 
         this._dom.onclick = (): void => {
             // todo followPlayerMarker(null)
         };
         this._dom.onmouseleave = (): void => {
             if (!pin.pinned) {
-                this.hide();
+                this.show(false);
             }
         };
         this._dom.onmouseenter = (): void => {
             if (!pin.pinned) {
-                this.show();
+                this.show(true);
             }
         };
     }
@@ -61,12 +59,8 @@ export class SidebarControl {
         return this._playersControl;
     }
 
-    public hide(): void {
-        this._dom.classList.remove('show');
-    }
-
-    public show(): void {
-        this._dom.classList.add('show');
+    public show(show: boolean): void {
+        this._dom.className = show ? 'show' : '';
     }
 
     public tick(): void {

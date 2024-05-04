@@ -14,6 +14,19 @@ module.exports = {
         ignored: '**/*.json',
         usePolling: false,
       },
+    },
+    historyApiFallback: {
+      publicPath: '/',
+      rewrites: [
+        {
+          from: /.+\/[+-]?\d+\/[+-]?\d+\/[+-]?\d+(.*)/,
+          to: ctx => ctx.match[1] ? ctx.match[1] : '/'
+        },
+        {
+          from: /./,
+          to: '/404.html'
+        }
+      ],
     }
   },
   devtool: 'source-map',

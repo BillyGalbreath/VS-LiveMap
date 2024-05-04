@@ -5,13 +5,17 @@
   --sidebar-unpinned-background: rgba(128, 0, 0, 0.5);
   --sidebar-unpinned-border: 1px solid rgba(128, 0, 0, 0.75);
   --sidebar-unpinned-filter-shadow: drop-shadow(1px 1px 1px rgba(255, 0, 0, .75));
-  --notification-info: #A0AFAF80;
+  --notification-info-color: #EEEEEE;
+  --notification-info-background: #A0AFAF80;
   --notification-info-border: 1px outset #A0AFAFBF;
-  --notification-success: #40FF0080;
+  --notification-success-color: #EEEEEE;
+  --notification-success-background: #40FF0080;
   --notification-success-border: 1px outset #40FF00BF;
-  --notification-warning: #FFE00080;
+  --notification-warning-color: #EEEEEE;
+  --notification-warning-background: #FFE00080;
   --notification-warning-border: 1px outset #FFE000BF;
-  --notification-danger: #FF404080;
+  --notification-danger-color: #EEEEEE;
+  --notification-danger-background: #FF404080;
   --notification-danger-border: 1px outset #FF4040BF;
 }
 

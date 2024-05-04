@@ -9,7 +9,7 @@ export class PinControl {
 
     private _pinned: boolean = false;
 
-    constructor(livemap: LiveMap) {
+    constructor(livemap: LiveMap, parent: HTMLElement) {
         this._livemap = livemap;
 
         this._dom = L.DomUtil.create('div');
@@ -20,7 +20,7 @@ export class PinControl {
         };
 
         if (livemap.settings.ui.sidebar.pinned != "hide") {
-            document.querySelector('aside')!.appendChild(this._dom);
+            parent.appendChild(this._dom);
         }
 
         this._img = L.DomUtil.create('img', '', this._dom);
