@@ -62,7 +62,9 @@ export class LiveMap extends L.Map {
         this._settings = settings;
 
         // set custom page title from lang
-        document.title = settings.lang.title ?? 'Vintage Story LiveMap';
+        if (document.title.trim() == '') {
+            document.title = settings.lang.title ?? 'Vintage Story LiveMap';
+        }
 
         // pre-calculate map's scale
         this._scale ??= (1 / Math.pow(2, settings.zoom.maxout));

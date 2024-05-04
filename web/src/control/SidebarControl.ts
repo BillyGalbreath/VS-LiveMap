@@ -30,7 +30,7 @@ export class SidebarControl {
         L.DomUtil.create('div', '', holder); // this one is squishy :3
         logo.appendChild(window.createSVGIcon("logo"));
         const text: HTMLElement = L.DomUtil.create('span', '', logo);
-        text.innerText = "LiveMap";
+        text.innerText = this._livemap.settings.lang.title;
 
         // add these after the logo
         this._dom.appendChild(this.renderersControl.dom);
