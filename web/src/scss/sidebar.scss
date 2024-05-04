@@ -20,7 +20,7 @@ aside {
   backdrop-filter: var(--blur);
   color: var(--text-color);
   text-shadow: var(--text-shadow);
-  transition: all 0.2s ease, right var(--bounce);
+  transition: all 0.3s ease, right var(--bounce);
   background-blend-mode: color;
 
   &:hover {
@@ -65,7 +65,7 @@ aside {
 
 
     > div, svg {
-      transition: all 0.1s ease;
+      transition: all 0.3s ease;
     }
 
     > div {
@@ -118,7 +118,7 @@ aside {
         border: var(--border);
         border-radius: 5px;
         box-shadow: var(--box-shadow);
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
       }
 
       p {
