@@ -60,7 +60,8 @@ dotnet build
 And the final zip will be located at `bin/mods/livemap.zip` if there were no errors.
 
 ## Special Thanks
-
+<br>
+<br>
 <div align="center">
   <table>
     <tr>
