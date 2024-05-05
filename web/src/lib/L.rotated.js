@@ -26,7 +26,7 @@
 
 // https://github.com/bbecquet/Leaflet.RotatedMarker
 
-import * as L from "leaflet";
+import * as L from 'leaflet';
 
 (function () {
   // save these original methods before they are overwritten

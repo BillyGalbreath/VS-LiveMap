@@ -8,11 +8,10 @@ aside {
   width: 250px;
   height: 100%;
   display: flex;
-  align-items: center;
   flex-direction: column;
   padding: 0 100px 0 0;
   z-index: 1000000;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
   border-left: var(--border);
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
@@ -33,6 +32,11 @@ aside {
 
     #pin {
       opacity: 1;
+      transition: all .2s ease-in-out, opacity .6s ease-out;
+
+      svg {
+        rotate: 0deg;
+      }
     }
 
     div {
@@ -87,7 +91,7 @@ aside {
     overflow-y: auto;
     scrollbar-width: none;
     margin-bottom: 10px;
-    width: 100%;
+    width: 320px;
 
     &::-webkit-scrollbar {
       display: none;
@@ -140,18 +144,22 @@ aside {
     border: 1px solid transparent;
     border-radius: 4px;
     opacity: 0;
-    transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out, opacity .3s ease-out;
     cursor: pointer;
 
-    img {
-      opacity: .75;
+    svg {
+      margin: 0;
+      padding: 0;
       width: 23px;
       height: 23px;
+      rotate: 45deg;
+      transition: all 0.3s cubic-bezier(0.3, 2, 0.6, 1);
     }
 
     &.pinned {
-      img {
+      svg {
         filter: var(--sidebar-pinned-filter-shadow);
+        rotate: -45deg;
       }
 
       &:hover {
@@ -161,7 +169,7 @@ aside {
     }
 
     &.unpinned {
-      img {
+      svg {
         filter: var(--sidebar-unpinned-filter-shadow);
       }
 

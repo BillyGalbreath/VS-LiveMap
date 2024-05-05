@@ -1,7 +1,7 @@
-import * as L from "leaflet";
-import {LiveMap} from "../../LiveMap";
-import {Point} from "../../data/Point";
-import {MenuRow} from "./MenuRow";
+import * as L from 'leaflet';
+import {LiveMap} from '../../LiveMap';
+import {Point} from '../../data/Point';
+import {MenuRow} from './MenuRow';
 
 export class ContextMenu {
     private readonly _livemap: LiveMap;

@@ -24,7 +24,6 @@ img.leaflet-tile {
   .leaflet-control-layers-toggle {
     width: 30px !important;
     height: 30px !important;
-    background-image: url(images/layers.png);
     background-size: 20px 20px;
     background-repeat: no-repeat;
     background-position: 50% 50%;
@@ -61,6 +60,7 @@ img.leaflet-tile {
     }
 
     .leaflet-bottom {
+      display: grid;
       align-content: flex-end;
     }
 
@@ -69,7 +69,6 @@ img.leaflet-tile {
     }
 
     .leaflet-center {
-      display: grid;
       justify-content: center;
     }
 

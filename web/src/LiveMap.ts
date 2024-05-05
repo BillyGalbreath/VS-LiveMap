@@ -230,7 +230,7 @@ window.onload = (): void => {
 };
 
 // update map size when window size, scale, or orientation changes
-"orientationchange resize".split(' ').forEach((event: string): void => {
+'orientationchange resize'.split(' ').forEach((event: string): void => {
     window.addEventListener(event, (): void => {
         window.livemap?.updateSizeToWindow();
     }, {passive: true});
@@ -239,7 +239,7 @@ window.onload = (): void => {
 window.fetchJson = async <T>(url: string): Promise<T> => {
     const res: Response = await fetch(url, {
         headers: {
-            "Content-Disposition": "inline"
+            'Content-Disposition': 'inline'
         }
     });
     if (res.ok) {
@@ -287,12 +287,12 @@ const setTheme = (): void => {
     const theme: string = localStorage.getItem('theme') ?? knownThemes[+prefersDark];
     document.querySelector('html')!.setAttribute('theme', theme);
     // todo
-    //localStorage.setItem("theme", theme);
-    //localStorage.removeItem("theme");
+    //localStorage.setItem('theme', theme);
+    //localStorage.removeItem('theme');
 
-    const icon: HTMLLinkElement | null = document.querySelector("link[rel='shortcut icon']");
+    const icon: HTMLLinkElement | null = document.querySelector('link[rel="shortcut icon"]');
     if (icon) {
-        icon.href = prefersDark ? "favicon-white.ico" : "favicon.ico";
+        icon.href = prefersDark ? 'favicon-white.ico' : 'favicon.ico';
     }
 };
 

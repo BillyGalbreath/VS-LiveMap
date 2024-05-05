@@ -18,8 +18,8 @@
 
 // https://github.com/jdfergason/Leaflet.Ellipse
 
-import * as L from "leaflet";
-import {Point} from "../data/Point";
+import * as L from 'leaflet';
+import {Point} from '../data/Point';
 
 L.SVG.include({
   _updateEllipse: function (layer) {
@@ -53,7 +53,7 @@ L.Canvas.include({
     } else if (this.hasOwnProperty('_layers')) {
       this._layers[layer._leaflet_id] = layer;
     } else {
-      throw new Error("Cannot find property _drawnLayers or _layers");
+      throw new Error('Cannot find property _drawnLayers or _layers');
     }
 
     ctx.save();

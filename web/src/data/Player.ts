@@ -1,5 +1,5 @@
-import {Point} from "./Point";
-import {Value} from "./Value";
+import {Point} from './Point';
+import {Value} from './Value';
 
 export class Player {
     private readonly _id: string;

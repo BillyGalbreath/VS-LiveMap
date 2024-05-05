@@ -1,12 +1,12 @@
 import * as L from 'leaflet';
 import {LiveMap} from '../LiveMap';
-import {Marker, MarkerJson, PopupOptions} from "./marker/Marker";
-import {Circle} from "./marker/Circle";
-import {Ellipse} from "./marker/Ellipse";
-import {Icon} from "./marker/Icon";
-import {Polygon} from "./marker/Polygon";
-import {Polyline} from "./marker/Polyline";
-import {Rectangle} from "./marker/Rectangle";
+import {Marker, MarkerJson, PopupOptions} from './marker/Marker';
+import {Circle} from './marker/Circle';
+import {Ellipse} from './marker/Ellipse';
+import {Icon} from './marker/Icon';
+import {Polygon} from './marker/Polygon';
+import {Polyline} from './marker/Polyline';
+import {Rectangle} from './marker/Rectangle';
 
 interface Defaults {
     options: L.LayerOptions,
@@ -86,7 +86,7 @@ export class MarkersLayer extends L.LayerGroup {
 
         // insert any custom css
         if (json.css) {
-            document.head.insertAdjacentHTML('beforeend', `<style id="${this.id}">${json.css}</style>`);
+            document.head.insertAdjacentHTML('beforeend', `<style id='${this.id}'>${json.css}</style>`);
         }
 
         // only add to the map if we are not hiding it by default

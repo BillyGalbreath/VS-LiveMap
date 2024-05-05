@@ -1,7 +1,7 @@
 import * as L from 'leaflet';
-import {Marker, MarkerJson} from "./Marker";
-import {MarkersLayer} from "../MarkersLayer";
-import {Point} from "../../data/Point";
+import {Marker, MarkerJson} from './Marker';
+import {MarkersLayer} from '../MarkersLayer';
+import {Point} from '../../data/Point';
 
 export class Icon extends Marker {
     private static svgHtml: string = '<svg preserveAspectRatio="none" width="100%" height="100%"><use href="{0}"></use></svg>';

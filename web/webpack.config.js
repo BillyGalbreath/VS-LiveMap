@@ -12,8 +12,8 @@ module.exports = {
       directory: path.join(__dirname, 'public'),
       watch: {
         ignored: '**/*.json',
-        usePolling: false,
-      },
+        usePolling: false
+      }
     },
     historyApiFallback: {
       publicPath: '/',
@@ -26,7 +26,7 @@ module.exports = {
           from: /./,
           to: '/404.html'
         }
-      ],
+      ]
     }
   },
   devtool: 'source-map',
@@ -53,7 +53,7 @@ module.exports = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              esModule: false,
+              esModule: false
             }
           },
           {
@@ -67,7 +67,7 @@ module.exports = {
             loader: 'sass-loader',
             options: {
               sassOptions: {
-                outputStyle: 'expanded',
+                outputStyle: 'expanded'
               }
             }
           }
@@ -77,8 +77,8 @@ module.exports = {
         test: /\.svg$/,
         loader: 'svg-sprite-loader',
         options: {
-          symbolId: (filePath) => `svg-${path.basename(filePath, '.svg')}`,
-        },
+          symbolId: (filePath) => `svg-${path.basename(filePath, '.svg')}`
+        }
       }
     ]
   },
@@ -94,7 +94,7 @@ module.exports = {
           }
         }
       })
-    ],
+    ]
   },
   output: {
     publicPath: '/',

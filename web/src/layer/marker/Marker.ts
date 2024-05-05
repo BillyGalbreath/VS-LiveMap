@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
-import {MarkersLayer} from "../MarkersLayer";
-import {Point} from "../../data/Point";
+import {MarkersLayer} from '../MarkersLayer';
+import {Point} from '../../data/Point';
 
 export interface MarkerJson {
     type: string,

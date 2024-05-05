@@ -1,6 +1,6 @@
-import {LiveMap} from "../LiveMap";
-import {Renderer} from "../data/Renderer";
-import * as L from "leaflet";
+import {LiveMap} from '../LiveMap';
+import {Renderer} from '../data/Renderer';
+import * as L from 'leaflet';
 
 export class RenderersControl {
     private readonly _livemap: LiveMap;
@@ -8,7 +8,7 @@ export class RenderersControl {
 
     private _renderers: Renderer[] = [];
 
-    private _rendererType: string = "basic";
+    private _rendererType: string = 'basic';
 
     constructor(livemap: LiveMap) {
         this._livemap = livemap;

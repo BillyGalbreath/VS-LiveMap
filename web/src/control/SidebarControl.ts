@@ -1,8 +1,8 @@
 import * as L from 'leaflet';
 import {LiveMap} from '../LiveMap';
-import {PinControl} from "./PinControl";
-import {PlayersControl} from "./PlayersControl";
-import {RenderersControl} from "./RenderersControl";
+import {PinControl} from './PinControl';
+import {PlayersControl} from './PlayersControl';
+import {RenderersControl} from './RenderersControl';
 
 export class SidebarControl {
     private readonly _livemap: LiveMap;
@@ -28,7 +28,7 @@ export class SidebarControl {
         const holder: HTMLElement = L.DomUtil.create('div', '', this._dom);
         const logo: HTMLElement = L.DomUtil.create('div', '', holder);
         L.DomUtil.create('div', '', holder); // this one is squishy :3
-        logo.appendChild(window.createSVGIcon("logo"));
+        logo.appendChild(window.createSVGIcon('logo'));
         const text: HTMLElement = L.DomUtil.create('span', '', logo);
         text.innerText = this._livemap.settings.lang.title;
 

@@ -1,7 +1,7 @@
-import {LiveMap} from "../LiveMap";
-import {Players} from "../data/Players";
-import {Player} from "../data/Player";
-import * as L from "leaflet";
+import {LiveMap} from '../LiveMap';
+import {Players} from '../data/Players';
+import {Player} from '../data/Player';
+import * as L from 'leaflet';
 
 export class PlayersControl {
     private readonly _livemap: LiveMap;

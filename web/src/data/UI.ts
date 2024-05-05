@@ -1,4 +1,4 @@
-import {Sidebar} from "./Sidebar";
+import {Sidebar} from './Sidebar';
 
 export class UI {
     private readonly _sidebar: Sidebar;

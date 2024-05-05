@@ -2,7 +2,7 @@ export class Web {
     private readonly _tiletype: string;
 
     constructor(web?: Web) {
-        this._tiletype = web?._tiletype ?? "webp";
+        this._tiletype = web?._tiletype ?? 'webp';
     }
 
     get tiletype(): string {

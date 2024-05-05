@@ -5,10 +5,10 @@ self.addEventListener('fetch', e => {
     fetch(e.request).then(orig => {
       return orig.status < 400 ? orig : new Response(null, {
         status: 202,
-        statusText: "Accepted",
+        statusText: 'Accepted',
         headers: new Headers({
-          "Status": orig.status,
-          "StatusText": orig.statusText
+          'Status': orig.status,
+          'StatusText': orig.statusText
         })
       });
     })

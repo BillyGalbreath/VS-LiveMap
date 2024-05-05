@@ -1,11 +1,10 @@
 import * as L from 'leaflet';
-import {LiveMap} from "../LiveMap";
-import {Lang} from "../data/Lang";
+import {LiveMap} from '../LiveMap';
 
 export class PinControl {
     private readonly _livemap: LiveMap;
     private readonly _dom: HTMLElement;
-    private readonly _img: HTMLImageElement;
+    private readonly _svg: SVGSVGElement;
 
     private _pinned: boolean = false;
 
@@ -16,16 +15,17 @@ export class PinControl {
         this._dom.id = 'pin';
         this._dom.onclick = (): void => {
             this.pin(!this.pinned);
-            localStorage.setItem("pinned", this.pinned ? "pinned" : "unpinned");
+            localStorage.setItem('pinned', this.pinned ? 'pinned' : 'unpinned');
         };
 
-        if (livemap.settings.ui.sidebar.pinned != "hide") {
+        if (livemap.settings.ui.sidebar.pinned != 'hide') {
             parent.appendChild(this._dom);
         }
 
-        this._img = L.DomUtil.create('img', '', this._dom);
+        this._dom.appendChild(window.createSVGIcon('pin'));
+        this._svg = this._dom.querySelector('svg')!;
 
-        this.pin("pinned" === (localStorage.getItem("pinned") ?? livemap.settings.ui.sidebar.pinned));
+        this.pin('pinned' === (localStorage.getItem('pinned') ?? livemap.settings.ui.sidebar.pinned));
     }
 
     public get pinned(): boolean {
@@ -35,13 +35,10 @@ export class PinControl {
     public pin(pinned: boolean): void {
         this._pinned = pinned;
 
-        const lang: Lang = this._livemap.settings.lang;
-        const state: string = pinned ? 'pinned' : 'unpinned';
-        const text: string = eval(`lang.${state}`);
+        this._dom.className = pinned ? 'pinned' : 'unpinned';
+        const text: string = eval(`this._livemap.settings.lang.${this._dom.className}`);
 
-        this._dom.className = state;
-        this._img.src = `images/${state}.png`;
-        this._img.alt = text;
-        this._img.title = text;
+        this._svg.setAttribute('alt', text);
+        this._svg.setAttribute('title', text);
     }
 }

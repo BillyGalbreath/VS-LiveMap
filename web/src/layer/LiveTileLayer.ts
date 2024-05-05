@@ -2,9 +2,9 @@ import * as L from 'leaflet';
 import {LiveMap} from '../LiveMap';
 
 // https://stackoverflow.com/a/75848002/3530727
-navigator.serviceWorker.register("noerr.js").then((): void => {
+navigator.serviceWorker.register('noerr.js').then((): void => {
         navigator.serviceWorker.controller
-            ? window.dispatchEvent(new CustomEvent("swready"))
+            ? window.dispatchEvent(new CustomEvent('swready'))
             : navigator.serviceWorker.ready
                 .then((): void => location.reload());
     }

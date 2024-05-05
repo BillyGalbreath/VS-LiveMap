@@ -1,4 +1,4 @@
-import {Player} from "./Player";
+import {Player} from './Player';
 
 export class Players {
     private readonly _max: number;

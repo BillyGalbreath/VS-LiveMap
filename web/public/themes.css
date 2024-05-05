@@ -1,10 +1,10 @@
 :root {
-  --sidebar-pinned-background: rgba(0, 128, 0, 0.5);
-  --sidebar-pinned-border: 1px solid rgba(0, 128, 0, 0.75);
-  --sidebar-pinned-filter-shadow: drop-shadow(1px 1px 1px rgba(0, 255, 0, .75));
-  --sidebar-unpinned-background: rgba(128, 0, 0, 0.5);
-  --sidebar-unpinned-border: 1px solid rgba(128, 0, 0, 0.75);
-  --sidebar-unpinned-filter-shadow: drop-shadow(1px 1px 1px rgba(255, 0, 0, .75));
+  --sidebar-pinned-background: #00FF0080;
+  --sidebar-pinned-border: 1px solid #00FF00BF;
+  --sidebar-pinned-filter-shadow: drop-shadow(1px 1px 1px #00FF0080);
+  --sidebar-unpinned-background: #FF000080;
+  --sidebar-unpinned-border: 1px solid #FF0000BF;
+  --sidebar-unpinned-filter-shadow: drop-shadow(1px 1px 1px #FF000080);
   --notification-info-color: #EEEEEE;
   --notification-info-background: #A0AFAF80;
   --notification-info-border: 1px outset #A0AFAFBF;

@@ -1,7 +1,7 @@
 import * as L from 'leaflet';
 import {ControlBox} from './ControlBox';
 import {LiveMap} from '../LiveMap';
-import {Point} from "../data/Point";
+import {Point} from '../data/Point';
 
 export class CoordsControl extends ControlBox {
     private readonly _dom: HTMLElement;

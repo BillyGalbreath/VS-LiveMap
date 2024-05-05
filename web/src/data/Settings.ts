@@ -1,9 +1,9 @@
-import {Point} from "./Point";
-import {Web} from "./Web";
+import {Point} from './Point';
+import {Web} from './Web';
 import {Zoom} from './Zoom';
-import {UI} from "./UI";
-import {Lang} from "./Lang";
-import {Renderer} from "./Renderer";
+import {Renderer} from './Renderer';
+import {UI} from './UI';
+import {Lang} from './Lang';
 
 export class Settings {
     private readonly _attribution: string;

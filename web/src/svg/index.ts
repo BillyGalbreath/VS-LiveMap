@@ -20,6 +20,7 @@ import './marker.svg';
 import './mushroom.svg';
 import './paste.svg';
 import './pick.svg';
+import './pin.svg';
 import './player.svg';
 import './propick.svg';
 import './rocks.svg';
