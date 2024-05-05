@@ -1,5 +1,6 @@
 export class Lang {
     private readonly _title: string;
+    private readonly _logo: string;
     private readonly _pinned: string;
     private readonly _unpinned: string;
     private readonly _players: string;
@@ -23,6 +24,7 @@ export class Lang {
 
     constructor(lang: Lang) {
         this._title = lang.title;
+        this._logo = lang.logo;
         this._pinned = lang.pinned;
         this._unpinned = lang.unpinned;
         this._players = lang.players;
@@ -47,6 +49,10 @@ export class Lang {
 
     get title(): string {
         return this._title ?? 'Vintage Story LiveMap';
+    }
+
+    get logo(): string {
+        return this._logo ?? 'LiveMap';
     }
 
     get pinned(): string {

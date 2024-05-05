@@ -7,6 +7,7 @@ import {Lang} from './Lang';
 
 export class Settings {
     private readonly _attribution: string;
+    private readonly _homepage: string;
     private readonly _friendlyUrls: boolean;
     private readonly _interval: number;
     private readonly _size: Point;
@@ -20,6 +21,7 @@ export class Settings {
 
     constructor(json: Settings) {
         this._attribution = json.attribution ?? '';
+        this._homepage = json.homepage ?? '';
         this._friendlyUrls = json.friendlyUrls ?? true;
         this._interval = json.interval ?? 30;
         this._size = json.size ? Point.of(json.size) : Point.of(1024000, 1024000);
@@ -34,6 +36,10 @@ export class Settings {
 
     get attribution(): string {
         return this._attribution;
+    }
+
+    get homepage(): string {
+        return this._homepage;
     }
 
     get friendlyUrls(): boolean {

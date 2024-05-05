@@ -28,9 +28,14 @@ export class SidebarControl {
         const holder: HTMLElement = L.DomUtil.create('div', '', this._dom);
         const logo: HTMLElement = L.DomUtil.create('div', '', holder);
         L.DomUtil.create('div', '', holder); // this one is squishy :3
-        logo.appendChild(window.createSVGIcon('logo'));
-        const text: HTMLElement = L.DomUtil.create('span', '', logo);
-        text.innerText = this._livemap.settings.lang.title;
+
+        const homepage: string = this._livemap.settings.homepage;
+        const link: HTMLElement = L.DomUtil.create((homepage ? 'a' : 'span'), '', logo);
+        link.innerText = this._livemap.settings.lang.logo;
+        link.prepend(window.createSVGIcon('logo'));
+        if (homepage) {
+            (link as HTMLAnchorElement).href = homepage;
+        }
 
         // add these after the logo
         this._dom.appendChild(this.renderersControl.dom);

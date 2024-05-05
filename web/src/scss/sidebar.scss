@@ -77,6 +77,13 @@ aside {
       flex: 1;
     }
 
+    a,
+    span {
+      display: flex;
+      color: var(--text-color);
+      text-decoration: none;
+    }
+
     svg {
       width: 24px;
       height: 24px;

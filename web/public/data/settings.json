@@ -1,5 +1,6 @@
 {
   "attribution": "<a href=\"https://mods.vintagestory.at/livemap\" target=\"_blank\">Livemap</a> &copy;2024",
+  "homepage": "https://mods.vintagestory.at/livemap",
   "friendlyUrls": true,
   "interval": 30,
   "size": [1024000, 1024000],
@@ -28,7 +29,8 @@
     }
   },
   "lang": {
-    "title": "LiveMap",
+    "title": "Vintage Story LiveMap",
+    "logo": "LiveMap",
     "pinned": "Pinned",
     "unpinned": "Unpinned",
     "players": "Players ({cur}/{max})",
