@@ -85,9 +85,6 @@ export class LiveMap extends L.Map {
 
         // stuff to do after the map fully loads
         this.on('load', (): void => this.onLoad());
-
-        // center the map on url coordinates or spawn (0, 0); this initializes the map
-        setTimeout((): void => this.linkControl.centerOnUrl(), 0);
     }
 
     onLoad(): void {

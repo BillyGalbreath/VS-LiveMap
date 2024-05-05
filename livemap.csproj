@@ -52,12 +52,6 @@
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" IncludeAssets="compile" PrivateAssets="all" />
         <PackageReference Include="NuGet.Build.Tasks.Pack" Version="6.7.0" IncludeAssets="compile" PrivateAssets="all" />
         <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" IncludeAssets="compile;runtime" PrivateAssets="all" />
-        <None Include=".github\images\og.webp" />
-        <None Include="LICENSE;README.md;resources/**" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" Link="%(RecursiveDir)%(Filename)%(Extension)" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="web\public\tiles\basic\" />
     </ItemGroup>
 
     <Target Name="_ResolveCopyLocalNuGetPkgXmls" AfterTargets="ResolveReferences">

@@ -1,11 +1,13 @@
 export class MenuRow {
     private readonly _text?: string;
+    private readonly _alt?: string;
     private readonly _icon?: string;
     private readonly _key?: string;
     private readonly _action?: (e?: Event) => void;
 
-    constructor(text?: string, icon?: string, key?: string, action?: (e?: Event) => void) {
+    constructor(text?: string, alt?: string, icon?: string, key?: string, action?: (e?: Event) => void) {
         this._text = text;
+        this._alt = alt;
         this._icon = icon;
         this._key = key?.toLowerCase();
         this._action = action;
@@ -13,6 +15,10 @@ export class MenuRow {
 
     get text(): string | undefined {
         return this._text;
+    }
+
+    get alt(): string | undefined {
+        return this._alt;
     }
 
     get icon(): string | undefined {
@@ -28,7 +34,7 @@ export class MenuRow {
     }
 
     public create(): HTMLElement {
-        if (!this._text) {
+        if (!this.text) {
             // no contents or text, make a divider
             return document.createElement('hr');
         }
@@ -39,11 +45,11 @@ export class MenuRow {
         const keyElem: Element = document.createElement('p');
 
         // populate contents
-        if (this._icon) {
-            iconElem.appendChild(window.createSVGIcon(this._icon));
+        if (this.icon) {
+            iconElem.appendChild(window.createSVGIcon(this.icon));
         }
-        textElem.innerHTML = this._text ?? '';
-        keyElem.innerHTML = this._key ?? '';
+        textElem.innerHTML = this.text ?? '';
+        keyElem.innerHTML = this.key ?? '';
 
         // create row
         const row: HTMLElement = document.createElement('div');
@@ -51,9 +57,13 @@ export class MenuRow {
         row.appendChild(textElem);
         row.appendChild(keyElem);
 
+        if (this.alt) {
+            row.title = this.alt;
+        }
+
         // attach click action
-        if (this._action) {
-            row.onclick = (e: MouseEvent) => this._action!(e);
+        if (this.action) {
+            row.onclick = (e: MouseEvent) => this.action!(e);
         }
 
         return row;

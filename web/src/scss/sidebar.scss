@@ -134,12 +134,9 @@ aside {
   }
 
   #pin {
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 23px;
     height: 23px;
-    margin: 5px 5px 10px 6px;
+    margin: 5px 5px -32px 6px;
     padding: 2px;
     border: 1px solid transparent;
     border-radius: 4px;

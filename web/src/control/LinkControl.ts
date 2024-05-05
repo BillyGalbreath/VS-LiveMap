@@ -2,11 +2,11 @@ import * as L from 'leaflet';
 import {ControlBox} from './ControlBox';
 import {LiveMap} from '../LiveMap';
 import {Point} from '../data/Point';
+import {Url} from '../data/Url';
 
 export class LinkControl extends ControlBox {
     private readonly _dom: HTMLAnchorElement;
-
-    private _basePath: string = '/';
+    private readonly _url: Url;
 
     constructor(livemap: LiveMap) {
         super(livemap, 'bottomleft');
@@ -14,6 +14,7 @@ export class LinkControl extends ControlBox {
         this._dom = L.DomUtil.create('a', 'leaflet-control-layers link');
         this._dom.title = 'Share this location';
         this._dom.appendChild(window.createSVGIcon('link'));
+        L.DomEvent.disableClickPropagation(this._dom);
         this._dom.onclick = (e: MouseEvent): void => {
             e.preventDefault();
             window.history.replaceState({}, 'LiveMap', this._dom.href);
@@ -24,9 +25,19 @@ export class LinkControl extends ControlBox {
             );
         }
 
-        L.DomEvent.disableClickPropagation(this._dom);
-
+        // add to the map once we have a dom to add
         this.addTo(livemap);
+
+        // parse data from the browser's url
+        this._url = new Url(this._livemap, window.location.pathname);
+
+        // center the map on url coordinates or spawn (0, 0);
+        // this sets up the map after ctor and before load
+        // onLoad will not call until this is finished
+        setTimeout((): void => {
+            this._livemap.sidebarControl.renderersControl.rendererType = this._url.renderer;
+            this._livemap.centerOn(this._url.point, this._url.zoom);
+        }, 0);
     }
 
     onAdd(map: L.Map): HTMLAnchorElement {
@@ -41,48 +52,22 @@ export class LinkControl extends ControlBox {
     }
 
     update = (): void => {
-        this._dom.href = this.getUrlFromView();
-
+        this._dom.href = this.getUrlFromView().toString();
         // todo - find out how to prevent chrome from spamming history
         window.history.replaceState({}, '', this._dom.href);
     }
 
-    public getUrlFromView(): string {
+    public getUrlFromView(): Url {
         return this.getUrlFromPoint(
-            Point.of(this._livemap.getCenter())
-                .floor()
+            Point.of(this._livemap.getCenter()).floor()
                 .subtract(this._livemap.settings.spawn)
         );
     }
 
-    public getUrlFromPoint(point: Point): string {
-        const renderer: string = this._livemap.sidebarControl.renderersControl.rendererType;
-        const zoom: number = this._livemap.currentZoom();
-        if (this._livemap.settings.friendlyUrls) {
-            return `${this._basePath}${renderer}/${zoom}/${point.x}/${point.z}/`;
-        } else {
-            return `${this._basePath}?renderer=${renderer}&zoom=${zoom}&x=${point.x}&z=${point.z}`;
-        }
-    }
-
-    public centerOnUrl(): void {
-        let renderer, zoom, x, z;
-        const match: RegExpExecArray | null = /(.*\/)?(.+)\/([+-]?\d+)\/([+-]?\d+)\/([+-]?\d+)(\/.*)?$/.exec(window.location.pathname);
-        if (match) {
-            this._basePath = match[1] ?? '/';
-            renderer = match[2];
-            zoom = match[3];
-            x = match[4];
-            z = match[5];
-        } else {
-            const url: URLSearchParams = new URLSearchParams(window.location.search);
-            this._basePath = window.location.pathname?.split('?')[0]?.replace('index.html', '') ?? '/';
-            renderer = url.get('renderer');
-            zoom = url.get('zoom');
-            x = url.get('x');
-            z = url.get('z');
-        }
-        this._livemap.sidebarControl.renderersControl.rendererType = renderer ?? this._livemap.settings.renderers[0].id;
-        this._livemap.centerOn(Point.of(x ?? 0, z ?? 0), zoom ?? this._livemap.settings.zoom.def);
+    public getUrlFromPoint(point: Point): Url {
+        return new Url(this._livemap, this._url.basePath,
+            this._livemap.sidebarControl.renderersControl.rendererType,
+            this._livemap.currentZoom(), point.x, point.z
+        );
     }
 }

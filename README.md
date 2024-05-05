@@ -58,3 +58,46 @@ dotnet build
 ```
 
 And the final zip will be located at `bin/mods/livemap.zip` if there were no errors.
+
+## Special Thanks
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center" width="33%">
+        <a href="https://www.vintagestory.at/">
+          <img width="200" src="https://content.invisioncic.com/r268468/monthly_2018_02/gamelogo-vintagestory-banner.thumb.png.5748739b983e8b748e7bcf976e74c4c2.png">
+        </a>
+      </td>
+      <td align="center" width="33%">
+        <a href="https://leafletjs.com/">
+          <img width="200" src="https://leafletjs.com/docs/images/logo.png">
+        </a>
+      </td>
+      <td align="center" width="34%">
+        <a href="https://jetbrains.com/">
+          <img width="200" src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.png">
+        </a>
+      </td>
+    </tr>
+  </table>
+  <table>
+    <tr>
+      <td align="center" width="33%">
+        <a href="https://github.com/">
+          <img width="200" src="https://github.githubassets.com/assets/GitHub-Logo-ee398b662d42.png">
+        </a>
+      </td>
+      <td align="center" width="34%">
+        <a href="https://www.jenkins.io/">
+          <img width="200" src="https://mirror.xmission.com/jenkins/art/jenkins-logo/48x48/logo+title.png">
+        </a>
+      </td>
+      <td align="center" width="33%">
+        <a href="https://www.nuget.org/">
+          <img width="200" src="https://www.nuget.org/Content/gallery/img/logo-header.svg">
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>

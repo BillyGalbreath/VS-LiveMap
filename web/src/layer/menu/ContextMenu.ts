@@ -1,6 +1,8 @@
 import * as L from 'leaflet';
 import {LiveMap} from '../../LiveMap';
+import {Lang} from '../../data/Lang';
 import {Point} from '../../data/Point';
+import {Url} from '../../data/Url';
 import {MenuRow} from './MenuRow';
 
 export class ContextMenu {
@@ -36,18 +38,19 @@ export class ContextMenu {
     }
 
     private createRows(): MenuRow[] {
+        const lang: Lang = this._livemap.settings.lang;
         const rows: MenuRow[] = [];
         rows.push(new MenuRow('[ 0,0 ]'));
         rows.push(new MenuRow());
         if (navigator.clipboard) {
             // some browsers don't support clipboard api :(
-            rows.push(new MenuRow('Copy', 'copy', 'Ctrl+C', () => this.copy()));
-            rows.push(new MenuRow('Paste', 'paste', 'Ctrl+V', () => this.paste()));
+            rows.push(new MenuRow(lang.copy, lang.copyAlt, 'copy', 'Ctrl+C', () => this.copy()));
+            rows.push(new MenuRow(lang.paste, lang.pasteAlt, 'paste', 'Ctrl+V', () => this.paste()));
             rows.push(new MenuRow());
-            rows.push(new MenuRow('Share', 'link', 'Ctrl+S', () => this.share()));
+            rows.push(new MenuRow(lang.share, lang.shareAlt, 'link', 'Ctrl+S', () => this.share()));
             rows.push(new MenuRow());
         }
-        rows.push(new MenuRow('Center', 'center', 'F10', () => this.center()));
+        rows.push(new MenuRow(lang.center, lang.centerAlt, 'center', 'F10', () => this.center()));
         return rows;
     }
 
@@ -133,11 +136,11 @@ export class ContextMenu {
     public copy(): void {
         navigator.clipboard.writeText((this._point ?? this._livemap.coordsControl.getPoint()).toString(this._format))
             .then((): void => {
-                this._livemap.notifications.success('Copied location to clipboard');
+                this._livemap.notifications.success(this._livemap.settings.lang.notifCopy);
             })
             .catch((e): void => {
                 console.error('Could not copy location\n', e);
-                this._livemap.notifications.danger('Could not copy location');
+                this._livemap.notifications.danger(this._livemap.settings.lang.notifCopyFailed);
             })
             .finally((): void => {
                 this.close();
@@ -147,17 +150,17 @@ export class ContextMenu {
     public paste(): void {
         navigator.clipboard.readText()
             .then((text: string): void => {
-                const point: Point | undefined = this.pasteUrl(text) ?? this.pastePoint(text);
+                const point: Point | undefined = this.pastePoint(text) ?? this.pasteUrl(text);
                 if (point) {
-                    this._livemap.notifications.info('Centered on location from clipboard');
+                    this._livemap.notifications.info(this._livemap.settings.lang.notifPaste);
                     this._livemap.centerOn(point);
                 } else {
-                    this._livemap.notifications.warning('Not a valid location');
+                    this._livemap.notifications.warning(this._livemap.settings.lang.notifPasteInvalid);
                 }
             })
             .catch((e): void => {
                 console.error('Could not paste location\n', e);
-                this._livemap.notifications.danger('Could not paste location');
+                this._livemap.notifications.danger(this._livemap.settings.lang.notifPasteFailed);
             })
             .finally((): void => {
                 this.close();
@@ -173,8 +176,7 @@ export class ContextMenu {
 
     private pasteUrl(text: string): Point | undefined {
         try {
-            const params: URLSearchParams = new URLSearchParams(new URL(text).searchParams);
-            return Point.of(parseInt(params.get('x') ?? ''), parseInt(params.get('z') ?? ''));
+            return new Url(this._livemap, text).point;
         } catch (err) {
             return;
         }
@@ -185,11 +187,11 @@ export class ContextMenu {
         const text: string = `${window.location.origin}${this._livemap.linkControl.getUrlFromPoint(point)}`;
         navigator.clipboard.writeText(text)
             .then((): void => {
-                this._livemap.notifications.success('Copied shareable url to clipboard');
+                this._livemap.notifications.success(this._livemap.settings.lang.notifShare);
             })
             .catch((e): void => {
                 console.error('Could not copy shareable url\n', e);
-                this._livemap.notifications.danger('Could not copy shareable url');
+                this._livemap.notifications.danger(this._livemap.settings.lang.notifShareFailed);
             })
             .finally((): void => {
                 this.close();
@@ -200,6 +202,7 @@ export class ContextMenu {
         this._livemap.centerOn(this._livemap.coordsControl.getPoint());
         this._livemap.coordsControl.update();
         this._livemap.linkControl.update();
+        this._livemap.notifications.success(this._livemap.settings.lang.notifCenter);
         this.close();
     }
 
