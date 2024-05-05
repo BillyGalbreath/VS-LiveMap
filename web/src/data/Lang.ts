@@ -22,110 +22,110 @@ export class Lang {
     private readonly _notifCenter: string;
 
     constructor(lang: Lang) {
-        this._title = lang.title ?? 'Vintage Story LiveMap';
-        this._pinned = lang.pinned ?? 'Pinned';
-        this._unpinned = lang.unpinned ?? 'Unpinned';
-        this._players = lang.players ?? 'Players ({cur}/{max})';
-        this._renderers = lang.renderers ?? 'Map Types';
-        this._copy = lang.copy ?? 'Copy';
-        this._copyAlt = lang.copyAlt ?? 'Copy this location to the clipboard';
-        this._paste = lang.paste ?? 'Paste';
-        this._pasteAlt = lang.pasteAlt ?? 'Go to a point from the clipboard';
-        this._share = lang.share ?? 'Share';
-        this._shareAlt = lang.shareAlt ?? 'Copy a sharable url to the clipboard';
-        this._center = lang.center ?? 'Share';
-        this._centerAlt = lang.centerAlt ?? 'Center the map on this point';
-        this._notifCopy = lang.notifCopy ?? 'Copied location to clipboard';
-        this._notifCopyFailed = lang.notifCopyFailed ?? 'Could not copy location';
-        this._notifPaste = lang.notifPaste ?? 'Centered on location from clipboard';
-        this._notifPasteFailed = lang.notifPasteFailed ?? 'Could not paste location';
-        this._notifPasteInvalid = lang.notifPasteInvalid ?? 'Not a valid location';
-        this._notifShare = lang.notifShare ?? 'Copied shareable url to clipboard';
-        this._notifShareFailed = lang.notifShareFailed ?? 'Could not copy shareable url';
-        this._notifCenter = lang.notifCenter ?? 'Centered on location';
+        this._title = lang.title;
+        this._pinned = lang.pinned;
+        this._unpinned = lang.unpinned;
+        this._players = lang.players;
+        this._renderers = lang.renderers;
+        this._copy = lang.copy;
+        this._copyAlt = lang.copyAlt;
+        this._paste = lang.paste;
+        this._pasteAlt = lang.pasteAlt;
+        this._share = lang.share;
+        this._shareAlt = lang.shareAlt;
+        this._center = lang.center;
+        this._centerAlt = lang.centerAlt;
+        this._notifCopy = lang.notifCopy;
+        this._notifCopyFailed = lang.notifCopyFailed;
+        this._notifPaste = lang.notifPaste;
+        this._notifPasteFailed = lang.notifPasteFailed;
+        this._notifPasteInvalid = lang.notifPasteInvalid;
+        this._notifShare = lang.notifShare;
+        this._notifShareFailed = lang.notifShareFailed;
+        this._notifCenter = lang.notifCenter;
     }
 
     get title(): string {
-        return this._title;
+        return this._title ?? 'Vintage Story LiveMap';
     }
 
     get pinned(): string {
-        return this._pinned;
+        return this._pinned ?? 'Pinned';
     }
 
     get unpinned(): string {
-        return this._unpinned;
+        return this._unpinned ?? 'Unpinned';
     }
 
     get players(): string {
-        return this._players;
+        return this._players ?? 'Players ({cur}/{max})';
     }
 
     get renderers(): string {
-        return this._renderers;
+        return this._renderers ?? 'Map Types';
     }
 
     get copy(): string {
-        return this._copy;
+        return this._copy ?? 'Copy';
     }
 
     get copyAlt(): string {
-        return this._copyAlt;
+        return this._copyAlt ?? 'Copy this location to the clipboard';
     }
 
     get paste(): string {
-        return this._paste;
+        return this._paste ?? 'Paste';
     }
 
     get pasteAlt(): string {
-        return this._pasteAlt;
+        return this._pasteAlt ?? 'Go to a point from the clipboard';
     }
 
     get share(): string {
-        return this._share;
+        return this._share ?? 'Share';
     }
 
     get shareAlt(): string {
-        return this._shareAlt;
+        return this._shareAlt ?? 'Copy a sharable url to the clipboard';
     }
 
     get center(): string {
-        return this._center;
+        return this._center ?? 'Center';
     }
 
     get centerAlt(): string {
-        return this._centerAlt;
+        return this._centerAlt ?? 'Center the map on this point';
     }
 
     get notifCopy(): string {
-        return this._notifCopy;
+        return this._notifCopy ?? 'Copied location to clipboard';
     }
 
     get notifCopyFailed(): string {
-        return this._notifCopyFailed;
+        return this._notifCopyFailed ?? 'Could not copy location';
     }
 
     get notifPaste(): string {
-        return this._notifPaste;
+        return this._notifPaste ?? 'Centered on location from clipboard';
     }
 
     get notifPasteFailed(): string {
-        return this._notifPasteFailed;
+        return this._notifPasteFailed ?? 'Could not paste location';
     }
 
     get notifPasteInvalid(): string {
-        return this._notifPasteInvalid;
+        return this._notifPasteInvalid ?? 'Not a valid location';
     }
 
     get notifShare(): string {
-        return this._notifShare;
+        return this._notifShare ?? 'Copied shareable url to clipboard';
     }
 
     get notifShareFailed(): string {
-        return this._notifShareFailed;
+        return this._notifShareFailed ?? 'Could not copy shareable url';
     }
 
     get notifCenter(): string {
-        return this._notifCenter;
+        return this._notifCenter ?? 'Centered on location';
     }
 }

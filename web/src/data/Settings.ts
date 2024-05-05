@@ -28,7 +28,7 @@ export class Settings {
         this._zoom = json.zoom ? new Zoom(json.zoom) : new Zoom();
         this._renderers = json.renderers ?? [];
         this._ui = json.ui ? new UI(json.ui) : new UI();
-        this._lang = json.lang ? new Lang(json.lang) : new Lang();
+        this._lang = new Lang(json.lang);
         this._markers = json.markers ?? [];
     }
 
