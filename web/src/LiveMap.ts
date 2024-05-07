@@ -106,7 +106,6 @@ export class LiveMap extends L.Map {
 
         // replace layers.png with an svg
         const layers: HTMLElement = document.querySelector('.leaflet-control-layers-toggle')!;
-        layers.style.backgroundImage = 'none';
         layers.appendChild(window.createSVGIcon('layers'));
         const svg: SVGElement = layers.firstChild as SVGElement;
         svg.style.width = '24px';
