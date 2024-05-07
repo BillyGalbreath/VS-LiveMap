@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Reflection;
@@ -6,6 +7,10 @@ using livemap.data;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
+using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 
 namespace livemap.util;
 
@@ -42,5 +47,45 @@ public static class Extensions {
         int r = (int)(vec.Z * 0xFF);
         int a = (int)(vec.W * 0xFF);
         return (uint)(a << 24 | r << 16 | g << 8 | b);
+    }
+
+    public static Point ToPoint(this BlockPos pos) {
+        return new Point(pos.X, pos.Z);
+    }
+
+    public static Point ToPoint(this EntityPos pos) {
+        return new Point(Math.Round(pos.X, 1), Math.Round(pos.Z, 1));
+    }
+
+    public static Point Size(this IWorldManagerAPI api) {
+        return new Point(api.MapSizeX, api.MapSizeZ);
+    }
+
+    public static Dictionary<string, object> GetHealth(this IPlayer player) {
+        EntityBehaviorHealth health = player.Entity.GetBehavior<EntityBehaviorHealth>();
+        return new Dictionary<string, object> {
+            { "cur", health?.Health ?? 15 },
+            { "max", health?.MaxHealth ?? 15 },
+        };
+    }
+
+    public static Dictionary<string, object> GetSatiety(this IPlayer player) {
+        EntityBehaviorHunger satiety = player.Entity.GetBehavior<EntityBehaviorHunger>();
+        return new Dictionary<string, object> {
+            { "cur", satiety?.Saturation ?? 1500 },
+            { "max", satiety?.MaxSaturation ?? 1500 },
+        };
+    }
+
+    public static string GetAvatar(this EntityPlayer player) {
+        ITreeAttribute appliedParts = (ITreeAttribute)player.WatchedAttributes.GetTreeAttribute("skinConfig")["appliedParts"];
+        return $"https://vs.pl3x.net/v1/" +
+               $"{appliedParts.GetString("baseskin")}/" +
+               $"{appliedParts.GetString("eyecolor")}/" +
+               $"{appliedParts.GetString("hairbase")}/" +
+               $"{appliedParts.GetString("hairextra")}/" +
+               $"{appliedParts.GetString("mustache")}/" +
+               $"{appliedParts.GetString("beard")}/" +
+               $"{appliedParts.GetString("haircolor")}.png";
     }
 }

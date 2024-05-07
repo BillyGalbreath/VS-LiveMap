@@ -11,21 +11,17 @@ export class PinControl {
     constructor(livemap: LiveMap, parent: HTMLElement) {
         this._livemap = livemap;
 
-        this._dom = L.DomUtil.create('div');
+        this._dom = L.DomUtil.create('div', '', parent);
         this._dom.id = 'pin';
         this._dom.onclick = (): void => {
             this.pin(!this.pinned);
             localStorage.setItem('pinned', this.pinned ? 'pinned' : 'unpinned');
         };
 
-        if (livemap.settings.ui.sidebar.pinned != 'hide') {
-            parent.appendChild(this._dom);
-        }
-
         this._dom.appendChild(window.createSVGIcon('pin'));
         this._svg = this._dom.querySelector('svg')!;
 
-        this.pin('pinned' === (localStorage.getItem('pinned') ?? livemap.settings.ui.sidebar.pinned));
+        this.pin(livemap.settings.ui.sidebar.pinned == 'pinned' || localStorage.getItem('pinned') == 'pinned');
     }
 
     public get pinned(): boolean {

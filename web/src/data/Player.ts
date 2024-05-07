@@ -2,24 +2,24 @@ import {Point} from './Point';
 import {Value} from './Value';
 
 export class Player {
-    private readonly _id: string;
-    private readonly _name: string;
-    private readonly _avatar: string;
-    private readonly _role: string;
-    private readonly _pos: Point;
-    private readonly _yaw: number;
-    private readonly _health: Value;
-    private readonly _satiety: Value;
+    private _id: string;
+    private _name: string;
+    private _avatar: string;
+    private _role: string;
+    private _pos: Point;
+    private _yaw: number;
+    private _health: Value;
+    private _satiety: Value;
 
     constructor(player?: Player) {
         this._id = player?.id ?? '';
         this._name = player?.name ?? '';
         this._avatar = player?.avatar ?? '';
         this._role = player?.role ?? '';
-        this._pos = player?.pos ?? new Point(0, 0);
+        this._pos = player?.pos ? Point.of(player.pos) : new Point(0, 0);
         this._yaw = player?.yaw ?? 0;
-        this._health = player?.health ?? new Value();
-        this._satiety = player?.satiety ?? new Value();
+        this._health = new Value(player?.health);
+        this._satiety = new Value(player?.satiety);
     }
 
     get id(): string {
@@ -52,5 +52,16 @@ export class Player {
 
     get satiety(): Value {
         return this._satiety;
+    }
+
+    public updateData(data: Player): void {
+        this._id = data.id;
+        this._name = data.name;
+        this._avatar = data.avatar;
+        this._role = data.role;
+        this._pos = data.pos;
+        this._yaw = data.yaw;
+        this._health = data.health;
+        this._satiety = data.satiety;
     }
 }

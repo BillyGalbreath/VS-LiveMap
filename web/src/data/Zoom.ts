@@ -5,7 +5,7 @@ export class Zoom {
 
     constructor(zoom?: Zoom) {
         this._def = zoom?.def ?? 0;
-        this._maxin = zoom?.maxin ?? 3;
+        this._maxin = zoom?.maxin ?? -3;
         this._maxout = zoom?.maxout ?? 8;
     }
 

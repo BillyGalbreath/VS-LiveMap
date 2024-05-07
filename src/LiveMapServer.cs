@@ -27,7 +27,9 @@ public sealed class LiveMapServer : LiveMap {
     public Colormap Colormap { get; }
     public SepiaColors SepiaColors { get; }
     public NetworkHandler NetworkHandler { get; }
+    public LayerRegistry LayerRegistry { get; }
     public RendererRegistry RendererRegistry { get; }
+    public JsonDataTask JsonDataTask { get; }
     public RenderTaskManager RenderTaskManager { get; }
     public WebServer WebServer { get; }
 
@@ -42,6 +44,8 @@ public sealed class LiveMapServer : LiveMap {
         Files.DataDir = Path.Combine(GamePaths.DataPath, "ModData", Api.World.SavegameIdentifier, "LiveMap");
         Files.ColormapFile = Path.Combine(Files.DataDir, "colormap.json");
         Files.WebDir = Path.Combine(Files.DataDir, "web");
+        Files.JsonDir = Path.Combine(Files.WebDir, "data");
+        Files.MarkerDir = Path.Combine(Files.JsonDir, "markers");
         Files.TilesDir = Path.Combine(Files.WebDir, "tiles");
 
         ReloadConfig();
@@ -52,8 +56,10 @@ public sealed class LiveMapServer : LiveMap {
         SepiaColors = new SepiaColors(this);
         NetworkHandler = new ServerNetworkHandler(this);
 
+        LayerRegistry = new LayerRegistry();
         RendererRegistry = new RendererRegistry(this);
 
+        JsonDataTask = new JsonDataTask(this);
         RenderTaskManager = new RenderTaskManager(this);
         WebServer = new WebServer(this);
 
@@ -67,7 +73,7 @@ public sealed class LiveMapServer : LiveMap {
         }, 1);
 
         Api.ChatCommands.Create("livemap")
-            .WithDescription(Lang.Get("command.livemap.description"))
+            .WithDescription("command.livemap.description".ToLang())
             .RequiresPrivilege("root")
             .WithArgs(new WordArgParser("command", false, new[] { "fullrender" }))
             .HandleWith(args => {
@@ -84,7 +90,7 @@ public sealed class LiveMapServer : LiveMap {
                         Api.ChatCommands.Get("autosavenow").Execute(args);
                     }, 1);
                 }).Start();
-                return TextCommandResult.Success("command.fullrender.started");
+                return TextCommandResult.Success("command.fullrender.started".ToLang());
             });
 
         _gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
@@ -115,6 +121,7 @@ public sealed class LiveMapServer : LiveMap {
         WebServer.Run();
 
         // todo - update player positions, public waypoints, etc
+        JsonDataTask.Run();
     }
 
     internal void ReceiveColormap(IServerPlayer player, ColormapPacket packet) {
@@ -150,8 +157,10 @@ public sealed class LiveMapServer : LiveMap {
 
         // order matters here
         RenderTaskManager.Dispose();
+        JsonDataTask.Dispose();
         WebServer.Dispose();
         NetworkHandler.Dispose();
+        LayerRegistry.Dispose();
         RendererRegistry.Dispose();
         Colormap.Dispose();
         SepiaColors.Dispose();

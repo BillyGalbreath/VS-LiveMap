@@ -11,6 +11,8 @@ public abstract class Files {
     public static string DataDir { get; internal set; } = null!;
     public static string ColormapFile { get; internal set; } = null!;
     public static string WebDir { get; internal set; } = null!;
+    public static string JsonDir { get; internal set; } = null!;
+    public static string MarkerDir { get; internal set; } = null!;
     public static string TilesDir { get; internal set; } = null!;
 
     internal static void ExtractWebFiles(LiveMapServer server) {

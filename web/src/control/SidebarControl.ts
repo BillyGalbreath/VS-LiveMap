@@ -1,7 +1,6 @@
 import * as L from 'leaflet';
 import {LiveMap} from '../LiveMap';
 import {PinControl} from './PinControl';
-import {PlayersControl} from './PlayersControl';
 import {RenderersControl} from './RenderersControl';
 
 export class SidebarControl {
@@ -9,19 +8,20 @@ export class SidebarControl {
     private readonly _dom: HTMLElement;
 
     private readonly _renderersControl: RenderersControl;
-    private readonly _playersControl: PlayersControl;
 
     constructor(livemap: LiveMap) {
         this._livemap = livemap;
 
-        this._renderersControl = new RenderersControl(livemap);
-        this._playersControl = new PlayersControl(livemap);
+        this._renderersControl = new RenderersControl(this._livemap);
 
         this._dom = L.DomUtil.create('aside');
-        document.body.prepend(this._dom);
+
+        if (livemap.settings.ui.sidebar.pinned != 'hide') {
+            document.body.prepend(this._dom);
+        }
 
         // set up and show/hide the pin
-        const pin: PinControl = new PinControl(livemap, this._dom);
+        const pin: PinControl = new PinControl(this._livemap, this._dom);
         this.show(pin.pinned);
 
         // set up the logo fancy div magic
@@ -39,7 +39,7 @@ export class SidebarControl {
 
         // add these after the logo
         this._dom.appendChild(this.renderersControl.dom);
-        this._dom.appendChild(this.playersControl.dom);
+        this._dom.appendChild(this._livemap.playersLayer.dom);
 
         this._dom.onclick = (): void => {
             // todo followPlayerMarker(null)
@@ -60,15 +60,11 @@ export class SidebarControl {
         return this._renderersControl;
     }
 
-    get playersControl(): PlayersControl {
-        return this._playersControl;
-    }
-
     public show(show: boolean): void {
         this._dom.className = show ? 'show' : '';
     }
 
     public tick(): void {
-        this.playersControl.tick();
+        //
     }
 }

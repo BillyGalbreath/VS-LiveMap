@@ -2,6 +2,9 @@
   "attribution": "<a href=\"https://mods.vintagestory.at/livemap\" target=\"_blank\">Livemap</a> &copy;2024",
   "homepage": "https://mods.vintagestory.at/livemap",
   "friendlyUrls": true,
+  "playerList": true,
+  "playerMarkers": true,
+  "maxPlayers": 20,
   "interval": 30,
   "size": [1024000, 1024000],
   "spawn": [512000, 512000],
@@ -25,7 +28,7 @@
   ],
   "ui": {
     "sidebar": {
-      "pinned": false
+      "pinned": "pinned"
     }
   },
   "lang": {
@@ -33,7 +36,7 @@
     "logo": "LiveMap",
     "pinned": "Pinned",
     "unpinned": "Unpinned",
-    "players": "Players ({cur}/{max})",
+    "players": "Players",
     "renderers": "Map Types",
     "copy": "Copy",
     "copy-alt": "Copy this location to the clipboard",
@@ -53,7 +56,6 @@
     "notif-center": "Centered on location"
   },
   "markers": [
-    "players",
     "spawn",
     "test"
   ]

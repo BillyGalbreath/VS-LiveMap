@@ -25,10 +25,10 @@ interface LayerJson {
 }
 
 export class MarkersLayer extends L.LayerGroup {
-    private readonly _livemap: LiveMap;
+    protected readonly _livemap: LiveMap;
     private readonly _url: string;
 
-    private readonly _markers: Map<string, Marker> = new Map<string, Marker>();
+    private readonly _markers: Map<string, Marker> = new Map();
 
     private _id?: string;
     private _label?: string;
@@ -36,13 +36,18 @@ export class MarkersLayer extends L.LayerGroup {
     private _defaults?: Defaults;
     private _json?: LayerJson;
 
-    constructor(livemap: LiveMap, url: string) {
+    constructor(livemap: LiveMap, url: string, interval?: number) {
         super([]);
         this._livemap = livemap;
         this._url = url;
+        this._interval = interval;
 
         // initial update to get interval and label
         this.updateLayer();
+    }
+
+    get markers(): Map<string, Marker> {
+        return this._markers;
     }
 
     get id(): string {
@@ -99,7 +104,7 @@ export class MarkersLayer extends L.LayerGroup {
         this._livemap.layersControl.addOverlay(this, this._label);
     }
 
-    private updateLayer(): void {
+    protected updateLayer(): void {
         window.fetchJson<LayerJson>(this._url)
             .then((json: LayerJson): void => {
                 if (!this._label) {

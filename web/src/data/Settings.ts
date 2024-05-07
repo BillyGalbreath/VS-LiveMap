@@ -9,6 +9,9 @@ export class Settings {
     private readonly _attribution: string;
     private readonly _homepage: string;
     private readonly _friendlyUrls: boolean;
+    private readonly _playerList: boolean;
+    private readonly _playerMarkers: boolean;
+    private readonly _maxPlayers: number;
     private readonly _interval: number;
     private readonly _size: Point;
     private readonly _spawn: Point;
@@ -23,6 +26,9 @@ export class Settings {
         this._attribution = json.attribution ?? '';
         this._homepage = json.homepage ?? '';
         this._friendlyUrls = json.friendlyUrls ?? true;
+        this._playerList = json.playerList ?? true;
+        this._playerMarkers = json.playerMarkers ?? true;
+        this._maxPlayers = json.maxPlayers ?? 0;
         this._interval = json.interval ?? 30;
         this._size = json.size ? Point.of(json.size) : Point.of(1024000, 1024000);
         this._spawn = json.spawn ? Point.of(json.spawn) : this.size.divide(2);
@@ -44,6 +50,18 @@ export class Settings {
 
     get friendlyUrls(): boolean {
         return this._friendlyUrls;
+    }
+
+    get playerList(): boolean {
+        return this._playerList;
+    }
+
+    get playerMarkers(): boolean {
+        return this._playerMarkers;
+    }
+
+    get maxPlayers(): number {
+        return this._maxPlayers;
     }
 
     get interval(): number {

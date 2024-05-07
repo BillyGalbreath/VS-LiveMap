@@ -20,11 +20,11 @@ export abstract class Marker {
     protected readonly _id: string;
     protected readonly _type: string;
     protected readonly _marker: L.Layer;
-    protected readonly _layer: MarkersLayer;
+    protected readonly _layer: L.LayerGroup;
 
     protected _json: MarkerJson;
 
-    protected constructor(layer: MarkersLayer, json: MarkerJson, marker: L.Layer) {
+    protected constructor(layer: L.LayerGroup, json: MarkerJson, marker: L.Layer) {
         this._id = json.id;
         this._type = json.type;
         this._json = json;

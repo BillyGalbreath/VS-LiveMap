@@ -35,13 +35,13 @@ export class LiveTileLayer extends L.TileLayer {
             // for extra zoom in, make higher than maxNativeZoom
             // this is the stretched tiles to zoom in further
             // maxZoom = maxNativeZoom + extra
-            // maxZoom = zoom.maxout + zoom.maxin
-            maxZoom: livemap.settings.zoom.maxout + livemap.settings.zoom.maxin,
+            // maxZoom = zoom.maxout - (-zoom.maxin)
+            maxZoom: livemap.settings.zoom.maxout - livemap.settings.zoom.maxin,
             // we need to counter effect the higher maxZoom here
             // zoomOffset = maxNativeZoom - maxZoom
-            // zoomOffset = zoom.maxout - (zoom.maxout + zoom.maxin)
-            // zoomOffset = -(zoom.maxin)
-            zoomOffset: -livemap.settings.zoom.maxin
+            // zoomOffset = zoom.maxout - (zoom.maxout + (-zoom.maxin))
+            // zoomOffset = (-zoom.maxin)
+            zoomOffset: livemap.settings.zoom.maxin
         });
 
         this._livemap = livemap;

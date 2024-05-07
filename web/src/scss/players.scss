@@ -1,3 +1,8 @@
+.leaflet-marker-icon,
+.leaflet-players-pane > div {
+  transition: all .5s;
+}
+
 .leaflet-players-pane {
   z-index: 1000000000 !important;
 
@@ -7,7 +12,6 @@
     border: 0;
     background: none;
     box-shadow: none;
-    transition: all 0.25s;
     pointer-events: auto;
 
     &.leaflet-tooltip {
@@ -104,12 +108,12 @@
             border-radius: calc(var(--height) / 2);
           }
 
-          &.health p {
+          &:first-child p {
             width: var(--amount);
             background: var(--health-color);
           }
 
-          &.satiety p {
+          &:not(:first-child) p {
             margin-top: 2px;
             width: var(--amount);
             background: var(--satiety-color);

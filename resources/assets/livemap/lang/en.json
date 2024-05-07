@@ -1,19 +1,7 @@
 ﻿{
   "command.livemap.description": "Command to manage the LiveMap mod.",
 
-  "command.unknown-subcommand": "Unknown subcommand.",
-  "command.player-only": "Player only command.",
-  "command.client-command": "This is a client command. Use a dot (.) instead of slash (/).",
-
-  "command.success": "<font color=\"#19B919\">{0}</font>",
-  "command.error": "<font color=\"#B91919\">{0}</font>",
-
-  "command.colormap.started": "Generating a new colormap. Your game may freeze for a few seconds. Please be patient..",
-  "command.colormap.finished": "Colormap was generated and sent to the server.",
-
   "command.fullrender.started": "FullRender task has started.",
-
-  "command.reload.finished": "LiveMap config and services were successfully reloaded.",
 
   "livemap:no-data-to-display": "\nNo data to display.\n\nIs the mod disabled?",
   "livemap:access-denied": "\nSorry. Access Denied.",

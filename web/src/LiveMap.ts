@@ -10,6 +10,7 @@ import {Settings} from './data/Settings';
 import {Point} from './data/Point';
 import './scss/styles';
 import './svg'
+import {PlayersLayer} from "./layer/PlayersLayer";
 
 export class LiveMap extends L.Map {
     declare _controlCorners: { [x: string]: HTMLDivElement; };
@@ -19,6 +20,7 @@ export class LiveMap extends L.Map {
     private readonly _settings: Settings;
 
     private readonly _tileLayerControl: TileLayerControl;
+    private readonly _playersLayer: PlayersLayer;
     private readonly _layersControl: LayersControl;
     private readonly _linkControl: LinkControl;
     private readonly _coordsControl: CoordsControl;
@@ -72,6 +74,7 @@ export class LiveMap extends L.Map {
         // set up the controllers
         this._tileLayerControl = new TileLayerControl(this);
         this._layersControl = new LayersControl(this);
+        this._playersLayer = new PlayersLayer(this);
         this._coordsControl = new CoordsControl(this);
         this._linkControl = new LinkControl(this);
         this._sidebarControl = new SidebarControl(this);
@@ -146,6 +149,10 @@ export class LiveMap extends L.Map {
 
     get tileLayerControl(): TileLayerControl {
         return this._tileLayerControl;
+    }
+
+    get playersLayer(): PlayersLayer {
+        return this._playersLayer;
     }
 
     get layersControl(): LayersControl {

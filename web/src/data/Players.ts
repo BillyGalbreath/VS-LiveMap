@@ -1,19 +1,13 @@
 import {Player} from './Player';
 
 export class Players {
-    private readonly _max: number;
-    private readonly _list: Player[];
+    private readonly _players: Player[];
 
-    constructor(players?: Players) {
-        this._max = players?.max ?? 0;
-        this._list = players?.list ?? [];
+    constructor(json?: Players) {
+        this._players = json?.players ?? [];
     }
 
-    get max(): number {
-        return this._max;
-    }
-
-    get list(): Player[] {
-        return this._list;
+    get players(): Player[] {
+        return this._players;
     }
 }
