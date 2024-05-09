@@ -13,7 +13,7 @@
   },
   "zoom": {
     "def": 0,
-    "maxin": 3,
+    "maxin": -3,
     "maxout": 8
   },
   "renderers": [

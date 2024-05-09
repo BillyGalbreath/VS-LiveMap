@@ -136,7 +136,7 @@ export class PlayersLayer extends MarkersLayer {
 
     private addToSidebar(player: Player): void {
         const li: HTMLElement = L.DomUtil.create('li', '', this._dom);
-        li.id = player.id;
+        li.id = this.cleanUid(player.id);
         li.title = player.name;
 
         const img: HTMLImageElement = L.DomUtil.create('img', '', li);
@@ -148,7 +148,7 @@ export class PlayersLayer extends MarkersLayer {
     }
 
     private removeFromSidebar(id: string): void {
-        this._dom.querySelectorAll(`#${id}`)?.forEach((li: Element): void => li.remove());
+        this._dom.querySelectorAll(`#${this.cleanUid(id)}`)?.forEach((li: Element): void => li.remove());
     }
 
     private tooltip(player: Player): string {
@@ -159,5 +159,12 @@ export class PlayersLayer extends MarkersLayer {
         const segments: number = Math.round(value.max / divisor);
         const amount: number = Math.round((Math.min(value.cur, value.max) / value.max) * 100);
         return `--amount:${amount}%;--segments:${segments}`;
+    }
+
+    private cleanUid(id: string): string {
+        return id
+            .replace("\\", "-slash-")
+            .replace("+", "-plus-")
+            .replace("=", "-equals-");
     }
 }

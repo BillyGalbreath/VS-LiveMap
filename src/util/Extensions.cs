@@ -22,9 +22,17 @@ public static class Extensions {
         return obj.GetType().GetField(name, _flags)?.GetValue(obj) as T;
     }
 
-    public static void AddIfNotExists<T>(this ICollection<T> collection, T value) {
-        if (!collection.Contains(value)) {
-            collection.Add(value);
+    public static V ComputeIfAbsent<K, V>(this Dictionary<K, V> dict, K key, System.Func<K, V> func) where K : notnull {
+        if (!dict.TryGetValue(key, out V? value)) {
+            value = func.Invoke(key);
+            dict.Add(key, value);
+        }
+        return value;
+    }
+
+    public static void AddIfNotExists<T>(this List<T> list, T value) {
+        if (!list.Contains(value)) {
+            list.Add(value);
         }
     }
 

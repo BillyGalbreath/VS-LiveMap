@@ -38,7 +38,7 @@ public sealed class JsonDataTask {
 
             Players();
 
-            IEnumerable<string> markers = Markers(now);
+            string[] markers = Markers(now);
 
             if (now - _lastSettings > Math.Max(1, 30) * 1000) {
                 Settings(markers);
@@ -49,11 +49,11 @@ public sealed class JsonDataTask {
         })).Start();
     }
 
-    private IEnumerable<string> Markers(long now) {
-        List<string> layers = new();
+    private string[] Markers(long now) {
+        List<string> list = new();
         foreach ((string? key, Layer? layer) in _server.LayerRegistry) {
             // track this for settings.json
-            layers.AddIfNotExists(key);
+            list.AddIfNotExists(key);
 
             // check if we should update
             if (now - _markerLastUpdate.GetValueOrDefault(layer.Id, 0) < Math.Max(layer.Interval ?? 0, 0)) {
@@ -70,7 +70,7 @@ public sealed class JsonDataTask {
                 Console.Error.WriteLine(e.ToString());
             }
         }
-        return layers.ToArray();
+        return list.ToArray();
     }
 
     private void Players() {
@@ -138,15 +138,15 @@ public sealed class JsonDataTask {
     }
 
     private Dictionary<string, object?>[] Renderers() {
-        List<Dictionary<string, object?>> arr = new();
+        List<Dictionary<string, object?>> list = new();
         Dictionary<string, Renderer.Builder> renderers = new(_server.RendererRegistry);
         foreach ((string? key, _) in renderers) {
             Dictionary<string, object?> obj = new();
             obj.TryAdd("id", key);
             obj.TryAdd("icon", "" /*renderer.Icon*/); // todo
-            arr.AddIfNotExists(obj);
+            list.AddIfNotExists(obj);
         }
-        return arr.ToArray();
+        return list.ToArray();
     }
 
     private static Dictionary<string, object?> Player(IPlayer player) {
