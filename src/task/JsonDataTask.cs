@@ -156,7 +156,7 @@ public sealed class JsonDataTask {
         obj.TryAdd("avatar", player.Entity.GetAvatar());
         obj.TryAdd("role", player.Role.Code); // todo add role color to name
         obj.TryAdd("pos", player.GetPoint());
-        obj.TryAdd("yaw", 270 - (player.Entity.SidedPos.Yaw * (180.0 / Math.PI)));
+        obj.TryAdd("yaw", 90 - ((player.Entity?.SidedPos?.Yaw ?? 0) * (180.0 / Math.PI)));
         obj.TryAdd("health", player.GetHealth());
         obj.TryAdd("satiety", player.GetSatiety());
         return obj;

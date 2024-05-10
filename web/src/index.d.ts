@@ -1,5 +1,6 @@
 import * as L from 'leaflet';
 import {LiveMap} from './LiveMap';
+import {InteractiveLayerOptions} from "leaflet";
 
 declare global {
     interface Window {
@@ -18,6 +19,13 @@ declare global {
 module 'leaflet' {
     export namespace Browser {
         const linux: boolean;
+    }
+
+    interface MarkerOptions extends InteractiveLayerOptions {
+        iconUrl?: string;
+        radii?: L.PointTuple;
+        radius?: number;
+        rotationAngle?: number;
     }
 
     export function ellipse(latLng: L.LatLngExpression, options?: L.EllipseOptions): L.Ellipse;

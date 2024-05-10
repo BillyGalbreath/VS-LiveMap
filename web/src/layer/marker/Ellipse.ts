@@ -19,6 +19,6 @@ export class Ellipse extends Marker {
     }
 
     private static radius(json: MarkerJson): L.PointTuple {
-        return (json.options as L.EllipseOptions).radii ?? [10, 10];
+        return json.options.radii ?? [10, 10];
     }
 }

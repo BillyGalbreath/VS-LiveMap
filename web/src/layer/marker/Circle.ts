@@ -19,6 +19,6 @@ export class Circle extends Marker {
     }
 
     private static radius(json: MarkerJson): number {
-        return Point.pixelsToMeters((json.options as L.CircleOptions).radius ?? 10);
+        return Point.pixelsToMeters(json.options.radius ?? 10);
     }
 }

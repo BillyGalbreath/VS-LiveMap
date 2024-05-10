@@ -89,11 +89,13 @@ export class PlayersLayer extends MarkersLayer {
         const icon: Icon = this.markers.get(player.id) as Icon;
         const marker: L.Marker = icon.get() as L.Marker;
         marker.setLatLng(data.pos.toLatLng());
-        marker.options = {
-            ...marker.options,
-            rotationAngle: data.yaw
-        } as L.MarkerOptions;
         marker.setTooltipContent(this.tooltip(data));
+
+        // https://stackoverflow.com/a/53416030/3530727
+        const from: number = marker.options.rotationAngle ?? Math.round(data.yaw);
+        const to: number = Math.round(data.yaw);
+        const diff: number = ((((to - from) % 360) + 540) % 360) - 180;
+        marker.options.rotationAngle = from + diff;
     }
 
     private removePlayer(id: string): void {
