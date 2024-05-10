@@ -94,7 +94,7 @@ public sealed class Colormap {
                 continue;
             }
 
-            // fix alpha channel here
+            // add opaque alpha channel back
             for (int i = 0; i < colors.Length; i++) {
                 if (colors[i] > 0) {
                     colors[i] |= (uint)0xFF << 24;

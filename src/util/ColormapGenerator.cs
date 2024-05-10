@@ -118,9 +118,12 @@ public class ColormapGenerator {
 
         // get 30 color samples for this block
         uint[] colors = new uint[30];
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < colors.Length; i++) {
             // blend the base color with a random color
-            colors[i] = (uint)Color.Blend(argb, block.GetRandomColor(_client.Api, pos, BlockFacing.UP, i));
+            uint color = (uint)Color.Blend(argb, block.GetRandomColor(_client.Api, pos, BlockFacing.UP, i));
+
+            // strip off alpha channel and save color
+            colors[i] = color & 0xFFFFFF;
         }
 
         // store sample colors in the colormap
