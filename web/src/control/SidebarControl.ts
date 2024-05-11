@@ -16,7 +16,7 @@ export class SidebarControl {
 
         this._dom = L.DomUtil.create('aside');
 
-        if (livemap.settings.ui.sidebar.pinned != 'hide') {
+        if (livemap.settings.ui.sidebar != 'hide') {
             document.body.prepend(this._dom);
         }
 
@@ -29,9 +29,9 @@ export class SidebarControl {
         const logo: HTMLElement = L.DomUtil.create('div', '', holder);
         L.DomUtil.create('div', '', holder); // this one is squishy :3
 
-        const homepage: string = this._livemap.settings.homepage;
+        const homepage: string = this._livemap.settings.ui.homepage;
         const link: HTMLElement = L.DomUtil.create((homepage ? 'a' : 'span'), '', logo);
-        link.innerText = this._livemap.settings.lang.logo;
+        link.innerText = this._livemap.settings.ui.logo;
         link.prepend(window.createSVGIcon('logo'));
         if (homepage) {
             (link as HTMLAnchorElement).href = homepage;

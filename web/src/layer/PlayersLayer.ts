@@ -165,8 +165,8 @@ export class PlayersLayer extends MarkersLayer {
 
     private cleanUid(id: string): string {
         return id
-            .replace("\\", "-slash-")
-            .replace("+", "-plus-")
-            .replace("=", "-equals-");
+            .replace(/\//, "-slash-")
+            .replace(/\+/, "-plus-")
+            .replace(/=/, "-equals-");
     }
 }

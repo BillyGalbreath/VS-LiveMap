@@ -21,7 +21,7 @@ export class PinControl {
         this._dom.appendChild(window.createSVGIcon('pin'));
         this._svg = this._dom.querySelector('svg')!;
 
-        this.pin(livemap.settings.ui.sidebar.pinned == 'pinned' || localStorage.getItem('pinned') == 'pinned');
+        this.pin(livemap.settings.ui.sidebar == 'pinned' || localStorage.getItem('pinned') == 'pinned');
     }
 
     public get pinned(): boolean {

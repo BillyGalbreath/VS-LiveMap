@@ -31,5 +31,27 @@
   "livemap:zoom.max-out": "Max Out",
   "livemap:zoom.max-out.hint": "The maximum zoom out you can do on the map.\nEach additional level requires a new set of tiles\nto be rendered, so don't go too wild here.",
   "livemap:zoom.default": "Default",
-  "livemap:zoom.default.hint": "The default zoom when loading the map in browser.\nNormal sized tiles (1 pixel = 1 block) are always\nat zoom level 0, making it a good default value."
+  "livemap:zoom.default.hint": "The default zoom when loading the map in browser.\nNormal sized tiles (1 pixel = 1 block) are always\nat zoom level 0, making it a good default value.",
+
+  "livemap:lang.pinned": "Pinned",
+  "livemap:lang.unpinned": "Unpinned",
+  "livemap:lang.players": "Players",
+  "livemap:lang.renderers": "Map Types",
+  "livemap:lang.copy": "Copy",
+  "livemap:lang.copy-alt": "Copy this location to the clipboard",
+  "livemap:lang.paste": "Paste",
+  "livemap:lang.paste-alt": "Go to a point from the clipboard",
+  "livemap:lang.share": "Share",
+  "livemap:lang.share-alt": "Copy a sharable url to the clipboard",
+  "livemap:lang.center": "Center",
+  "livemap:lang.center-alt": "Center the map on this point",
+  "livemap:lang.notif-copy": "Copied location to clipboard",
+  "livemap:lang.notif-copy-failed": "Could not copy location",
+  "livemap:lang.notif-paste": "Centered on location from clipboard",
+  "livemap:lang.notif-paste-failed": "Could not paste location",
+  "livemap:lang.notif-paste-invalid": "Not a valid location",
+  "livemap:lang.notif-share": "Copied shareable url to clipboard",
+  "livemap:lang.notif-share-failed": "Could not copy shareable url",
+  "livemap:lang.notif-center": "Centered on location"
+
 }

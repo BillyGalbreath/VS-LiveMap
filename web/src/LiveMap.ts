@@ -65,7 +65,7 @@ export class LiveMap extends L.Map {
 
         // set custom page title from lang
         if (document.title.trim() == '') {
-            document.title = settings.lang.title ?? 'Vintage Story LiveMap';
+            document.title = settings.ui.title ?? 'Vintage Story LiveMap';
         }
 
         // pre-calculate map's scale
@@ -84,7 +84,7 @@ export class LiveMap extends L.Map {
         this._notifications = new Notifications();
 
         // replace leaflet's attribution with our own
-        this.attributionControl.setPrefix(settings.attribution);
+        this.attributionControl.setPrefix(settings.ui.attribution);
 
         // stuff to do after the map fully loads
         this.on('load', (): void => this.onLoad());

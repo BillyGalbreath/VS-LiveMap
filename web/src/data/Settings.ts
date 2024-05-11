@@ -2,12 +2,10 @@ import {Point} from './Point';
 import {Web} from './Web';
 import {Zoom} from './Zoom';
 import {Renderer} from './Renderer';
-import {UI} from './UI';
+import {Ui} from './Ui';
 import {Lang} from './Lang';
 
 export class Settings {
-    private readonly _attribution: string;
-    private readonly _homepage: string;
     private readonly _friendlyUrls: boolean;
     private readonly _playerList: boolean;
     private readonly _playerMarkers: boolean;
@@ -18,13 +16,11 @@ export class Settings {
     private readonly _web: Web;
     private readonly _zoom: Zoom;
     private readonly _renderers: Renderer[];
-    private readonly _ui: UI;
+    private readonly _ui: Ui;
     private readonly _lang: Lang;
     private readonly _markers: string[];
 
     constructor(json: Settings) {
-        this._attribution = json.attribution ?? '';
-        this._homepage = json.homepage ?? '';
         this._friendlyUrls = json.friendlyUrls ?? true;
         this._playerList = json.playerList ?? true;
         this._playerMarkers = json.playerMarkers ?? true;
@@ -35,17 +31,9 @@ export class Settings {
         this._web = json.web ? new Web(json.web) : new Web();
         this._zoom = json.zoom ? new Zoom(json.zoom) : new Zoom();
         this._renderers = json.renderers ?? [];
-        this._ui = json.ui ? new UI(json.ui) : new UI();
+        this._ui = json.ui ? new Ui(json.ui) : new Ui();
         this._lang = new Lang(json.lang);
         this._markers = json.markers ?? [];
-    }
-
-    get attribution(): string {
-        return this._attribution;
-    }
-
-    get homepage(): string {
-        return this._homepage;
     }
 
     get friendlyUrls(): boolean {
@@ -88,7 +76,7 @@ export class Settings {
         return this._renderers;
     }
 
-    get ui(): UI {
+    get ui(): Ui {
         return this._ui;
     }
 

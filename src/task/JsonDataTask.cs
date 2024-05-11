@@ -86,8 +86,6 @@ public sealed class JsonDataTask {
 
     private void Settings(IEnumerable markers) {
         Dictionary<string, object?> obj = new();
-        obj.TryAdd("attribution", """<a href="https://mods.vintagestory.at/livemap" target="_blank">Livemap</a> &copy;2024""");
-        obj.TryAdd("homepage", "https://mods.vintagestory.at/livemap");
         obj.TryAdd("friendlyUrls", true);
         obj.TryAdd("playerList", true);
         obj.TryAdd("playerMarkers", true);
@@ -102,30 +100,34 @@ public sealed class JsonDataTask {
             { "maxout", _server.Config.Zoom.MaxOut }
         });
         obj.TryAdd("renderers", Renderers());
-        obj.TryAdd("ui", new Dictionary<string, object?> { { "sidebar", new Dictionary<string, object?> { { "pinned", "pinned" } } } });
+        obj.TryAdd("ui", new Dictionary<string, object?> {
+            { "attribution", _server.Config.Ui.Attribution },
+            { "homepage", _server.Config.Ui.Homepage },
+            { "title", _server.Config.Ui.Title },
+            { "logo", _server.Config.Ui.Logo },
+            { "sidebar", _server.Config.Ui.Sidebar }
+        });
         obj.TryAdd("lang", new Dictionary<string, object?> {
-            { "title", "Vintage Story LiveMap" },
-            { "logo", "LiveMap" },
-            { "pinned", "Pinned" },
-            { "unpinned", "Unpinned" },
-            { "players", "Players" },
-            { "renderers", "Map Types" },
-            { "copy", "Copy" },
-            { "copy-alt", "Copy this location to the clipboard" },
-            { "paste", "Paste" },
-            { "paste-alt", "Go to a point from the clipboard" },
-            { "share", "Share" },
-            { "share-alt", "Copy a sharable url to the clipboard" },
-            { "center", "Center" },
-            { "center-alt", "Center the map on this point" },
-            { "notif-copy", "Copied location to clipboard" },
-            { "notif-copy-failed", "Could not copy location" },
-            { "notif-paste", "Centered on location from clipboard" },
-            { "notif-paste-failed", "Could not paste location" },
-            { "notif-paste-invalid", "Not a valid location" },
-            { "notif-share", "Copied shareable url to clipboard" },
-            { "notif-share-failed", "Could not copy shareable url" },
-            { "notif-center", "Centered on location" }
+            { "pinned", "lang.pinned".ToLang() },
+            { "unpinned", "lang.unpinned".ToLang() },
+            { "players", "lang.players".ToLang() },
+            { "renderers", "lang.renderers".ToLang() },
+            { "copy", "lang.copy".ToLang() },
+            { "copy-alt", "lang.copy-alt".ToLang() },
+            { "paste", "lang.paste".ToLang() },
+            { "paste-alt", "lang.paste-alt".ToLang() },
+            { "share", "lang.share".ToLang() },
+            { "share-alt", "lang.share-alt".ToLang() },
+            { "center", "lang.center".ToLang() },
+            { "center-alt", "lang.center-alt".ToLang() },
+            { "notif-copy", "lang.notif-copy".ToLang() },
+            { "notif-copy-failed", "lang.notif-copy-failed".ToLang() },
+            { "notif-paste", "lang.notif-paste".ToLang() },
+            { "notif-paste-failed", "lang.notif-paste-failed".ToLang() },
+            { "notif-paste-invalid", "lang.notif-paste-invalid".ToLang() },
+            { "notif-share", "lang.notif-share".ToLang() },
+            { "notif-share-failed", "lang.notif-share-failed".ToLang() },
+            { "notif-center", "lang.notif-center".ToLang() }
         });
         obj.TryAdd("markers", markers);
         try {
