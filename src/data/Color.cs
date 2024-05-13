@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using JetBrains.Annotations;
 using livemap.json;
+using livemap.util;
 using Newtonsoft.Json;
 
 namespace livemap.data;
@@ -86,17 +87,106 @@ public readonly struct Color {
         return uint.Parse(lastSix, NumberStyles.HexNumber);
     }
 
-    public static int Reverse(int abgr) {
-        return abgr & 0xFF << 24 |
-               (abgr >> 16 & 0xFF) << 0 |
-               (abgr >> 8 & 0xFF) << 8 |
-               (abgr >> 0 & 0xFF) << 16;
+    public uint Alpha() {
+        return _value >> 24 & 0xFF;
     }
 
-    public static int Blend(int argb1, int argb2) {
-        return ((argb1 >> 24 & 0xFF) << 24) |
-               (int)(((argb1 >> 16 & 0xFF) * 0.4) + ((argb2 >> 16 & 0xFF) * 0.6)) << 16 |
-               (int)(((argb1 >> 8 & 0xFF) * 0.4) + ((argb2 >> 8 & 0xFF) * 0.6)) << 8 |
-               (int)(((argb1 >> 0 & 0xFF) * 0.4) + ((argb2 >> 0 & 0xFF) * 0.6));
+    public uint Red() {
+        return _value >> 16 & 0xFF;
+    }
+
+    public uint Green() {
+        return _value >> 8 & 0xFF;
+    }
+
+    public uint Blue() {
+        return _value & 0xFF;
+    }
+
+    public Color Alpha(uint alpha) {
+        return (alpha << 24) | (_value & 0xFFFFFF);
+    }
+
+    public static Color Reverse(Color color) {
+        return color.Alpha() |
+               (color.Red() << 0) |
+               (color.Green() << 8) |
+               (color.Blue() << 16);
+    }
+
+    public static Color Blend(Color color0, Color color1, float ratio) {
+        float iRatio = 1 - ratio;
+        return (color0.Alpha() << 24) |
+               ((uint)((color0.Red() * ratio) + (color1.Red() * iRatio)) << 16) |
+               ((uint)((color0.Green() * ratio) + (color1.Green() * iRatio)) << 8) |
+               ((uint)((color0.Blue() * ratio) + (color1.Blue() * iRatio)));
+    }
+
+    public static Color LerpHsb(Color color0, Color color1, float delta) {
+        float[] hsb0 = Rgb2Hsb(color0.Red(), color0.Green(), color0.Blue());
+        float[] hsb1 = Rgb2Hsb(color1.Red(), color1.Green(), color1.Blue());
+        return Hsb2Rgb(
+            Mathf.Lerp(hsb0[0], hsb1[0], delta),
+            Mathf.Lerp(hsb0[1], hsb1[1], delta),
+            Mathf.Lerp(hsb0[2], hsb1[2], delta)
+        );
+    }
+
+    public static float[] Rgb2Hsb(uint red, uint green, uint blue) {
+        uint max = Mathf.Max(red, green, blue);
+        uint min = Mathf.Min(red, green, blue);
+        float diff = max - min;
+        float saturation = max == 0 ? 0 : diff / max;
+        float hue;
+        if (saturation == 0) {
+            hue = 0;
+        } else {
+            float delta = diff * 6;
+            if (red == max) {
+                hue = (green - blue) / delta;
+            } else if (green == max) {
+                hue = (1 / 3F) + ((blue - red) / delta);
+            } else {
+                hue = (2 / 3F) + ((red - green) / delta);
+            }
+            if (hue < 0) {
+                hue++;
+            }
+        }
+        return new[] { hue, saturation, max / 255F };
+    }
+
+    public static Color Hsb2Rgb(float hue, float saturation, float brightness) {
+        if (saturation == 0) {
+            return Convert(brightness, brightness, brightness);
+        }
+        if (brightness is < 0 or > 1) {
+            throw new ArgumentOutOfRangeException(nameof(brightness), "brightness must be between 0 and 1");
+        }
+        if (saturation is < 0 or > 1) {
+            throw new ArgumentOutOfRangeException(nameof(saturation), "saturation must be between 0 and 1");
+        }
+        hue -= (float)Math.Floor(hue);
+        int i = (int)(6 * hue);
+        float f = 6 * hue - i;
+        float p = brightness * (1 - saturation);
+        float q = brightness * (1 - saturation * f);
+        float t = brightness * (1 - saturation * (1 - f));
+        return i switch {
+            0 => Convert(brightness, t, p),
+            1 => Convert(q, brightness, p),
+            2 => Convert(p, brightness, t),
+            3 => Convert(p, q, brightness),
+            4 => Convert(t, p, brightness),
+            5 => Convert(brightness, p, q),
+            _ => throw new Exception("impossible")
+        };
+    }
+
+    private static Color Convert(float red, float green, float blue) {
+        uint r = (uint)Math.Round(255 * red);
+        uint g = (uint)Math.Round(255 * green);
+        uint b = (uint)Math.Round(255 * blue);
+        return (r << 16) | (g << 8) | b;
     }
 }

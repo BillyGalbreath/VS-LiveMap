@@ -141,7 +141,7 @@ public sealed class JsonDataTask {
 
     private Dictionary<string, object?>[] Renderers() {
         List<Dictionary<string, object?>> list = new();
-        Dictionary<string, Renderer.Builder> renderers = new(_server.RendererRegistry);
+        Dictionary<string, Renderer> renderers = new(_server.RendererRegistry);
         foreach ((string? key, _) in renderers) {
             Dictionary<string, object?> obj = new();
             obj.TryAdd("id", key);

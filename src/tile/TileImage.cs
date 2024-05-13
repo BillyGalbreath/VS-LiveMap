@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
+using livemap.data;
 using livemap.logger;
 using livemap.util;
 using SkiaSharp;
@@ -14,8 +15,6 @@ namespace livemap.tile;
 
 [PublicAPI]
 public unsafe class TileImage {
-    private readonly LiveMapServer _server;
-
     private readonly SKBitmap _bitmap;
     private readonly byte* _bitmapPtr;
     private readonly byte[] _shadowMap;
@@ -25,9 +24,7 @@ public unsafe class TileImage {
     private readonly int _regionX;
     private readonly int _regionZ;
 
-    public TileImage(LiveMapServer server, int regionX, int regionZ) {
-        _server = server;
-
+    public TileImage(int regionX, int regionZ) {
         _bitmap = new SKBitmap(512, 512);
         _bitmapPtr = (byte*)_bitmap.GetPixels().ToPointer();
         _shadowMap = new byte[512 << 9].Fill((byte)128);
@@ -63,9 +60,10 @@ public unsafe class TileImage {
     }
 
     public void Save(string rendererId) {
+        Config config = LiveMap.Api.Config;
         try {
-            for (int zoom = 0; zoom <= _server.Config.Zoom.MaxOut; zoom++) {
-                FileInfo fileInfo = new(Path.Combine(Files.TilesDir, rendererId, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.{_server.Config.Web.TileType.Type}"));
+            for (int zoom = 0; zoom <= config.Zoom.MaxOut; zoom++) {
+                FileInfo fileInfo = new(Path.Combine(Files.TilesDir, rendererId, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.{config.Web.TileType.Type}"));
                 GamePaths.EnsurePathExists(fileInfo.Directory!.FullName);
 
                 if (zoom > 0) {
@@ -75,11 +73,11 @@ public unsafe class TileImage {
                     WritePixels(bitmap, zoom);
 
                     using FileStream outStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                    bitmap.Encode(_server.Config.Web.TileType.Format, _server.Config.Web.TileQuality).SaveTo(outStream);
+                    bitmap.Encode(config.Web.TileType.Format, config.Web.TileQuality).SaveTo(outStream);
                     bitmap.Dispose();
                 } else {
                     using FileStream outStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                    _bitmap.Encode(_server.Config.Web.TileType.Format, _server.Config.Web.TileQuality).SaveTo(outStream);
+                    _bitmap.Encode(config.Web.TileType.Format, config.Web.TileQuality).SaveTo(outStream);
                 }
             }
 

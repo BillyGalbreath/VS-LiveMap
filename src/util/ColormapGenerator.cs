@@ -114,13 +114,13 @@ public class ColormapGenerator {
 
     private void ProcessBlock(Block block, BlockPos pos, Colormap colormap) {
         // get the base color of this block - game stores these in reverse byte order for some reason
-        int argb = Color.Reverse(block.GetColor(_client.Api, pos));
+        uint argb = Color.Reverse((uint)block.GetColor(_client.Api, pos));
 
         // get 30 color samples for this block
         uint[] colors = new uint[30];
         for (int i = 0; i < colors.Length; i++) {
             // blend the base color with a random color
-            uint color = (uint)Color.Blend(argb, block.GetRandomColor(_client.Api, pos, BlockFacing.UP, i));
+            uint color = Color.Blend(argb, (uint)block.GetRandomColor(_client.Api, pos, BlockFacing.UP, i), 0.4F);
 
             // strip off alpha channel and save color
             colors[i] = color & 0xFFFFFF;

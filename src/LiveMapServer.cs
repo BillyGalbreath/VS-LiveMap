@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -23,15 +24,25 @@ namespace livemap;
 [PublicAPI]
 public sealed class LiveMapServer : LiveMap {
     public ICoreServerAPI Api { get; }
+
     public Config Config { get; private set; } = null!;
+
     public Colormap Colormap { get; }
     public SepiaColors SepiaColors { get; }
+
     public NetworkHandler NetworkHandler { get; }
+
     public LayerRegistry LayerRegistry { get; }
     public RendererRegistry RendererRegistry { get; }
+
     public JsonDataTask JsonDataTask { get; }
     public RenderTaskManager RenderTaskManager { get; }
+
     public WebServer WebServer { get; }
+
+    public HashSet<int> MicroBlocks { get; }
+    public HashSet<int> BlocksToIgnore { get; }
+    public int LandBlock { get; }
 
     private readonly long _gameTickTaskId;
 
@@ -57,7 +68,7 @@ public sealed class LiveMapServer : LiveMap {
         NetworkHandler = new ServerNetworkHandler(this);
 
         LayerRegistry = new LayerRegistry();
-        RendererRegistry = new RendererRegistry(this);
+        RendererRegistry = new RendererRegistry();
 
         JsonDataTask = new JsonDataTask(this);
         RenderTaskManager = new RenderTaskManager(this);
@@ -94,6 +105,26 @@ public sealed class LiveMapServer : LiveMap {
             });
 
         _gameTickTaskId = Api.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
+
+        MicroBlocks = api.World.Blocks
+            .Where(block => block.Code != null)
+            .Where(block =>
+                block.Code.Path.StartsWith("chiseledblock") ||
+                block.Code.Path.StartsWith("microblock"))
+            .Select(block => block.Id)
+            .ToHashSet();
+
+        BlocksToIgnore = api.World.Blocks
+            .Where(block => block.Code != null)
+            .Where(block =>
+                (block.Code.Path.EndsWith("-snow") && !MicroBlocks.Contains(block.Id)) ||
+                block.Code.Path.EndsWith("-snow2") ||
+                block.Code.Path.EndsWith("-snow3") ||
+                block.Code.Path.Equals("snowblock") ||
+                block.Code.Path.Contains("snowlayer-"))
+            .Select(block => block.Id).ToHashSet();
+
+        LandBlock = api.World.GetBlock(new AssetLocation("game", "soil-low-normal")).Id;
     }
 
     public void ReloadConfig() {
@@ -164,5 +195,10 @@ public sealed class LiveMapServer : LiveMap {
         RendererRegistry.Dispose();
         Colormap.Dispose();
         SepiaColors.Dispose();
+
+        RendererRegistry.Dispose();
+
+        MicroBlocks.Clear();
+        BlocksToIgnore.Clear();
     }
 }

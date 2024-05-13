@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace livemap.render;
@@ -26,6 +27,7 @@ public class BlockData {
         public int Y { get; }
         public int Top { get; }
         public int Under { get; }
+        public Dictionary<string, object?> Custom = new();
 
         public Data(int y, int top, int under) {
             Y = y;

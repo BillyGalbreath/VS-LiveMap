@@ -9,16 +9,15 @@ namespace livemap.render;
 [PublicAPI]
 public abstract class Renderer : Keyed {
     public string Id { get; }
-    public LiveMapServer Server { get; }
+
     public TileImage? TileImage { get; set; }
 
-    protected Renderer(LiveMapServer server, string id) {
+    protected Renderer(string id) {
         Id = id;
-        Server = server;
     }
 
     public virtual void AllocateImage(int regionX, int regionZ) {
-        TileImage = new TileImage(Server, regionX, regionZ);
+        TileImage = new TileImage(regionX, regionZ);
     }
 
     public virtual void SaveImage() {
@@ -33,12 +32,12 @@ public abstract class Renderer : Keyed {
 
     public virtual void ProcessBlockData(int regionX, int regionZ, BlockData blockData) { }
 
-    protected (int, int) ProcessBlock(BlockData.Data? block, int defY = 0) {
+    public virtual (int, int) ProcessBlock(BlockData.Data? block, int defY = 0) {
         if (block == null) {
             return (0, defY);
         }
         int id, y;
-        if (Server.RenderTaskManager.RenderTask.BlocksToIgnore.Contains(block.Top)) {
+        if (LiveMap.Api.BlocksToIgnore.Contains(block.Top)) {
             id = block.Under;
             y = block.Y - 1;
         } else {
@@ -48,7 +47,7 @@ public abstract class Renderer : Keyed {
         return (id, y);
     }
 
-    protected float ProcessShadow(int x, int y, int z, BlockData blockData) {
+    public virtual float ProcessShadow(int x, int y, int z, BlockData blockData) {
         (int _, int northwest) = ProcessBlock(blockData.Get(x - 1, z - 1), y);
         (int _, int north) = ProcessBlock(blockData.Get(x, z - 1), y);
         (int _, int west) = ProcessBlock(blockData.Get(x - 1, z), y);
@@ -65,15 +64,5 @@ public abstract class Renderer : Keyed {
 
     public virtual void Dispose() {
         TileImage?.Dispose();
-    }
-
-    public class Builder : Keyed {
-        public string Id { get; }
-        public Func<LiveMapServer, Renderer> Func { get; }
-
-        public Builder(string id, Func<LiveMapServer, Renderer> func) {
-            Id = id;
-            Func = func;
-        }
     }
 }

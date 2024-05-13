@@ -22,38 +22,9 @@ public sealed class RenderTask {
     private readonly LiveMapServer _server;
     private readonly ChunkLoader _chunkLoader;
 
-    public HashSet<int> MicroBlocks { get; }
-    public HashSet<int> BlocksToIgnore { get; }
-
-    public Dictionary<string, Renderer> Renderers { get; } = new();
-
-    private readonly int _landBlock;
-
     public RenderTask(LiveMapServer server) {
         _server = server;
-
         _chunkLoader = new ChunkLoader(_server.Api);
-
-        MicroBlocks = _server.Api.World.Blocks
-            .Where(block => block.Code != null)
-            .Where(block =>
-                block.Code.Path.StartsWith("chiseledblock") ||
-                block.Code.Path.StartsWith("microblock"))
-            .Select(block => block.Id)
-            .ToHashSet();
-
-        BlocksToIgnore = _server.Api.World.Blocks
-            .Where(block => block.Code != null)
-            .Where(block =>
-                (block.Code.Path.EndsWith("-snow") && !MicroBlocks.Contains(block.Id)) ||
-                block.Code.Path.EndsWith("-snow2") ||
-                block.Code.Path.EndsWith("-snow3") ||
-                block.Code.Path.Equals("snowblock") ||
-                block.Code.Path.Contains("snowlayer-") ||
-                block is BlockRequireSolidGround)
-            .Select(block => block.Id).ToHashSet();
-
-        _landBlock = _server.Api.World.GetBlock(new AssetLocation("game", "soil-low-normal")).Id;
     }
 
     public void ScanRegion(int regionX, int regionZ) {
@@ -71,7 +42,7 @@ public sealed class RenderTask {
             }
 
             // process the region through all the renderers
-            foreach ((string? _, Renderer? renderer) in Renderers) {
+            foreach ((string _, Renderer renderer) in LiveMap.Api.RendererRegistry) {
                 renderer.AllocateImage(regionX, regionZ);
                 renderer.ProcessBlockData(regionX, regionZ, blockData);
                 renderer.CalculateShadows();
@@ -121,7 +92,7 @@ public sealed class RenderTask {
         }
 
         // process the chunk through all the renderers
-        foreach ((string? _, Renderer? renderer) in Renderers) {
+        foreach ((string _, Renderer renderer) in LiveMap.Api.RendererRegistry) {
             renderer.ScanChunkColumn(chunkPos, blockData);
         }
     }
@@ -151,11 +122,11 @@ public sealed class RenderTask {
     }
 
     private void CheckForMicroBlocks(int x, int y, int z, ServerChunk serverChunk, ref int top) {
-        if (!MicroBlocks.Contains(top)) {
+        if (!LiveMap.Api.MicroBlocks.Contains(top)) {
             return;
         }
         serverChunk.BlockEntities.TryGetValue(_mutableBlockPos.Set(x, y, z), out BlockEntity? be);
-        top = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _landBlock;
+        top = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : LiveMap.Api.LandBlock;
     }
 
     private int GetTopBlockY(ServerMapChunk? mapChunk, int x, int z, int def = 0) {
@@ -165,12 +136,5 @@ public sealed class RenderTask {
 
     public void Dispose() {
         _chunkLoader.Dispose();
-        MicroBlocks.Clear();
-        BlocksToIgnore.Clear();
-
-        foreach ((string? _, Renderer renderer) in Renderers) {
-            renderer.Dispose();
-        }
-        Renderers.Clear();
     }
 }

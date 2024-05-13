@@ -4,12 +4,12 @@ namespace livemap.render;
 
 [PublicAPI]
 public class SepiaRenderer : Renderer {
-    protected bool IsWater(int? id) => id == null || Server.SepiaColors.BlockIsWater[(int)id];
-    protected byte GetIndex(int id) => Server.SepiaColors.Block2Color[id];
-    protected uint GetColor(int id) => Server.SepiaColors.ColorsByCode.GetValueAtIndex(id);
-    protected uint GetColor(string id) => Server.SepiaColors.ColorsByCode[id];
+    public static bool IsWater(int? id) => id == null || LiveMap.Api.SepiaColors.BlockIsWater[(int)id];
+    public static byte GetIndex(int id) => LiveMap.Api.SepiaColors.Block2Color[id];
+    public static uint GetColor(int index) => LiveMap.Api.SepiaColors.ColorsByCode.GetValueAtIndex(index);
+    public static uint GetColor(string id) => LiveMap.Api.SepiaColors.ColorsByCode[id];
 
-    public SepiaRenderer(LiveMapServer server) : base(server, "sepia") { }
+    public SepiaRenderer() : base("sepia") { }
 
     public override void ProcessBlockData(int regionX, int regionZ, BlockData blockData) {
         if (TileImage == null) {
