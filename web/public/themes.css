@@ -19,7 +19,7 @@
   --notification-danger-border: 1px outset #FF4040BF;
 }
 
-html[theme="white-glass"] {
+html[theme='white-glass'] {
   --text-color: #000000E5;
   --text-color-hover: #212121;
   --text-color-attribution: #101010A0;
@@ -34,7 +34,7 @@ html[theme="white-glass"] {
   --blur: blur(6px);
 }
 
-html[theme="black-glass"] {
+html[theme='black-glass'] {
   --text-color: #DFDFDFE5;
   --text-color-hover: #CECECE;
   --text-color-attribution: #FFFFFF80;
@@ -49,7 +49,7 @@ html[theme="black-glass"] {
   --blur: blur(6px);
 }
 
-html[theme="clear-glass"] {
+html[theme='clear-glass'] {
   --text-color: #FFFFFFE5;
   --text-color-hover: #EEEEEE;
   --text-color-attribution: #FFFFFF80;
@@ -64,7 +64,7 @@ html[theme="clear-glass"] {
   --blur: blur(2px);
 }
 
-html[theme="light"] {
+html[theme='light'] {
   --text-color: #404040;
   --text-color-hover: #808080;
   --text-color-attribution: #666666;
@@ -79,7 +79,7 @@ html[theme="light"] {
   --blur: none;
 }
 
-html[theme="dark"] {
+html[theme='dark'] {
   --text-color: #FFFFFFC8;
   --text-color-hover: #EEEEEE;
   --text-color-attribution: #888888;

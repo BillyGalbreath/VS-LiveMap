@@ -1,6 +1,5 @@
 import * as L from 'leaflet';
 import {LiveMap} from './LiveMap';
-import {InteractiveLayerOptions} from "leaflet";
 
 declare global {
     interface Window {

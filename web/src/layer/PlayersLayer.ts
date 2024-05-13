@@ -1,11 +1,11 @@
 import * as L from 'leaflet';
 import {LiveMap} from '../LiveMap';
-import {MarkersLayer} from "./MarkersLayer";
+import {MarkersLayer} from './MarkersLayer';
 import {Players} from '../data/Players';
 import {Player} from '../data/Player';
-import {Value} from "../data/Value";
-import {Icon} from "./marker/Icon";
-import {Marker, MarkerJson} from "./marker/Marker";
+import {Value} from '../data/Value';
+import {Icon} from './marker/Icon';
+import {Marker, MarkerJson} from './marker/Marker';
 
 export class PlayersLayer extends MarkersLayer {
     private readonly _dom: HTMLElement;
@@ -17,6 +17,11 @@ export class PlayersLayer extends MarkersLayer {
     constructor(livemap: LiveMap) {
         super(livemap, '', 1);
         this._dom = L.DomUtil.create('ul');
+
+        this.options = {
+            ...this.options,
+            pane: 'players'
+        };
 
         // add this layer to the layers control and map
         livemap.layersControl.addOverlay(this, livemap.settings.lang.players);
@@ -112,16 +117,16 @@ export class PlayersLayer extends MarkersLayer {
             options: {
                 title: player.name,
                 rotationAngle: player.yaw,
-                iconUrl: "#svg-player",
+                iconUrl: '#svg-player',
                 iconSize: [24, 24],
                 iconAnchor: [12, 12]
             },
             tooltip: {
-                "permanent": true,
-                "direction": "right",
-                "offset": [10, 0],
-                "pane": "players",
-                "content": this.tooltip(player)
+                'permanent': true,
+                'direction': 'right',
+                'offset': [10, 0],
+                'pane': 'players',
+                'content': this.tooltip(player)
             }
         } as unknown as MarkerJson);
         icon.addTo(this);
@@ -154,7 +159,7 @@ export class PlayersLayer extends MarkersLayer {
     }
 
     private tooltip(player: Player): string {
-        return `<ul><li><img src='${player.avatar}' alt="avatar"></li><li>${player.name}<div style='${this.stat(player.health, 3)}'><p></p></div><div style='${this.stat(player.satiety, 300)};--height:6px'><p></p></div></li></ul>`
+        return `<ul><li><img src='${player.avatar}' alt='avatar'></li><li>${player.name}<div style='${this.stat(player.health, 3)}'><p></p></div><div style='${this.stat(player.satiety, 300)};--height:6px'><p></p></div></li></ul>`
     }
 
     private stat(value: Value, divisor: number): string {
@@ -165,8 +170,8 @@ export class PlayersLayer extends MarkersLayer {
 
     private cleanUid(id: string): string {
         return id
-            .replace(/\//, "-slash-")
-            .replace(/\+/, "-plus-")
-            .replace(/=/, "-equals-");
+            .replace(/\//, '-slash-')
+            .replace(/\+/, '-plus-')
+            .replace(/=/, '-equals-');
     }
 }

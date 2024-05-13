@@ -10,7 +10,7 @@ import {Settings} from './data/Settings';
 import {Point} from './data/Point';
 import './scss/styles';
 import './svg'
-import {PlayersLayer} from "./layer/PlayersLayer";
+import {PlayersLayer} from './layer/PlayersLayer';
 
 export class LiveMap extends L.Map {
     declare _controlCorners: { [x: string]: HTMLDivElement; };
@@ -273,7 +273,7 @@ for (let i: number = 0; i < document.styleSheets.length; i++) {
         const rules: CSSRuleList = css.cssRules;
         for (let j: number = 0; j < rules.length; j++) {
             const rule: CSSStyleRule = rules[j] as CSSStyleRule;
-            const match: RegExpExecArray | null = /html\[theme="(.+)"]/.exec(rule.selectorText);
+            const match: RegExpExecArray | null = /html\[theme=\u0022(.+)\u0022]/.exec(rule.selectorText);
             if (match) {
                 knownThemes.push(match[1]);
             }
@@ -293,7 +293,7 @@ const setTheme = (): void => {
     //localStorage.setItem('theme', theme);
     //localStorage.removeItem('theme');
 
-    const icon: HTMLLinkElement | null = document.querySelector('link[rel="shortcut icon"]');
+    const icon: HTMLLinkElement | null = document.querySelector(`link[rel='shortcut icon']`);
     if (icon) {
         icon.href = prefersDark ? 'favicon-white.ico' : 'favicon.ico';
     }

@@ -6,7 +6,7 @@ export class Ui {
     private readonly _sidebar: string;
 
     constructor(json?: Ui) {
-        this._attribution = json?.attribution ?? '<a href="https://mods.vintagestory.at/livemap" target="_blank">Livemap</a> &copy;2024';
+        this._attribution = json?.attribution ?? `<a href='https://mods.vintagestory.at/livemap' target='_blank'>Livemap</a> &copy;2024`;
         this._homepage = json?.homepage ?? 'https://mods.vintagestory.at/livemap';
         this._title = json?.title ?? 'Vintage Story LiveMap';
         this._logo = json?.logo ?? 'LiveMap';

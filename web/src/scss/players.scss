@@ -4,7 +4,7 @@
 }
 
 .leaflet-players-pane {
-  z-index: 1000000000 !important;
+  z-index: 100000000;
 
   > div {
     margin: 0;
@@ -14,8 +14,11 @@
     box-shadow: none;
     pointer-events: auto;
 
+    &:hover {
+      z-index: 200000000;
+    }
+
     &.leaflet-tooltip {
-      z-index: 10000000000;
       color: var(--text-color);
       background: var(--background);
       border: var(--border);
