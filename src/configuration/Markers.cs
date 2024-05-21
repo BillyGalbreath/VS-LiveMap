@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace livemap.data;
+namespace livemap.configuration;
 
 [PublicAPI]
 public class Markers {

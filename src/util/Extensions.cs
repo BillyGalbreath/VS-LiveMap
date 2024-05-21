@@ -37,7 +37,7 @@ public static class Extensions {
     }
 
     public static string ToLang(this string key, params object[]? args) {
-        return Lang.Get($"{LiveMapMod.Id}:{key}", args);
+        return Lang.Get($"{LiveMap.Api.ModId}:{key}", args);
     }
 
     public static Point GetPoint(this IPlayer player) {

@@ -42,7 +42,7 @@ public sealed class RenderTask {
             }
 
             // process the region through all the renderers
-            foreach ((string _, Renderer renderer) in LiveMap.Api.RendererRegistry) {
+            foreach ((string _, Renderer renderer) in _server.RendererRegistry) {
                 renderer.AllocateImage(regionX, regionZ);
                 renderer.ProcessBlockData(regionX, regionZ, blockData);
                 renderer.CalculateShadows();
@@ -92,7 +92,7 @@ public sealed class RenderTask {
         }
 
         // process the chunk through all the renderers
-        foreach ((string _, Renderer renderer) in LiveMap.Api.RendererRegistry) {
+        foreach ((string _, Renderer renderer) in _server.RendererRegistry) {
             renderer.ScanChunkColumn(chunkPos, blockData);
         }
     }
@@ -122,11 +122,11 @@ public sealed class RenderTask {
     }
 
     private void CheckForMicroBlocks(int x, int y, int z, ServerChunk serverChunk, ref int top) {
-        if (!LiveMap.Api.MicroBlocks.Contains(top)) {
+        if (!_server.MicroBlocks.Contains(top)) {
             return;
         }
         serverChunk.BlockEntities.TryGetValue(_mutableBlockPos.Set(x, y, z), out BlockEntity? be);
-        top = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : LiveMap.Api.LandBlock;
+        top = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _server.LandBlock;
     }
 
     private int GetTopBlockY(ServerMapChunk? mapChunk, int x, int z, int def = 0) {

@@ -8,7 +8,7 @@ public sealed class ClientNetworkHandler : NetworkHandler {
     private IClientNetworkChannel? _channel;
 
     public ClientNetworkHandler(LiveMapClient client) {
-        _channel = client.Api.Network.RegisterChannel(LiveMapMod.Id)
+        _channel = client.Api.Network.RegisterChannel(client.ModId)
             .RegisterMessageType<ColormapPacket>()
             .RegisterMessageType<ConfigPacket>()
             .SetMessageHandler<ColormapPacket>(_ => { })

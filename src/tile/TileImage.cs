@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
-using livemap.data;
 using livemap.logger;
 using livemap.util;
 using SkiaSharp;
@@ -59,11 +58,10 @@ public unsafe class TileImage {
         }
     }
 
-    public void Save(string rendererId) {
-        Config config = LiveMap.Api.Config;
+    public void Save(LiveMapServer server, string rendererId) {
         try {
-            for (int zoom = 0; zoom <= config.Zoom.MaxOut; zoom++) {
-                FileInfo fileInfo = new(Path.Combine(Files.TilesDir, rendererId, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.{config.Web.TileType.Type}"));
+            for (int zoom = 0; zoom <= server.Config.Zoom.MaxOut; zoom++) {
+                FileInfo fileInfo = new(Path.Combine(Files.TilesDir, rendererId, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.{server.Config.Web.TileType.Type}"));
                 GamePaths.EnsurePathExists(fileInfo.Directory!.FullName);
 
                 if (zoom > 0) {
@@ -73,11 +71,11 @@ public unsafe class TileImage {
                     WritePixels(bitmap, zoom);
 
                     using FileStream outStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                    bitmap.Encode(config.Web.TileType.Format, config.Web.TileQuality).SaveTo(outStream);
+                    bitmap.Encode(server.Config.Web.TileType.Format, server.Config.Web.TileQuality).SaveTo(outStream);
                     bitmap.Dispose();
                 } else {
                     using FileStream outStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                    _bitmap.Encode(config.Web.TileType.Format, config.Web.TileQuality).SaveTo(outStream);
+                    _bitmap.Encode(server.Config.Web.TileType.Format, server.Config.Web.TileQuality).SaveTo(outStream);
                 }
             }
 

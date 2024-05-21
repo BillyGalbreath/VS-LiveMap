@@ -1,5 +1,5 @@
 using ImGuiNET;
-using livemap.data;
+using livemap.configuration;
 using livemap.gui.element;
 
 namespace livemap.gui.settings;

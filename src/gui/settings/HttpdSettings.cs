@@ -1,6 +1,6 @@
 using System.Numerics;
 using ImGuiNET;
-using livemap.data;
+using livemap.configuration;
 
 namespace livemap.gui.settings;
 

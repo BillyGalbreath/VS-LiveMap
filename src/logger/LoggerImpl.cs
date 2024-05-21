@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Vintagestory.API.Common;
 using Vintagestory.Common;
@@ -43,30 +44,22 @@ public abstract partial class LoggerImpl : LoggerBase {
     protected abstract bool DebugToConsole { get; }
     protected abstract bool DebugToEventFile { get; }
 
+    private readonly string _modid;
+    private readonly Vintagestory.Logger _parent;
+
     private bool _canUseColor = true;
 
-    private static string Strip(string message) {
-        return ColorCodesRegex().Replace(AnsiCodesRegex().Replace(message, ""), "");
-    }
-
-    private static string Parse(string message) {
-        MatchCollection results = ColorCodesRegex().Matches(message);
-
-        foreach (Match match in results) {
-            message = message.Replace(match.Value, $"\u001b[{_ansiCodes[match.Groups[1].Value]}m");
-        }
-
-        return message;
+    protected LoggerImpl(string modid, ILogger logger) {
+        _modid = modid;
+        _parent = (Vintagestory.Logger)((ModLogger)logger).Parent;
     }
 
     protected override void LogImpl(EnumLogType logType, string format, params object[] args) {
-        string stripped = $"[{LiveMapMod.Id}] {Strip(format)}";
+        string stripped = $"[{_modid}] {Strip(format)}";
 
-        Vintagestory.Logger parent = (Vintagestory.Logger)((ModLogger)LiveMapMod.VanillaLogger).Parent;
+        PrintToCorrectLogFile(_parent, logType, stripped, args);
 
-        PrintToCorrectLogFile(parent, logType, stripped, args);
-
-        if (!parent.printToConsole(logType)) {
+        if (!_parent.printToConsole(logType)) {
             return;
         }
 
@@ -74,13 +67,13 @@ public abstract partial class LoggerImpl : LoggerBase {
             return;
         }
 
-        if (parent.TraceLog) {
-            Trace.WriteLine(parent.FormatLogEntry(logType, stripped, args));
+        if (_parent.TraceLog) {
+            Trace.WriteLine(_parent.FormatLogEntry(logType, stripped, args));
         }
 
         SetupColorsOrNot(logType);
 
-        WriteToLog(parent, logType, format, stripped, args);
+        WriteToLog(_parent, logType, format, stripped, args);
 
         Console.ResetColor();
     }
@@ -137,12 +130,22 @@ public abstract partial class LoggerImpl : LoggerBase {
         }
 
         Console.WriteLine(parent.FormatLogEntry(logType, Parse(
-            $"[&3{LiveMapMod.Id}{logType switch {
+            $"[&3{_modid}{logType switch {
                 EnumLogType.Debug => "&e",
                 EnumLogType.Error or EnumLogType.Fatal => "&c",
                 EnumLogType.Warning => "&6",
                 _ => "&r"
             }}] {format}&r"
         ), args));
+    }
+
+    private static string Strip(string message) {
+        return ColorCodesRegex().Replace(AnsiCodesRegex().Replace(message, ""), "");
+    }
+
+    private static string Parse(string message) {
+        return ColorCodesRegex().Matches(message).Aggregate(message, (current, match) =>
+            current.Replace(match.Value, $"\u001b[{_ansiCodes[match.Groups[1].Value]}m")
+        );
     }
 }

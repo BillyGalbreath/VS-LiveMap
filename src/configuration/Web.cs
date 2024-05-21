@@ -3,7 +3,7 @@ using livemap.json;
 using livemap.tile;
 using Newtonsoft.Json;
 
-namespace livemap.data;
+namespace livemap.configuration;
 
 [PublicAPI]
 public class Web {

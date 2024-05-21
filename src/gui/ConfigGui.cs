@@ -14,7 +14,7 @@ public class ConfigGui : Gui {
         ConfigLibModSystem? configlib = _client.Api.ModLoader.GetModSystem<ConfigLibModSystem>();
         configlib.ConfigWindowOpened += OnOpen;
         configlib.ConfigWindowClosed += OnClose;
-        configlib.RegisterCustomConfig(LiveMapMod.Id, (_, controlButtons) => {
+        configlib.RegisterCustomConfig(client.ModId, (_, controlButtons) => {
             try {
                 return Draw(controlButtons);
             } catch (Exception) {

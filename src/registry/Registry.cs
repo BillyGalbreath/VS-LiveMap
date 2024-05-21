@@ -8,7 +8,7 @@ public abstract class Registry<T> : OrderedDictionary<string, T>, Keyed where T 
     public string Id { get; }
 
     protected Registry(string id) {
-        Id = $"{LiveMapMod.Id}:{id}";
+        Id = $"{LiveMap.Api.ModId}:{id}";
     }
 
     public virtual int Register(T value) {

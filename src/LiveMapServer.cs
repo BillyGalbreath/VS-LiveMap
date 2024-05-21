@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using JetBrains.Annotations;
+using livemap.configuration;
 using livemap.data;
 using livemap.httpd;
 using livemap.logger;
@@ -22,9 +22,10 @@ using Vintagestory.Common.Database;
 
 namespace livemap;
 
-[PublicAPI]
 public sealed class LiveMapServer : LiveMap {
     public ICoreServerAPI Api { get; }
+
+    public string ModId => _mod.Mod.Info.ModID;
 
     public Config Config { get; private set; } = null!;
 
@@ -45,13 +46,17 @@ public sealed class LiveMapServer : LiveMap {
     public HashSet<int> BlocksToIgnore { get; }
     public int LandBlock { get; }
 
+    private readonly LiveMapMod _mod;
     private readonly long _gameTickTaskId;
+    private readonly FileWatcher _configFileWatcher;
 
-    public LiveMapServer(ICoreServerAPI api) {
-        Api = api;
+    public LiveMapServer(LiveMapMod mod, ICoreServerAPI api) {
         LiveMap.Api = this;
 
-        Logger.LoggerImpl = new ServerLoggerImpl();
+        Api = api;
+        _mod = mod;
+
+        Logger.LoggerImpl = new ServerLoggerImpl(ModId, mod.Mod.Logger);
 
         Files.DataDir = Path.Combine(GamePaths.DataPath, "ModData", Api.World.SavegameIdentifier, "LiveMap");
         Files.ColormapFile = Path.Combine(Files.DataDir, "colormap.json");
@@ -59,6 +64,8 @@ public sealed class LiveMapServer : LiveMap {
         Files.JsonDir = Path.Combine(Files.WebDir, "data");
         Files.MarkerDir = Path.Combine(Files.JsonDir, "markers");
         Files.TilesDir = Path.Combine(Files.WebDir, "tiles");
+
+        _configFileWatcher = new FileWatcher(this);
 
         ReloadConfig();
 
@@ -81,7 +88,7 @@ public sealed class LiveMapServer : LiveMap {
         // things to do on first game tick
         Api.Event.RegisterCallback(_ => {
             Colormap.LoadFromDisk(Api.World);
-            RendererRegistry.RegisterBuiltIns();
+            RendererRegistry.RegisterBuiltIns(this);
         }, 1);
 
         Api.ChatCommands.Create("livemap")
@@ -129,8 +136,11 @@ public sealed class LiveMapServer : LiveMap {
     }
 
     public void ReloadConfig() {
-        string filename = $"{LiveMapMod.Id}.json";
+        string filename = $"{ModId}.json";
+
         Config = Api.LoadModConfig<Config>(filename) ?? new Config();
+
+        _configFileWatcher.IgnoreChanges = true;
         Api.StoreModConfig(Config, filename);
     }
 
@@ -182,6 +192,8 @@ public sealed class LiveMapServer : LiveMap {
     }
 
     public void Dispose() {
+        _configFileWatcher.Dispose();
+
         Api.Event.ChunkDirty -= OnChunkDirty;
         Api.Event.GameWorldSave -= OnGameWorldSave;
 

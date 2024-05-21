@@ -1,0 +1,79 @@
+using System;
+using System.IO;
+using livemap.logger;
+using Vintagestory.API.Config;
+
+namespace livemap.util;
+
+public class FileWatcher {
+    private readonly FileSystemWatcher _watcher;
+    private readonly LiveMapServer _server;
+
+    public bool IgnoreChanges { get; set; }
+
+    public FileWatcher(LiveMapServer server) {
+        _server = server;
+
+        _watcher = new FileSystemWatcher(GamePaths.ModConfig) {
+            Filter = $"{server.ModId}.json",
+            IncludeSubdirectories = false,
+            EnableRaisingEvents = true
+        };
+
+        _watcher.Changed += Changed;
+        _watcher.Created += Changed;
+        _watcher.Deleted += Changed;
+        _watcher.Renamed += Changed;
+        _watcher.Error += Error;
+    }
+
+    private void Changed(object sender, FileSystemEventArgs e) {
+        QueueReload(true);
+    }
+
+    private void Error(object sender, ErrorEventArgs e) {
+        Logger.Error(e.GetException().ToString());
+        QueueReload();
+    }
+
+    /// <summary>
+    /// My workaround for <a href='https://github.com/dotnet/runtime/issues/24079'>dotnet#24079</a>.
+    /// </summary>
+    private void QueueReload(bool changed = false) {
+        // check if already queued for reload
+        if (IgnoreChanges) {
+            return;
+        }
+
+        // mark as queued
+        IgnoreChanges = true;
+
+        // inform console/log
+        if (changed) {
+            Logger.Info("Detected the config was changed. Reloading.");
+            throw new Exception();
+        }
+
+        // wait for other changes to process
+        _server.Api.Event.RegisterCallback(_ => {
+            // reload the config
+            _server.ReloadConfig();
+
+            // wait some more to remove this change from the queue since the reload triggers another write
+            _server.Api.Event.RegisterCallback(_ => {
+                // unmark as queued
+                IgnoreChanges = false;
+            }, 100);
+        }, 100);
+    }
+
+    public void Dispose() {
+        _watcher.Changed -= Changed;
+        _watcher.Created -= Changed;
+        _watcher.Deleted -= Changed;
+        _watcher.Renamed -= Changed;
+        _watcher.Error -= Error;
+
+        _watcher.Dispose();
+    }
+}

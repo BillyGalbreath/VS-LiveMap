@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using livemap.configuration;
 using livemap.data;
 using livemap.httpd;
 using livemap.network;
@@ -12,6 +13,8 @@ namespace livemap;
 [PublicAPI]
 public interface LiveMap {
     public static LiveMap Api { get; internal set; } = null!;
+
+    public string ModId { get; }
 
     public Config Config { get; }
 
