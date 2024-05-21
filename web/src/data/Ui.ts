@@ -1,15 +1,17 @@
 export class Ui {
     private readonly _attribution: string;
-    private readonly _homepage: string;
-    private readonly _title: string;
-    private readonly _logo: string;
+    private readonly _logolink: string;
+    private readonly _logoimg: string;
+    private readonly _logotext: string;
+    private readonly _sitetitle: string;
     private readonly _sidebar: string;
 
     constructor(json?: Ui) {
         this._attribution = json?.attribution ?? `<a href='https://mods.vintagestory.at/livemap' target='_blank'>Livemap</a> &copy;2024`;
-        this._homepage = json?.homepage ?? 'https://mods.vintagestory.at/livemap';
-        this._title = json?.title ?? 'Vintage Story LiveMap';
-        this._logo = json?.logo ?? 'LiveMap';
+        this._logolink = json?.logolink ?? 'https://mods.vintagestory.at/livemap';
+        this._logoimg = json?.logoimg ?? `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path fill='currentColor' d='m2 2 32 16v80l-32-16v-80z'></path><path d='m34 18 32-16 32 16v80l-32-16-32 16'></path><path d='m66 8v68'></path></svg>`;
+        this._logotext = json?.logotext ?? 'LiveMap';
+        this._sitetitle = json?.sitetitle ?? 'Vintage Story LiveMap';
         this._sidebar = json?.sidebar ?? 'unpinned';
     }
 
@@ -17,16 +19,20 @@ export class Ui {
         return this._attribution;
     }
 
-    get homepage(): string {
-        return this._homepage;
+    get logolink(): string {
+        return this._logolink;
     }
 
-    get title(): string {
-        return this._title;
+    get logoimg(): string {
+        return this._logoimg;
     }
 
-    get logo(): string {
-        return this._logo;
+    get logotext(): string {
+        return this._logotext;
+    }
+
+    get sitetitle(): string {
+        return this._sitetitle;
     }
 
     get sidebar(): string {

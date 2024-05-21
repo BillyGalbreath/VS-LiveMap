@@ -65,7 +65,7 @@ export class LiveMap extends L.Map {
 
         // set custom page title from lang
         if (document.title.trim() == '') {
-            document.title = settings.ui.title ?? 'Vintage Story LiveMap';
+            document.title = settings.ui.sitetitle ?? 'Vintage Story LiveMap';
         }
 
         // pre-calculate map's scale

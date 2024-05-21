@@ -34,7 +34,7 @@ public abstract class Files {
             // check if we've already saved this file to disk
             string destPath = Path.Combine(WebDir, path);
             if (File.Exists(destPath) && server.Config.Web.ReadOnly) {
-                Logger.Debug($"Asset already exists on disk &6{path}");
+                Logger.Debug($"Skipping. Asset already exists on disk &6{path}");
                 continue;
             }
 

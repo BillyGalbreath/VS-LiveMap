@@ -32,9 +32,10 @@ public sealed class SettingsTask : JsonTask {
         dict.TryAdd("renderers", Renderers(cancellationToken));
         dict.TryAdd("ui", new Dictionary<string, object?> {
             { "attribution", _server.Config.Ui.Attribution },
-            { "homepage", _server.Config.Ui.Homepage },
-            { "title", _server.Config.Ui.Title },
-            { "logo", _server.Config.Ui.Logo },
+            { "logolink", _server.Config.Ui.LogoLink },
+            { "logoimg", _server.Config.Ui.LogoImg },
+            { "logotext", _server.Config.Ui.LogoText },
+            { "sitetitle", _server.Config.Ui.SiteTitle },
             { "sidebar", _server.Config.Ui.Sidebar }
         });
         dict.TryAdd("lang", new Dictionary<string, object?> {

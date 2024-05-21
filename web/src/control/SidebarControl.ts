@@ -29,13 +29,16 @@ export class SidebarControl {
         const logo: HTMLElement = L.DomUtil.create('div', '', holder);
         L.DomUtil.create('div', '', holder); // this one is squishy :3
 
-        const homepage: string = this._livemap.settings.ui.homepage;
-        const link: HTMLElement = L.DomUtil.create((homepage ? 'a' : 'span'), '', logo);
-        link.innerText = this._livemap.settings.ui.logo;
-        link.prepend(window.createSVGIcon('logo'));
-        if (homepage) {
-            (link as HTMLAnchorElement).href = homepage;
+        const logolink: string = this._livemap.settings.ui.logolink;
+        const logotext: string = this._livemap.settings.ui.logotext;
+
+        let rawhtml: string = this._livemap.settings.ui.logoimg;
+        if (logolink) {
+            rawhtml += `<span>${logotext}</span>`;
+        } else {
+            rawhtml += `<a href='${logolink}'>${logotext}</a>`;
         }
+        logo.insertAdjacentHTML('beforeend', rawhtml);
 
         // add these after the logo
         this._dom.appendChild(this.renderersControl.dom);
