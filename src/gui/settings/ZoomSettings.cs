@@ -14,7 +14,7 @@ public class ZoomSettings : Gui {
     }
 
     public override void Draw() {
-        if (!Header("zoom-settings", true)) {
+        if (!Header("zoom-settings", false)) {
             return;
         }
 

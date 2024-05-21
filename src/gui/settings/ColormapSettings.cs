@@ -24,15 +24,17 @@ public class ColormapSettings : Gui {
 
         ImGui.Indent();
 
-        if (ImGui.Button("colormap-generate".ToLang(), new Vector2 { X = 150f })) {
-            _modal.Open();
+        using (new StyleApplier(new Style { SpacingItem = ImGui.GetStyle().ItemSpacing with { X = 4f } })) {
+            if (ImGui.Button("colormap-generate".ToLang(), new Vector2 { X = 150f })) {
+                _modal.Open();
+            }
+
+            ImGui.SameLine();
+            ImGui.Text("colormap-generate.text".ToLang());
+
+            ImGui.SameLine();
+            Editors.DrawHint("colormap-generate.hint".ToLang());
         }
-
-        ImGui.SameLine();
-        ImGui.Text("colormap-generate.text".ToLang());
-
-        ImGui.SameLine();
-        Editors.DrawHint("colormap-generate.hint".ToLang());
 
         ImGui.Unindent();
 

@@ -8,7 +8,7 @@ public class HttpdSettings : Gui {
     public HttpdSettings(LiveMapClient client) : base(client) { }
 
     public override void Draw() {
-        if (!Header("httpd-settings", true)) {
+        if (!Header("httpd-settings", false)) {
             return;
         }
 

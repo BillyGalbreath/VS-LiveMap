@@ -20,7 +20,7 @@ public class TileTypeJsonConverter : JsonConverter {
             return null;
         }
         string? str = JToken.Load(reader).ToObject<string>();
-        return str == null ? null : TileType.Types.GetValueOrDefault(str);
+        return str == null ? null : TileType.Types.TryGetValue(str);
     }
 
     public override bool CanConvert(Type type) {

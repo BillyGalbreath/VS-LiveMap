@@ -23,7 +23,7 @@ public abstract class Gui {
 
     protected static bool Header(string id, bool defaultOpen) {
         bool open = ImGui.CollapsingHeader($"{id.ToLang()}##{id}", defaultOpen ? ImGuiTreeNodeFlags.DefaultOpen : ImGuiTreeNodeFlags.None);
-        Editors.DrawHint($"{$"{id}.hint".ToLang()}##{id}.hint");
+        Editors.DrawHint($"{$"{id}.hint".ToLang()}");
         return open;
     }
 
@@ -60,18 +60,14 @@ public abstract class Gui {
     }
 
     protected static void Input(string id, Action<string> input, float width) {
-        using (new StyleApplier(new Style { SpacingItem = ImGui.GetStyle().ItemSpacing with { X = 0f } })) {
+        using (new StyleApplier(new Style { SpacingItem = ImGui.GetStyle().ItemSpacing with { X = 4f } })) {
             ImGui.PushItemWidth(width);
             input.Invoke($"##{id}");
             ImGui.PopItemWidth();
-
-            ImGui.SameLine();
-            ImGui.Dummy(new Vector2(10f, 1f));
-
             ImGui.SameLine();
             ImGui.Text(id.ToLang());
             ImGui.SameLine();
-            Editors.DrawHint($"{id}.hint");
+            Editors.DrawHint($"{id}.hint".ToLang());
         }
     }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using ConfigLib;
 using livemap.gui.settings;
+using livemap.logger;
 using livemap.util;
 using Vintagestory.API.Server;
 
@@ -32,15 +33,33 @@ public class ConfigGui : Gui {
         if (_client.Api.World.Player.HasPrivilege(Privilege.root)) {
             _client.RequestConfig();
         }
-        _guis.ForEach(gui => gui.OnOpen());
+        _guis.ForEach(gui => {
+            try {
+                gui.OnOpen();
+            } catch (Exception e) {
+                Logger.Error(e.ToString());
+            }
+        });
     }
 
     public override void OnClose() {
-        _guis.ForEach(gui => gui.OnClose());
+        _guis.ForEach(gui => {
+            try {
+                gui.OnClose();
+            } catch (Exception e) {
+                Logger.Error(e.ToString());
+            }
+        });
     }
 
     public override void Draw() {
-        _guis.ForEach(gui => gui.Draw());
+        _guis.ForEach(gui => {
+            try {
+                gui.Draw();
+            } catch (Exception e) {
+                Logger.Error(e.ToString());
+            }
+        });
     }
 
     public void Dispose() {
@@ -62,25 +81,25 @@ public class ConfigGui : Gui {
         if (controlButtons.Save) {
             // saves changes to config
             // todo send values back to server
-            Console.WriteLine("SAVE");
+            Logger.Info("SAVE");
         }
 
         if (controlButtons.Restore) {
             // retrieves values from config
             // todo request new values from server
-            Console.WriteLine("RESTORE");
+            Logger.Info("RESTORE");
         }
 
         if (controlButtons.Reload) {
             // applies settings changes
             // todo not needed
-            Console.WriteLine("RELOAD");
+            Logger.Info("RELOAD");
         }
 
         if (controlButtons.Defaults) {
             // sets settings to default values
             // todo do we want original defaults or current defaults?
-            Console.WriteLine("DEFAULTS");
+            Logger.Info("DEFAULTS");
         }
 
         Draw();

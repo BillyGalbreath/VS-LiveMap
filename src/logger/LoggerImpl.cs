@@ -45,7 +45,7 @@ public abstract partial class LoggerImpl : LoggerBase {
     protected abstract bool DebugToEventFile { get; }
 
     private readonly string _modid;
-    private readonly Vintagestory.Logger _parent;
+    protected readonly Vintagestory.Logger _parent;
 
     private bool _canUseColor = true;
 
@@ -83,9 +83,7 @@ public abstract partial class LoggerImpl : LoggerBase {
         if (logFile != null) {
             try {
                 parent.LogToFile(logFile, logType, stripped, args);
-            } catch (NotSupportedException) {
-                Console.WriteLine("Unable to write to log file " + logFile);
-            } catch (ObjectDisposedException) {
+            } catch (Exception e) when (e is NotSupportedException or ObjectDisposedException) {
                 Console.WriteLine("Unable to write to log file " + logFile);
             }
         }
@@ -139,7 +137,7 @@ public abstract partial class LoggerImpl : LoggerBase {
         ), args));
     }
 
-    private static string Strip(string message) {
+    protected static string Strip(string message) {
         return ColorCodesRegex().Replace(AnsiCodesRegex().Replace(message, ""), "");
     }
 
