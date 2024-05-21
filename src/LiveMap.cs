@@ -5,6 +5,7 @@ using livemap.httpd;
 using livemap.network;
 using livemap.registry;
 using livemap.task;
+using livemap.task.data;
 
 namespace livemap;
 
@@ -22,7 +23,7 @@ public interface LiveMap {
     public LayerRegistry LayerRegistry { get; }
     public RendererRegistry RendererRegistry { get; }
 
-    public JsonDataTask JsonDataTask { get; }
+    public JsonTaskManager JsonTaskManager { get; }
     public RenderTaskManager RenderTaskManager { get; }
 
     public WebServer WebServer { get; }

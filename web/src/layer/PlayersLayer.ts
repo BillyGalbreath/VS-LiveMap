@@ -65,22 +65,22 @@ export class PlayersLayer extends MarkersLayer {
         const toRemove: Set<string> = new Set(this._players.keys());
 
         json.players.forEach((data: Player): void => {
-            const player: Player | undefined = this._players.get(data.id);
+            const player: Player | undefined = this._players.get(data.name);
             if (player) {
                 this.updatePlayer(player, new Player(data));
-                toRemove.delete(player.id);
+                toRemove.delete(player.name);
             } else {
                 this.createPlayer(new Player(data));
             }
         });
 
-        toRemove.forEach((id: string): void => {
-            this.removePlayer(id);
+        toRemove.forEach((name: string): void => {
+            this.removePlayer(name);
         });
     }
 
     private createPlayer(player: Player): void {
-        this._players.set(player.id, player);
+        this._players.set(player.name, player);
         if (this._livemap.settings.playerMarkers) {
             this.addMarker(player);
         }
@@ -91,7 +91,7 @@ export class PlayersLayer extends MarkersLayer {
 
     private updatePlayer(player: Player, data: Player): void {
         player.updateData(data);
-        const icon: Icon = this.markers.get(player.id) as Icon;
+        const icon: Icon = this.markers.get(player.name) as Icon;
         const marker: L.Marker = icon.get() as L.Marker;
         marker.setLatLng(data.pos.toLatLng());
         marker.setTooltipContent(this.tooltip(data));
@@ -103,16 +103,16 @@ export class PlayersLayer extends MarkersLayer {
         marker.options.rotationAngle = from + diff;
     }
 
-    private removePlayer(id: string): void {
-        this._players.delete(id);
-        this.removeMarker(id);
-        this.removeFromSidebar(id);
+    private removePlayer(name: string): void {
+        this._players.delete(name);
+        this.removeMarker(name);
+        this.removeFromSidebar(name);
     }
 
     private addMarker(player: Player): void {
         const icon: Icon = new Icon(this, {
             type: 'icon',
-            id: player.id,
+            id: player.name,
             point: player.pos,
             options: {
                 title: player.name,
@@ -130,20 +130,20 @@ export class PlayersLayer extends MarkersLayer {
             }
         } as unknown as MarkerJson);
         icon.addTo(this);
-        this.markers.set(player.id, icon);
+        this.markers.set(player.name, icon);
     }
 
-    private removeMarker(id: string): void {
-        const marker: Marker | undefined = this.markers.get(id);
+    private removeMarker(name: string): void {
+        const marker: Marker | undefined = this.markers.get(name);
         if (marker) {
-            this.markers.delete(id)
+            this.markers.delete(name)
             marker.remove();
         }
     }
 
     private addToSidebar(player: Player): void {
         const li: HTMLElement = L.DomUtil.create('li', '', this._dom);
-        li.id = this.cleanUid(player.id);
+        li.id = player.name;
         li.title = player.name;
 
         const img: HTMLImageElement = L.DomUtil.create('img', '', li);
@@ -154,8 +154,8 @@ export class PlayersLayer extends MarkersLayer {
         p.innerText = player.name;
     }
 
-    private removeFromSidebar(id: string): void {
-        this._dom.querySelectorAll(`#${this.cleanUid(id)}`)?.forEach((li: Element): void => li.remove());
+    private removeFromSidebar(name: string): void {
+        this._dom.querySelectorAll(`#${name}`)?.forEach((li: Element): void => li.remove());
     }
 
     private tooltip(player: Player): string {
@@ -166,12 +166,5 @@ export class PlayersLayer extends MarkersLayer {
         const segments: number = Math.round(value.max / divisor);
         const amount: number = Math.round((Math.min(value.cur, value.max) / value.max) * 100);
         return `--amount:${amount}%;--segments:${segments}`;
-    }
-
-    private cleanUid(id: string): string {
-        return id
-            .replace(/\//, '-slash-')
-            .replace(/\+/, '-plus-')
-            .replace(/=/, '-equals-');
     }
 }

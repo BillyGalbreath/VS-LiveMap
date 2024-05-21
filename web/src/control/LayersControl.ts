@@ -2,6 +2,10 @@ import * as L from 'leaflet';
 import {LiveMap} from '../LiveMap';
 import {MarkersLayer} from '../layer/MarkersLayer';
 
+interface LayersJson {
+    markers: string[]
+}
+
 export class LayersControl extends L.Control.Layers {
     declare _layers: L.Control.LayersObject[];
 
@@ -12,14 +16,20 @@ export class LayersControl extends L.Control.Layers {
 
         this.addTo(livemap);
 
-        // each json file is its own layer full of markers
-        livemap.settings.markers?.forEach((layer: string): void => {
-            try {
-                new MarkersLayer(livemap, `data/markers/${layer}.json`);
-            } catch (e) {
-                console.error(`Error loading markers layer (${layer})\n`, e);
-            }
-        });
+        window.fetchJson<LayersJson>('data/markers.json')
+            .then((json: LayersJson): void => {
+                // each layer has its own json file full of markers
+                json.markers.forEach((layer: string): void => {
+                    try {
+                        new MarkersLayer(livemap, `data/markers/${layer}.json`);
+                    } catch (e) {
+                        console.error(`Error loading markers layer (${layer})\n`, e);
+                    }
+                });
+            })
+            .catch((err: unknown): void => {
+                console.error(`Error fetching marker layers\n`, this, err);
+            });
     }
 
     public tick(count: number): void {

@@ -73,7 +73,7 @@ public static class Extensions {
         EntityBehaviorHealth health = player.Entity.GetBehavior<EntityBehaviorHealth>();
         return new Dictionary<string, object> {
             { "cur", health?.Health ?? 15 },
-            { "max", health?.MaxHealth ?? 15 },
+            { "max", health?.MaxHealth ?? 15 }
         };
     }
 
@@ -81,7 +81,7 @@ public static class Extensions {
         EntityBehaviorHunger satiety = player.Entity.GetBehavior<EntityBehaviorHunger>();
         return new Dictionary<string, object> {
             { "cur", satiety?.Saturation ?? 1500 },
-            { "max", satiety?.MaxSaturation ?? 1500 },
+            { "max", satiety?.MaxSaturation ?? 1500 }
         };
     }
 

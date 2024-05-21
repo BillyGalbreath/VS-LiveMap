@@ -1,4 +1,6 @@
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using livemap.logger;
 using Vintagestory.API.Common;
@@ -40,5 +42,11 @@ public abstract class Files {
             GamePaths.EnsurePathExists(Path.GetDirectoryName(destPath));
             File.WriteAllBytes(destPath, asset.Data);
         }
+    }
+
+    public static async Task WriteJsonAsync(string path, string json, CancellationToken token) {
+        FileInfo file = new(path);
+        GamePaths.EnsurePathExists(file.Directory!.FullName);
+        await File.WriteAllTextAsync(file.FullName, json, token);
     }
 }

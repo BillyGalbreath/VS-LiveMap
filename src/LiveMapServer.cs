@@ -11,6 +11,7 @@ using livemap.network;
 using livemap.network.packet;
 using livemap.registry;
 using livemap.task;
+using livemap.task.data;
 using livemap.util;
 using Newtonsoft.Json;
 using Vintagestory.API.Common;
@@ -35,7 +36,7 @@ public sealed class LiveMapServer : LiveMap {
     public LayerRegistry LayerRegistry { get; }
     public RendererRegistry RendererRegistry { get; }
 
-    public JsonDataTask JsonDataTask { get; }
+    public JsonTaskManager JsonTaskManager { get; }
     public RenderTaskManager RenderTaskManager { get; }
 
     public WebServer WebServer { get; }
@@ -70,7 +71,7 @@ public sealed class LiveMapServer : LiveMap {
         LayerRegistry = new LayerRegistry();
         RendererRegistry = new RendererRegistry();
 
-        JsonDataTask = new JsonDataTask(this);
+        JsonTaskManager = new JsonTaskManager(this);
         RenderTaskManager = new RenderTaskManager(this);
         WebServer = new WebServer(this);
 
@@ -152,7 +153,7 @@ public sealed class LiveMapServer : LiveMap {
         WebServer.Run();
 
         // todo - update player positions, public waypoints, etc
-        JsonDataTask.Run();
+        JsonTaskManager.Tick();
     }
 
     internal void ReceiveColormap(IServerPlayer player, ColormapPacket packet) {
@@ -188,7 +189,7 @@ public sealed class LiveMapServer : LiveMap {
 
         // order matters here
         RenderTaskManager.Dispose();
-        JsonDataTask.Dispose();
+        JsonTaskManager.Dispose();
         WebServer.Dispose();
         NetworkHandler.Dispose();
         LayerRegistry.Dispose();

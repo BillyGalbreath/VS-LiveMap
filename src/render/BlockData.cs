@@ -23,6 +23,7 @@ public class BlockData {
         return ((z & 511) * 512) + (x & 511);
     }
 
+    [PublicAPI]
     public class Data {
         public int Y { get; }
         public int Top { get; }

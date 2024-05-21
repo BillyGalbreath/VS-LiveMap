@@ -18,7 +18,6 @@ export class Settings {
     private readonly _renderers: Renderer[];
     private readonly _ui: Ui;
     private readonly _lang: Lang;
-    private readonly _markers: string[];
 
     constructor(json: Settings) {
         this._friendlyUrls = json.friendlyUrls ?? true;
@@ -33,7 +32,6 @@ export class Settings {
         this._renderers = json.renderers ?? [];
         this._ui = json.ui ? new Ui(json.ui) : new Ui();
         this._lang = new Lang(json.lang);
-        this._markers = json.markers ?? [];
     }
 
     get friendlyUrls(): boolean {
@@ -82,9 +80,5 @@ export class Settings {
 
     get lang(): Lang {
         return this._lang;
-    }
-
-    get markers(): string[] {
-        return this._markers;
     }
 }
