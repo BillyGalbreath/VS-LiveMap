@@ -55,6 +55,11 @@ public sealed class LiveMapClient {
         Config = packet.Config != null ? JsonConvert.DeserializeObject<Config>(packet.Config) : null;
     }
 
+    internal void SendConfig() {
+        Logger.Debug("Sending config packet to server");
+        NetworkHandler.SendPacket(new ConfigPacket { Config = JsonConvert.SerializeObject(Config) });
+    }
+
     public void Dispose() {
         _harmony.UnpatchAll(ModId);
         _gui?.Dispose();

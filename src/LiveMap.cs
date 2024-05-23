@@ -36,4 +36,6 @@ public interface LiveMap {
     public int LandBlock { get; }
 
     public void ReloadConfig();
+    public void LoadConfig();
+    public void SaveConfig();
 }

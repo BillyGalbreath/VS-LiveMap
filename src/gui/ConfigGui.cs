@@ -82,6 +82,7 @@ public class ConfigGui : Gui {
             // saves changes to config
             // todo send values back to server
             Logger.Info("SAVE");
+            _client.SendConfig();
         }
 
         if (controlButtons.Restore) {

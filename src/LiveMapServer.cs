@@ -136,12 +136,17 @@ public sealed class LiveMapServer : LiveMap {
     }
 
     public void ReloadConfig() {
-        string filename = $"{ModId}.json";
+        LoadConfig();
+        SaveConfig();
+    }
 
-        Config = Api.LoadModConfig<Config>(filename) ?? new Config();
+    public void LoadConfig() {
+        Config = Api.LoadModConfig<Config>($"{ModId}.json") ?? new Config();
+    }
 
+    public void SaveConfig() {
         _configFileWatcher.IgnoreChanges = true;
-        Api.StoreModConfig(Config, filename);
+        Api.StoreModConfig(Config, $"{ModId}.json");
     }
 
     private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
@@ -181,14 +186,27 @@ public sealed class LiveMapServer : LiveMap {
         Colormap.LoadFromPacket(Api.World, packet);
     }
 
-    internal void ReceiveConfigRequest(IServerPlayer player, ConfigPacket _) {
+    internal void ReceiveConfigRequest(IServerPlayer player, ConfigPacket packet) {
         if (!player.Privileges.Contains("root")) {
             Logger.Warn($"Ignoring config request packet from non-privileged user {player.PlayerName}");
             return;
         }
 
-        Logger.Info($"&dConfig request packet was received from &n{player.PlayerName}");
-        NetworkHandler.SendPacket(new ConfigPacket { Config = JsonConvert.SerializeObject(Config) }, player);
+        if (string.IsNullOrEmpty(packet.Config)) {
+            Logger.Info($"&dConfig request packet was received from &n{player.PlayerName}");
+            NetworkHandler.SendPacket(new ConfigPacket { Config = JsonConvert.SerializeObject(Config) }, player);
+            return;
+        }
+
+        Logger.Info($"&dConfig packet received from &n{player.PlayerName}");
+        Config? config = JsonConvert.DeserializeObject<Config>(packet.Config);
+        if (config == null) {
+            Logger.Error("Could not parse config data. Ignoring.");
+            return;
+        }
+
+        Config = config;
+        SaveConfig();
     }
 
     public void Dispose() {
