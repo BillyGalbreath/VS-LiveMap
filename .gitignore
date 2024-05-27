@@ -10,5 +10,3 @@
 /web/public/livemap.css*
 /web/public/data/
 /web/public/tiles/
-
-!/web/public/data/settings.json
