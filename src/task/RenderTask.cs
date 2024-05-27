@@ -122,11 +122,11 @@ public sealed class RenderTask {
     }
 
     private void CheckForMicroBlocks(int x, int y, int z, ServerChunk serverChunk, ref int top) {
-        if (!_server.MicroBlocks.Contains(top)) {
+        if (!_server.RenderTaskManager.MicroBlocks.Contains(top)) {
             return;
         }
         serverChunk.BlockEntities.TryGetValue(_mutableBlockPos.Set(x, y, z), out BlockEntity? be);
-        top = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _server.LandBlock;
+        top = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _server.RenderTaskManager.LandBlock;
     }
 
     private int GetTopBlockY(ServerMapChunk? mapChunk, int x, int z, int def = 0) {

@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace livemap.network.packet;
+namespace livemap.network;
 
 [ProtoContract]
 public sealed class ColormapPacket : Packet {

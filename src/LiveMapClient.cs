@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
 using livemap.data;
-using livemap.network.packet;
+using livemap.network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace livemap.client;
+namespace livemap;
 
 public sealed class LiveMapClient {
     private static BlockPos? _overridePos;

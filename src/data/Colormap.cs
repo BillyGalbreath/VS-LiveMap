@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using JetBrains.Annotations;
 using livemap.logger;
-using livemap.network.packet;
+using livemap.network;
 using livemap.util;
 using Newtonsoft.Json;
 using Vintagestory.API.Common;

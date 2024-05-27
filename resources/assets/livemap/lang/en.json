@@ -8,7 +8,8 @@
   "command.colormap.description": "Generate colormap on client and send to server.",
 
   "command.fullrender.description": "Queue up all generated regions for renderer.",
-  "command.fullrender.started": "FullRender task has started.",
+  "command.fullrender.missing-colormap": "Error: Missing colormap. Please run <a href=\"chattype:///livemap colormap\">/livemap colormap</a> first.",
+  "command.fullrender.started": "Fullrender task has started.",
 
   "command.radiusrender.description": "Queue up generated regions in radius for renderer.",
 

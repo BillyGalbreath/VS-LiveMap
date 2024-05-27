@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,12 +11,13 @@ namespace livemap.util;
 
 [PublicAPI]
 public abstract class Files {
-    public static string DataDir { get; internal set; } = null!;
-    public static string ColormapFile { get; internal set; } = null!;
-    public static string WebDir { get; internal set; } = null!;
-    public static string JsonDir { get; internal set; } = null!;
-    public static string MarkerDir { get; internal set; } = null!;
-    public static string TilesDir { get; internal set; } = null!;
+    public static string SavegameIdentifier { get; internal set; } = null!;
+    public static string DataDir => Path.Combine(GamePaths.DataPath, "ModData", SavegameIdentifier, "LiveMap");
+    public static string ColormapFile => Path.Combine(DataDir, "colormap.json");
+    public static string WebDir => Path.Combine(DataDir, "web");
+    public static string JsonDir => Path.Combine(WebDir, "data");
+    public static string MarkerDir => Path.Combine(JsonDir, "markers");
+    public static string TilesDir => Path.Combine(WebDir, "tiles");
 
     internal static void ExtractWebFiles(LiveMap server) {
         GamePaths.EnsurePathExists(DataDir);
@@ -38,9 +40,14 @@ public abstract class Files {
                 continue;
             }
 
-            Logger.Debug($"Saving asset from zip to disk &6{path}");
-            GamePaths.EnsurePathExists(Path.GetDirectoryName(destPath));
-            File.WriteAllBytes(destPath, asset.Data);
+            try {
+                Logger.Debug($"Saving asset from zip to disk &6{path}");
+                GamePaths.EnsurePathExists(Path.GetDirectoryName(destPath));
+                File.WriteAllBytes(destPath, asset.Data);
+            } catch (Exception e) {
+                Logger.Error($"Error saving asset to disk &4{path}");
+                Logger.Error(e.ToString());
+            }
         }
     }
 

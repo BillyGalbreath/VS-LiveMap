@@ -39,7 +39,7 @@ public abstract class Renderer : Keyed {
             return (0, defY);
         }
         int id, y;
-        if (Server.BlocksToIgnore.Contains(block.Top)) {
+        if (Server.RenderTaskManager.BlocksToIgnore.Contains(block.Top)) {
             id = block.Under;
             y = block.Y - 1;
         } else {

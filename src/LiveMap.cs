@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.IO;
-using System.Linq;
-using System.Threading;
+﻿using System.Linq;
 using JetBrains.Annotations;
 using livemap.command;
 using livemap.configuration;
@@ -10,17 +6,14 @@ using livemap.data;
 using livemap.httpd;
 using livemap.logger;
 using livemap.network;
-using livemap.network.packet;
 using livemap.registry;
 using livemap.task;
 using livemap.task.data;
 using livemap.util;
-using Newtonsoft.Json;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Vintagestory.Common.Database;
 
 namespace livemap;
 
@@ -38,7 +31,6 @@ public sealed class LiveMap {
     public SepiaColors SepiaColors { get; }
 
     public CommandHandler CommandHandler { get; }
-    public NetworkHandler NetworkHandler { get; }
 
     public LayerRegistry LayerRegistry { get; }
     public RendererRegistry RendererRegistry { get; }
@@ -48,13 +40,11 @@ public sealed class LiveMap {
 
     public WebServer WebServer { get; }
 
-    public HashSet<int> MicroBlocks { get; }
-    public HashSet<int> BlocksToIgnore { get; }
-    public int LandBlock { get; }
-
     private readonly LiveMapMod _mod;
-    private readonly long _gameTickTaskId;
     private readonly FileWatcher _configFileWatcher;
+
+    private long _gameTickTaskId;
+    private IServerNetworkChannel? _channel;
 
     public LiveMap(LiveMapMod mod, ICoreServerAPI api) {
         Api = this;
@@ -64,15 +54,11 @@ public sealed class LiveMap {
 
         Logger.LoggerImpl = new LoggerImpl(ModId, mod.Mod.Logger);
 
-        Files.DataDir = Path.Combine(GamePaths.DataPath, "ModData", Sapi.World.SavegameIdentifier, "LiveMap");
-        Files.ColormapFile = Path.Combine(Files.DataDir, "colormap.json");
-        Files.WebDir = Path.Combine(Files.DataDir, "web");
-        Files.JsonDir = Path.Combine(Files.WebDir, "data");
-        Files.MarkerDir = Path.Combine(Files.JsonDir, "markers");
-        Files.TilesDir = Path.Combine(Files.WebDir, "tiles");
+        Files.SavegameIdentifier = Sapi.World.SavegameIdentifier;
+        GamePaths.EnsurePathExists(GamePaths.ModConfig);
+        GamePaths.EnsurePathExists(Files.DataDir);
 
         _configFileWatcher = new FileWatcher(this);
-
         ReloadConfig();
 
         Files.ExtractWebFiles(this);
@@ -81,7 +67,6 @@ public sealed class LiveMap {
         SepiaColors = new SepiaColors(this);
 
         CommandHandler = new CommandHandler(this);
-        NetworkHandler = new ServerNetworkHandler(this);
 
         LayerRegistry = new LayerRegistry();
         RendererRegistry = new RendererRegistry();
@@ -90,57 +75,24 @@ public sealed class LiveMap {
         RenderTaskManager = new RenderTaskManager(this);
         WebServer = new WebServer(this);
 
-        Sapi.Event.ChunkDirty += OnChunkDirty;
-        Sapi.Event.GameWorldSave += OnGameWorldSave;
+        api.Event.ChunkDirty += OnChunkDirty;
+        api.Event.GameWorldSave += OnGameWorldSave;
 
+        Start();
+    }
+
+    public void Start() {
         // things to do on first game tick
         Sapi.Event.RegisterCallback(_ => {
             Colormap.LoadFromDisk(Sapi.World);
             RendererRegistry.RegisterBuiltIns(this);
         }, 1);
 
-        Sapi.ChatCommands.Create("livemap")
-            .WithDescription("command.livemap.description".ToLang())
-            .RequiresPrivilege("root")
-            .WithArgs(new WordArgParser("command", false, new[] { "fullrender" }))
-            .HandleWith(args => {
-                new Thread(_ => {
-                    // queue up all existing chunks
-                    ImmutableList<ChunkPos> chunks = new ChunkLoader(Sapi).GetAllMapChunkPositions().ToImmutableList();
-                    foreach (ChunkPos chunk in chunks) {
-                        RenderTaskManager.Queue(chunk.X >> 4, chunk.Z >> 4);
-                    }
-
-                    // trigger world save to process the queue now
-                    Sapi.Event.RegisterCallback(_ => {
-                        // do this back on the main thread
-                        Sapi.ChatCommands.Get("autosavenow").Execute(args);
-                    }, 1);
-                }).Start();
-                return TextCommandResult.Success("command.fullrender.started".ToLang());
-            });
-
         _gameTickTaskId = Sapi.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
 
-        MicroBlocks = api.World.Blocks
-            .Where(block => block.Code != null)
-            .Where(block =>
-                block.Code.Path.StartsWith("chiseledblock") ||
-                block.Code.Path.StartsWith("microblock"))
-            .Select(block => block.Id)
-            .ToHashSet();
-
-        BlocksToIgnore = api.World.Blocks
-            .Where(block => block.Code != null)
-            .Where(block =>
-                (block.Code.Path.EndsWith("-snow") && !MicroBlocks.Contains(block.Id)) ||
-                block.Code.Path.EndsWith("-snow2") ||
-                block.Code.Path.EndsWith("-snow3") ||
-                block.Code.Path.Equals("snowblock") ||
-                block.Code.Path.Contains("snowlayer-"))
-            .Select(block => block.Id).ToHashSet();
-
-        LandBlock = api.World.GetBlock(new AssetLocation("game", "soil-low-normal")).Id;
+        _channel = Sapi.Network.RegisterChannel(ModId)
+            .RegisterMessageType<ColormapPacket>()
+            .SetMessageHandler<ColormapPacket>(ReceiveColormap);
     }
 
     public void ReloadConfig() {
@@ -155,6 +107,11 @@ public sealed class LiveMap {
     public void SaveConfig() {
         _configFileWatcher.IgnoreChanges = true;
         Sapi.StoreModConfig(Config, $"{ModId}.json");
+        Sapi.Event.RegisterCallback(_ => _configFileWatcher.IgnoreChanges = false, 100);
+    }
+
+    public void SendPacket<T>(T packet, IPlayer? receiver = null) {
+        _channel?.SendPacket(packet, receiver as IServerPlayer);
     }
 
     private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
@@ -194,29 +151,6 @@ public sealed class LiveMap {
         Colormap.LoadFromPacket(Sapi.World, packet);
     }
 
-    internal void ReceiveConfigRequest(IServerPlayer player, ConfigPacket packet) {
-        if (!player.Privileges.Contains("root")) {
-            Logger.Warn($"Ignoring config request packet from non-privileged user {player.PlayerName}");
-            return;
-        }
-
-        if (string.IsNullOrEmpty(packet.Config)) {
-            Logger.Info($"&dConfig request packet was received from &n{player.PlayerName}");
-            NetworkHandler.SendPacket(new ConfigPacket { Config = JsonConvert.SerializeObject(Config) }, player);
-            return;
-        }
-
-        Logger.Info($"&dConfig packet received from &n{player.PlayerName}");
-        Config? config = JsonConvert.DeserializeObject<Config>(packet.Config);
-        if (config == null) {
-            Logger.Error("Could not parse config data. Ignoring.");
-            return;
-        }
-
-        Config = config;
-        SaveConfig();
-    }
-
     public void Dispose() {
         _configFileWatcher.Dispose();
 
@@ -226,7 +160,6 @@ public sealed class LiveMap {
         Sapi.Event.UnregisterGameTickListener(_gameTickTaskId);
 
         CommandHandler.Dispose();
-        NetworkHandler.Dispose();
 
         JsonTaskManager.Dispose();
         RenderTaskManager.Dispose();
@@ -237,9 +170,8 @@ public sealed class LiveMap {
         Colormap.Dispose();
         SepiaColors.Dispose();
 
-        MicroBlocks.Clear();
-        BlocksToIgnore.Clear();
-
         WebServer.Dispose();
+
+        _channel = null;
     }
 }

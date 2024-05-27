@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using livemap.logger;
 using Vintagestory.API.Config;
@@ -11,8 +10,11 @@ public class FileWatcher {
 
     public bool IgnoreChanges { get; set; }
 
+    private bool _queued;
+
     public FileWatcher(LiveMap server) {
         _server = server;
+
 
         _watcher = new FileSystemWatcher(GamePaths.ModConfig) {
             Filter = $"{server.ModId}.json",
@@ -41,17 +43,16 @@ public class FileWatcher {
     /// </summary>
     private void QueueReload(bool changed = false) {
         // check if already queued for reload
-        if (IgnoreChanges) {
+        if (IgnoreChanges || _queued) {
             return;
         }
 
         // mark as queued
-        IgnoreChanges = true;
+        _queued = true;
 
         // inform console/log
         if (changed) {
             Logger.Info("Detected the config was changed. Reloading.");
-            throw new Exception();
         }
 
         // wait for other changes to process
@@ -62,7 +63,7 @@ public class FileWatcher {
             // wait some more to remove this change from the queue since the reload triggers another write
             _server.Sapi.Event.RegisterCallback(_ => {
                 // unmark as queued
-                IgnoreChanges = false;
+                _queued = false;
             }, 100);
         }, 100);
     }

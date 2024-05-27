@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
 using livemap.logger;
 using livemap.util;
+using Vintagestory.API.Common;
 
 namespace livemap.task;
 
@@ -13,6 +15,10 @@ public sealed class RenderTaskManager {
     private readonly LiveMap _server;
 
     public RenderTask RenderTask { get; }
+
+    public HashSet<int> MicroBlocks { get; }
+    public HashSet<int> BlocksToIgnore { get; }
+    public int LandBlock { get; }
 
     private readonly ConcurrentQueue<long> _bufferQueue = new();
     private readonly BlockingCollection<long> _processQueue = new();
@@ -24,6 +30,26 @@ public sealed class RenderTaskManager {
     public RenderTaskManager(LiveMap server) {
         _server = server;
         RenderTask = new RenderTask(server);
+
+        MicroBlocks = server.Sapi.World.Blocks
+            .Where(block => block.Code != null)
+            .Where(block =>
+                block.Code.Path.StartsWith("chiseledblock") ||
+                block.Code.Path.StartsWith("microblock"))
+            .Select(block => block.Id)
+            .ToHashSet();
+
+        BlocksToIgnore = server.Sapi.World.Blocks
+            .Where(block => block.Code != null)
+            .Where(block =>
+                (block.Code.Path.EndsWith("-snow") && !MicroBlocks.Contains(block.Id)) ||
+                block.Code.Path.EndsWith("-snow2") ||
+                block.Code.Path.EndsWith("-snow3") ||
+                block.Code.Path.Equals("snowblock") ||
+                block.Code.Path.Contains("snowlayer-"))
+            .Select(block => block.Id).ToHashSet();
+
+        LandBlock = server.Sapi.World.GetBlock(new AssetLocation("game", "soil-low-normal")).Id;
     }
 
     public void Queue(int regionX, int regionZ) {
@@ -108,5 +134,8 @@ public sealed class RenderTaskManager {
         if (cancelled) {
             Logger.Warn("Render task cancelled!");
         }
+
+        MicroBlocks.Clear();
+        BlocksToIgnore.Clear();
     }
 }
