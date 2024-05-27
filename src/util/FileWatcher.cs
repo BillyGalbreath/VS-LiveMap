@@ -1,5 +1,4 @@
 using System.IO;
-using livemap.logger;
 using Vintagestory.API.Config;
 
 namespace livemap.util;

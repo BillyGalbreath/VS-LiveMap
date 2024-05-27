@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using livemap.logger;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 
@@ -29,23 +28,23 @@ public abstract class Files {
 
             // ensure we actually have data
             if (asset.Data == null) {
-                Logger.Error($"Error loading asset from zip &4{path}");
+                Logger.Error($"Error loading asset from zip {path}");
                 continue;
             }
 
             // check if we've already saved this file to disk
             string destPath = Path.Combine(WebDir, path);
             if (File.Exists(destPath) && server.Config.Web.ReadOnly) {
-                Logger.Debug($"Skipping. Asset already exists on disk &6{path}");
+                Logger.Debug($"Skipping. Asset already exists on disk {path}");
                 continue;
             }
 
             try {
-                Logger.Debug($"Saving asset from zip to disk &6{path}");
+                Logger.Debug($"Saving asset from zip to disk {path}");
                 GamePaths.EnsurePathExists(Path.GetDirectoryName(destPath));
                 File.WriteAllBytes(destPath, asset.Data);
             } catch (Exception e) {
-                Logger.Error($"Error saving asset to disk &4{path}");
+                Logger.Error($"Error saving asset to disk {path}");
                 Logger.Error(e.ToString());
             }
         }

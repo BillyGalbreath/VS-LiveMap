@@ -5,6 +5,7 @@ using livemap.network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Server;
 
 namespace livemap;
 
@@ -23,8 +24,17 @@ public sealed class LiveMapClient {
         _channel = api.Network.RegisterChannel(mod.Mod.Info.ModID)
             .RegisterMessageType<ColormapPacket>()
             .SetMessageHandler<ColormapPacket>(_ => {
+                _logger.Event("Received colormap request from server");
+
+                if (!api.World.Player.HasPrivilege(Privilege.root)) {
+                    _logger.Event("No privilege to use this mod");
+                    return;
+                }
+
                 Colormap? colormap = GenerateColormap();
+
                 if (colormap != null && _channel is { Connected: true }) {
+                    _logger.Event("Sending generated colormap to server");
                     _channel.SendPacket(new ColormapPacket { RawColormap = colormap.Serialize() });
                 }
             });

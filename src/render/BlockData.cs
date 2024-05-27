@@ -9,7 +9,7 @@ public class BlockData {
 
     public Data? Get(int x, int z) {
         if (x is < 0 or > 511 || z is < 0 or > 511) {
-            // todo - i really want to get the data from the neighbor regions..
+            // todo - i really want to get the edge data from the neighbor regions..
             return null;
         }
         return _data.GetValue(Index(x, z)) as Data;

@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
-using livemap.logger;
 using livemap.util;
 using SkiaSharp;
 using Vintagestory.API.Config;

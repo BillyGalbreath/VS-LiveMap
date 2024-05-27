@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
-using livemap.logger;
 using livemap.util;
 using Vintagestory.API.Common;
 
@@ -78,7 +77,7 @@ public sealed class RenderTaskManager {
 
         // we need a colormap
         if (_server.Colormap.Count == 0) {
-            Logger.Warn("Cannot process render queue. No colormap loaded.");
+            Logger.Warn("Cannot process render queue. No colormap loaded");
             return;
         }
 
@@ -132,10 +131,14 @@ public sealed class RenderTaskManager {
         while (_processQueue.TryTake(out _)) { }
 
         if (cancelled) {
-            Logger.Warn("Render task cancelled!");
+            Logger.Warn("Render task cancelled");
         }
 
         MicroBlocks.Clear();
         BlocksToIgnore.Clear();
+    }
+
+    public TextCommandResult Status() {
+        return _processQueue.Count == 0 ? "status.idle".CommandSuccess(_bufferQueue.Count) : "status.running".CommandSuccess(_processQueue.Count);
     }
 }

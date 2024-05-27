@@ -1,21 +1,27 @@
 ﻿{
-  "command.description": "Command to manage the LiveMap mod.",
-  "command.view-livemap-link": "View our livemap at <a href=\"http://localhost:8080\">http://localhost:8080</a>",
+  "command.description": "Get a link to the livemap",
+  "command.no-args-response": "View our livemap at <a href=\"http://localhost:8080\">http://localhost:8080</a>",
 
-  "command.success": "<font color=\"#19B919\">{0}</font>",
-  "command.error": "<font color=\"#B91919\">{0}</font>",
+  "command.error.no-privilege": "Sorry, you don't have the privilege to use this command",
+  "command.error.player-only-command": "Sorry, only players can run this command",
 
-  "command.colormap.description": "Generate colormap on client and send to server.",
+  "command.apothemrender.description": "Queue up generated regions in range around a position for renderer",
 
-  "command.fullrender.description": "Queue up all generated regions for renderer.",
-  "command.fullrender.missing-colormap": "Error: Missing colormap. Please run <a href=\"chattype:///livemap colormap\">/livemap colormap</a> first.",
-  "command.fullrender.started": "Fullrender task has started.",
+  "command.colormap.description": "Sends a request to your client to generate a new colormap. This requires LiveMap mod to also be installed on your client. Your client will generate a new colormap and then send it back to the server.",
+  "command.colormap.requested": "Requesting colormap from client",
+  "command.colormap.received": "Received colormap from client",
+  "command.colormap.empty": "Received an empty colormap from client. Try again",
 
-  "command.radiusrender.description": "Queue up generated regions in radius for renderer.",
+  "command.fullrender.description": "Queue up all generated regions in the entire world for renderer",
+  "command.fullrender.missing-colormap": "Error: Missing colormap. Please run <a href=\"chattype:///livemap colormap\">/livemap colormap</a> first",
+  "command.fullrender.started": "Fullrender task has started",
 
-  "command.reload.description": "Reload the mod configuration from disk.",
+  "command.reload.description": "Reload the mod configuration from disk",
+  "command.reload.done": "LiveMap config has been reloaded",
 
-  "command.status.description": "View current renderer status.",
+  "command.status.description": "View current renderer status",
+  "command.status.idle": "Renderers idle (queued: {0})",
+  "command.status.running": "Renderers running (remaining: {0})",
 
   "lang.pinned": "Pinned",
   "lang.unpinned": "Unpinned",

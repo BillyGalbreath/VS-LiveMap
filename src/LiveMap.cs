@@ -1,10 +1,8 @@
-﻿using System.Linq;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using livemap.command;
 using livemap.configuration;
 using livemap.data;
 using livemap.httpd;
-using livemap.logger;
 using livemap.network;
 using livemap.registry;
 using livemap.task;
@@ -38,12 +36,12 @@ public sealed class LiveMap {
     public JsonTaskManager JsonTaskManager { get; }
     public RenderTaskManager RenderTaskManager { get; }
 
-    public WebServer WebServer { get; }
+    public WebServer? WebServer { get; }
 
-    private readonly LiveMapMod _mod;
+    internal readonly LiveMapMod _mod;
     private readonly FileWatcher _configFileWatcher;
+    private readonly long _gameTickTaskId;
 
-    private long _gameTickTaskId;
     private IServerNetworkChannel? _channel;
 
     public LiveMap(LiveMapMod mod, ICoreServerAPI api) {
@@ -51,8 +49,6 @@ public sealed class LiveMap {
 
         Sapi = api;
         _mod = mod;
-
-        Logger.LoggerImpl = new LoggerImpl(ModId, mod.Mod.Logger);
 
         Files.SavegameIdentifier = Sapi.World.SavegameIdentifier;
         GamePaths.EnsurePathExists(GamePaths.ModConfig);
@@ -78,10 +74,6 @@ public sealed class LiveMap {
         api.Event.ChunkDirty += OnChunkDirty;
         api.Event.GameWorldSave += OnGameWorldSave;
 
-        Start();
-    }
-
-    public void Start() {
         // things to do on first game tick
         Sapi.Event.RegisterCallback(_ => {
             Colormap.LoadFromDisk(Sapi.World);
@@ -98,6 +90,8 @@ public sealed class LiveMap {
     public void ReloadConfig() {
         LoadConfig();
         SaveConfig();
+
+        WebServer?.Reload();
     }
 
     public void LoadConfig() {
@@ -130,24 +124,27 @@ public sealed class LiveMap {
         //RenderTask.Run();
 
         // ensure web server is still running
-        WebServer.Run();
+        WebServer?.Run();
 
         // todo - update player positions, public waypoints, etc
         JsonTaskManager.Tick();
     }
 
     internal void ReceiveColormap(IServerPlayer player, ColormapPacket packet) {
-        if (!player.Privileges.Contains("root")) {
+        if (!player.HasPrivilege(Privilege.root)) {
+            player.SendMessage(GlobalConstants.CurrentChatGroup, "command.error.no-privilege".ToLang(), EnumChatType.CommandError);
             Logger.Warn($"Ignoring colormap packet from non-privileged user {player.PlayerName}");
             return;
         }
 
-        if (packet.RawColormap == null) {
-            Logger.Warn($"Received null colormap from {player.PlayerName}");
+        if (string.IsNullOrEmpty(packet.RawColormap)) {
+            player.SendMessage(GlobalConstants.CurrentChatGroup, "command.colormap.empty".ToLang(), EnumChatType.CommandError);
+            Logger.Warn($"Received empty colormap from {player.PlayerName}");
             return;
         }
 
-        Logger.Info($"&dColormap packet was received from &n{player.PlayerName}");
+        player.SendMessage(GlobalConstants.CurrentChatGroup, "command.colormap.received".ToLang(), EnumChatType.CommandSuccess);
+        Logger.Info($"Colormap packet was received from &n{player.PlayerName}");
         Colormap.LoadFromPacket(Sapi.World, packet);
     }
 
@@ -170,7 +167,7 @@ public sealed class LiveMap {
         Colormap.Dispose();
         SepiaColors.Dispose();
 
-        WebServer.Dispose();
+        WebServer?.Dispose();
 
         _channel = null;
     }

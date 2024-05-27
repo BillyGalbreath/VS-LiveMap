@@ -1,16 +1,20 @@
 using System.Threading;
 using livemap.data;
+using livemap.util;
 using Vintagestory.API.Common;
 using Vintagestory.Common.Database;
 
 namespace livemap.command.subcommand;
 
 public class FullRenderCmd : AbstractCommand {
-    public FullRenderCmd(LiveMap server) : base(server, new[] { "fullrender" }) { }
+    public FullRenderCmd(LiveMap server) : base(
+        server,
+        new[] { "fullrender" }
+    ) { }
 
-    public override CommandResult Execute(TextCommandCallingArgs args) {
+    public override TextCommandResult Execute(TextCommandCallingArgs args) {
         if (Server.Colormap.Count == 0) {
-            return CommandResult.Error("fullrender.missing-colormap");
+            return "fullrender.missing-colormap".CommandError();
         }
 
         new Thread(_ => {
@@ -26,6 +30,6 @@ public class FullRenderCmd : AbstractCommand {
             }, 1);
         }).Start();
 
-        return CommandResult.Success("fullrender.started");
+        return "fullrender.started".CommandSuccess();
     }
 }

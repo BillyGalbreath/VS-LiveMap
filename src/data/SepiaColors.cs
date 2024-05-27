@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using SkiaSharp;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
 namespace livemap.data;
 
+[PublicAPI]
 public class SepiaColors {
-    private static string GetDefaultMapColorCode(EnumBlockMaterial material) {
+    public static string GetDefaultMapColorCode(EnumBlockMaterial material) {
         return material switch {
             EnumBlockMaterial.Soil => "land",
             EnumBlockMaterial.Sand => "desert",
@@ -25,7 +27,7 @@ public class SepiaColors {
         };
     }
 
-    private OrderedDictionary<string, string> HexColorsByCode { get; } = new() {
+    public OrderedDictionary<string, string> HexColorsByCode { get; } = new() {
         { "ink", "#483018" },
         { "settlement", "#856844" },
         { "wateredge", "#483018" },

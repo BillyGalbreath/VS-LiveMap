@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using livemap.data;
-using livemap.logger;
 using livemap.render;
 using livemap.util;
 using Vintagestory.API.Common;

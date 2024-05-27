@@ -45,6 +45,14 @@ public static class Extensions {
         return Lang.Get($"livemap:{key}", args);
     }
 
+    public static TextCommandResult CommandError(this string key, params object[]? args) {
+        return TextCommandResult.Success($"command.{key}".ToLang(args));
+    }
+
+    public static TextCommandResult CommandSuccess(this string key, params object[]? args) {
+        return TextCommandResult.Success($"command.{key}".ToLang(args));
+    }
+
     public static Point GetPoint(this IPlayer player) {
         return player.Entity.GetPoint();
     }

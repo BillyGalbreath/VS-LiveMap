@@ -5,7 +5,6 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using JetBrains.Annotations;
-using livemap.logger;
 using livemap.network;
 using livemap.util;
 using Newtonsoft.Json;
@@ -57,9 +56,9 @@ public sealed class Colormap {
             if (Deserialize(packet.RawColormap)) {
                 SaveToDisk();
                 RefreshIds(world);
-                Logger.Info("&dColormap saved to disk.");
+                Logger.Info("Colormap saved to disk");
             } else {
-                Logger.Warn("Could not save colormap to disk.");
+                Logger.Warn("Could not save colormap to disk");
             }
         }).Start();
     }
@@ -72,7 +71,7 @@ public sealed class Colormap {
             }
             if (Deserialize(json)) {
                 RefreshIds(world);
-                Logger.Info("&dColormap loaded from disk.");
+                Logger.Info("Colormap loaded from disk");
             } else {
                 Logger.Warn("Could not load colormap from disk.");
                 Logger.Warn("An admin needs to send the colormap from their client.");

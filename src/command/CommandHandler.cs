@@ -16,15 +16,14 @@ public class CommandHandler {
         _server = server;
 
         _chatCommand = server.Sapi.ChatCommands
-            .Create("livemap")
-            .WithRootAlias("map")
+            .Create(server.ModId)
             .WithDescription("command.description".ToLang())
             .RequiresPrivilege(Privilege.chat)
-            .HandleWith(_ => CommandResult.Success("view-livemap-link").Parse());
+            .HandleWith(_ => "no-args-response".CommandSuccess());
 
         RegisterSubCommand(new ColormapCmd(server));
         RegisterSubCommand(new FullRenderCmd(server));
-        RegisterSubCommand(new RadiusRenderCmd(server));
+        RegisterSubCommand(new ApothemRenderCmd(server));
         RegisterSubCommand(new ReloadCmd(server));
         RegisterSubCommand(new StatusCmd(server));
     }
@@ -33,18 +32,24 @@ public class CommandHandler {
         _chatCommand
             .BeginSubCommands(command.Name)
             .WithDescription(command.Description)
-            .RequiresPrivilege(command.Privilege)
+            .WithArgs(command.ArgParsers)
             .HandleWith(args => {
+                if (!args.Caller.HasPrivilege(command.Privilege)) {
+                    return "error.no-privilege".CommandError();
+                }
+                if (command.RequiresPlayer && args.Caller.Player == null) {
+                    return "error.player-only-command".CommandError();
+                }
                 try {
-                    return command.Execute(args).Parse();
+                    return command.Execute(args);
                 } catch (Exception e) {
-                    return TextCommandResult.Error("command.error".ToLang($"Error: {e.Message}"));
+                    return TextCommandResult.Error(e.Message);
                 }
             })
             .EndSubCommand();
     }
 
     public void Dispose() {
-        _server.Sapi.ChatCommands.UnregisterCommand("livemap");
+        _server.Sapi.ChatCommands.UnregisterCommand(_server.ModId);
     }
 }

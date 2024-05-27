@@ -5,7 +5,6 @@ using System.Net.Mime;
 using System.Text.RegularExpressions;
 using System.Threading;
 using JetBrains.Annotations;
-using livemap.logger;
 using livemap.util;
 using MimeTypes;
 
@@ -51,13 +50,13 @@ public partial class WebServer {
             int port = _server.Config.Httpd.Port;
 
             if (_listener == null) {
-                Logger.Info($"&aInternal webserver starting on port &e{port}");
+                Logger.Info($"Internal webserver starting on port {port}");
             }
 
             try {
                 (_listener = new HttpListener { Prefixes = { $"http://*:{port}/" } }).Start();
             } catch (Exception e) {
-                Logger.Error("&cInternal webserver has failed to start");
+                Logger.Error("Internal webserver has failed to start");
                 Logger.Error(e.ToString());
                 _running = false;
                 _stopped = true;
@@ -70,7 +69,7 @@ public partial class WebServer {
                     HandleRequest(_listener!.GetContext());
                 } catch (Exception) {
                     if (_stopped) {
-                        Logger.Info("&cInternal webserver has stopped");
+                        Logger.Info("Internal webserver has stopped");
                         if (_reload) {
                             _reload = false;
                             _stopped = false;
