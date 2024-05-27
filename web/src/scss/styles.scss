@@ -30,19 +30,20 @@ ul, li {
   transform: translateY(-50%);
   width: 100%;
 
-  > img {
-    display: block;
-    margin: 0 auto;
-    width: 90%;
-    height: auto;
-    max-width: 1024px;
-  }
-
   > svg {
     display: block;
     margin: 0 auto;
-    width: 64px;
-    height: 64px;
+
+    &:first-child {
+      width: 90%;
+      height: auto;
+      max-width: 1024px;
+    }
+
+    &:not(:first-child) {
+      width: 64px;
+      height: 64px;
+    }
   }
 }
 
