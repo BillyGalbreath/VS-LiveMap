@@ -40,6 +40,8 @@ aside {
     }
 
     div {
+      padding: 15px 0;
+
       svg {
         width: 40px;
         height: 40px;
@@ -47,6 +49,10 @@ aside {
       }
 
       div:not(:first-child) {
+        flex: 0;
+      }
+
+      span:not(:first-child) {
         flex: 0;
       }
     }
@@ -62,13 +68,12 @@ aside {
     display: flex;
     justify-content: center;
     width: 100%;
-    padding: 15px 0;
+    padding: 15px 0 15px 3px;
     line-height: 40px;
     font-size: 1.15rem;
     font-weight: 600;
 
-
-    > div, svg {
+    > div, svg, span {
       transition: all 0.3s ease;
     }
 
@@ -90,6 +95,10 @@ aside {
       padding: 8px 0;
       margin-right: 15px;
       filter: var(--filter-shadow);
+    }
+
+    span:not(:first-child) {
+      flex: auto;
     }
   }
 

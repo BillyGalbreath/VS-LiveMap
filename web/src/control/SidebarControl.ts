@@ -38,6 +38,7 @@ export class SidebarControl {
         } else {
             rawhtml += `<a href='${logolink}'>${logotext}</a>`;
         }
+        rawhtml += `<span></span>`;
         logo.insertAdjacentHTML('beforeend', rawhtml);
 
         // add these after the logo
