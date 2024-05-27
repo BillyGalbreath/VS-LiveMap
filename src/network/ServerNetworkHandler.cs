@@ -7,8 +7,8 @@ namespace livemap.network;
 public sealed class ServerNetworkHandler : NetworkHandler {
     private IServerNetworkChannel? _channel;
 
-    public ServerNetworkHandler(LiveMapServer server) {
-        _channel = server.Api.Network.RegisterChannel(server.ModId)
+    public ServerNetworkHandler(LiveMap server) {
+        _channel = server.Sapi.Network.RegisterChannel(server.ModId)
             .RegisterMessageType<ColormapPacket>()
             .RegisterMessageType<ConfigPacket>()
             .SetMessageHandler<ColormapPacket>(server.ReceiveColormap)

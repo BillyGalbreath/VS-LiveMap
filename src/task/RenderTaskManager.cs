@@ -10,7 +10,7 @@ namespace livemap.task;
 
 [PublicAPI]
 public sealed class RenderTaskManager {
-    private readonly LiveMapServer _server;
+    private readonly LiveMap _server;
 
     public RenderTask RenderTask { get; }
 
@@ -21,7 +21,7 @@ public sealed class RenderTaskManager {
     private bool _running;
     private bool _stopped;
 
-    public RenderTaskManager(LiveMapServer server) {
+    public RenderTaskManager(LiveMap server) {
         _server = server;
         RenderTask = new RenderTask(server);
     }

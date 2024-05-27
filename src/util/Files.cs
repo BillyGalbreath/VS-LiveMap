@@ -17,11 +17,11 @@ public abstract class Files {
     public static string MarkerDir { get; internal set; } = null!;
     public static string TilesDir { get; internal set; } = null!;
 
-    internal static void ExtractWebFiles(LiveMapServer server) {
+    internal static void ExtractWebFiles(LiveMap server) {
         GamePaths.EnsurePathExists(DataDir);
         // copy web assets from zip to disk
         // stored in "config" to allow the game to automatically load them for us
-        foreach (IAsset asset in server.Api.Assets.GetMany("config", "livemap")) {
+        foreach (IAsset asset in server.Sapi.Assets.GetMany("config", "livemap")) {
             // strip leading "config/" from the path
             string path = asset.Location.Path[7..];
 

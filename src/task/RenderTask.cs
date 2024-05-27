@@ -19,12 +19,12 @@ public sealed class RenderTask {
     // let's not create too many of these, so we don't kill the GC
     private readonly BlockPos _mutableBlockPos = new(0);
 
-    private readonly LiveMapServer _server;
+    private readonly LiveMap _server;
     private readonly ChunkLoader _chunkLoader;
 
-    public RenderTask(LiveMapServer server) {
+    public RenderTask(LiveMap server) {
         _server = server;
-        _chunkLoader = new ChunkLoader(_server.Api);
+        _chunkLoader = new ChunkLoader(_server.Sapi);
     }
 
     public void ScanRegion(int regionX, int regionZ) {
@@ -74,7 +74,7 @@ public sealed class RenderTask {
         }
 
         // load the actual chunks slices from game save
-        ServerChunk?[] chunkSlices = new ServerChunk?[_server.Api.WorldManager.MapSizeY >> 5];
+        ServerChunk?[] chunkSlices = new ServerChunk?[_server.Sapi.WorldManager.MapSizeY >> 5];
         foreach (int y in chunkIndexesToLoad) {
             chunkSlices[y] = _chunkLoader.GetServerChunk(chunkPos.X, y, chunkPos.Z);
         }
@@ -131,7 +131,7 @@ public sealed class RenderTask {
 
     private int GetTopBlockY(ServerMapChunk? mapChunk, int x, int z, int def = 0) {
         ushort? blockY = mapChunk?.RainHeightMap[Mathf.BlockIndex(x, z)];
-        return GameMath.Clamp(blockY ?? def, 0, _server.Api.WorldManager.MapSizeY - 1);
+        return GameMath.Clamp(blockY ?? def, 0, _server.Sapi.WorldManager.MapSizeY - 1);
     }
 
     public void Dispose() {

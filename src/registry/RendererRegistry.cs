@@ -7,7 +7,7 @@ namespace livemap.registry;
 public class RendererRegistry : Registry<Renderer> {
     public RendererRegistry() : base("renderers") { }
 
-    public void RegisterBuiltIns(LiveMapServer server) {
+    public void RegisterBuiltIns(LiveMap server) {
         Register(new BasicRenderer(server));
         Register(new SepiaRenderer(server));
     }

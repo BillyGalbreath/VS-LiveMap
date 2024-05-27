@@ -8,12 +8,12 @@ namespace livemap.render;
 
 [PublicAPI]
 public abstract class Renderer : Keyed {
-    public LiveMapServer Server { get; }
+    public LiveMap Server { get; }
     public string Id { get; }
 
     public TileImage? TileImage { get; set; }
 
-    protected Renderer(LiveMapServer server, string id) {
+    protected Renderer(LiveMap server, string id) {
         Server = server;
         Id = id;
     }

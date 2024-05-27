@@ -10,17 +10,17 @@ using Newtonsoft.Json;
 namespace livemap.task.data;
 
 public sealed class SettingsTask : JsonTask {
-    public SettingsTask(LiveMapServer server) : base(server) { }
+    public SettingsTask(LiveMap server) : base(server) { }
 
     protected override async Task TickAsync(CancellationToken cancellationToken) {
         Dictionary<string, object?> dict = new();
         dict.TryAdd("friendlyUrls", true);
         dict.TryAdd("playerList", true);
         dict.TryAdd("playerMarkers", true);
-        dict.TryAdd("maxPlayers", _server.Api.Server.Config.MaxClients);
+        dict.TryAdd("maxPlayers", _server.Sapi.Server.Config.MaxClients);
         dict.TryAdd("interval", 30);
-        dict.TryAdd("size", _server.Api.WorldManager.Size());
-        dict.TryAdd("spawn", _server.Api.World.DefaultSpawnPosition.ToPoint());
+        dict.TryAdd("size", _server.Sapi.WorldManager.Size());
+        dict.TryAdd("spawn", _server.Sapi.World.DefaultSpawnPosition.ToPoint());
         dict.TryAdd("web", new Dictionary<string, object?> {
             { "tiletype", _server.Config.Web.TileType.Type }
         });

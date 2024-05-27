@@ -58,7 +58,7 @@ public unsafe class TileImage {
         }
     }
 
-    public void Save(LiveMapServer server, string rendererId) {
+    public void Save(LiveMap server, string rendererId) {
         try {
             for (int zoom = 0; zoom <= server.Config.Zoom.MaxOut; zoom++) {
                 FileInfo fileInfo = new(Path.Combine(Files.TilesDir, rendererId, zoom.ToString(), $"{_regionX >> zoom}_{_regionZ >> zoom}.{server.Config.Web.TileType.Type}"));

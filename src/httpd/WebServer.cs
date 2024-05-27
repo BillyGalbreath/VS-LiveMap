@@ -16,7 +16,7 @@ public partial class WebServer {
     [GeneratedRegex(@"^(.*\/)?(.+)\/([+-]?\d+)\/([+-]?\d+)\/([+-]?\d+)(\/.*)?")]
     private static partial Regex FriendlyUrlRegex();
 
-    private readonly LiveMapServer _server;
+    private readonly LiveMap _server;
 
     private HttpListener? _listener;
     private Thread? _thread;
@@ -24,7 +24,7 @@ public partial class WebServer {
     private bool _stopped;
     private bool _reload;
 
-    public WebServer(LiveMapServer server) {
+    public WebServer(LiveMap server) {
         _server = server;
     }
 

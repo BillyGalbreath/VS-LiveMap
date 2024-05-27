@@ -12,7 +12,7 @@ namespace livemap.task.data;
 public class MarkersTask : JsonTask {
     private readonly Dictionary<string, long> _lastUpdate = new();
 
-    public MarkersTask(LiveMapServer server) : base(server) { }
+    public MarkersTask(LiveMap server) : base(server) { }
 
     protected override async Task TickAsync(CancellationToken cancellationToken) {
         List<string> layerIds = new();

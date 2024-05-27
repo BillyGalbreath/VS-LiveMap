@@ -10,12 +10,12 @@ using Vintagestory.API.Common;
 namespace livemap.task.data;
 
 public class PlayersTask : JsonTask {
-    public PlayersTask(LiveMapServer server) : base(server) { }
+    public PlayersTask(LiveMap server) : base(server) { }
 
     protected override async Task TickAsync(CancellationToken cancellationToken) {
         List<Dictionary<string, object?>> players = new();
 
-        List<IPlayer> onlinePlayers = new(_server.Api.World.AllOnlinePlayers);
+        List<IPlayer> onlinePlayers = new(_server.Sapi.World.AllOnlinePlayers);
         foreach (IPlayer player in onlinePlayers) {
             if (cancellationToken.IsCancellationRequested) {
                 return;

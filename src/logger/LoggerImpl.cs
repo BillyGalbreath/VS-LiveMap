@@ -8,7 +8,7 @@ using Vintagestory.Common;
 
 namespace livemap.logger;
 
-public abstract partial class LoggerImpl : LoggerBase {
+public partial class LoggerImpl : LoggerBase {
     [GeneratedRegex("(?i)&([a-f0-9k-or])", RegexOptions.None, "en-US")]
     private static partial Regex ColorCodesRegex();
 
@@ -16,40 +16,19 @@ public abstract partial class LoggerImpl : LoggerBase {
     private static partial Regex AnsiCodesRegex();
 
     private static readonly Dictionary<string, int> _ansiCodes = new() {
-        { "0", 30 },
-        { "1", 34 },
-        { "2", 32 },
-        { "3", 36 },
-        { "4", 31 },
-        { "5", 35 },
-        { "6", 33 },
-        { "7", 37 },
-        { "8", 90 },
-        { "9", 94 },
-        { "a", 92 },
-        { "b", 96 },
-        { "c", 91 },
-        { "d", 95 },
-        { "e", 93 },
-        { "f", 97 },
-        { "k", 8 },
-        { "l", 1 },
-        { "m", 9 },
-        { "n", 4 },
-        { "o", 3 },
-        { "r", 0 }
+        { "0", 30 }, { "1", 34 }, { "2", 32 }, { "3", 36 }, { "4", 31 },
+        { "5", 35 }, { "6", 33 }, { "7", 37 }, { "8", 90 }, { "9", 94 },
+        { "a", 92 }, { "b", 96 }, { "c", 91 }, { "d", 95 }, { "e", 93 },
+        { "f", 97 }, { "k", 8 }, { "l", 1 }, { "m", 9 }, { "n", 4 },
+        { "o", 3 }, { "r", 0 }
     };
 
-    protected abstract bool ColorConsole { get; }
-    protected abstract bool DebugToConsole { get; }
-    protected abstract bool DebugToEventFile { get; }
-
     private readonly string _modid;
-    protected readonly Vintagestory.Logger _parent;
+    private readonly Vintagestory.Logger _parent;
 
     private bool _canUseColor = true;
 
-    protected LoggerImpl(string modid, ILogger logger) {
+    public LoggerImpl(string modid, ILogger logger) {
         _modid = modid;
         _parent = (Vintagestory.Logger)((ModLogger)logger).Parent;
     }
@@ -57,13 +36,9 @@ public abstract partial class LoggerImpl : LoggerBase {
     protected override void LogImpl(EnumLogType logType, string format, params object[] args) {
         string stripped = $"[{_modid}] {Strip(format)}";
 
-        PrintToCorrectLogFile(_parent, logType, stripped, args);
+        PrintToCorrectLogFile(logType, stripped, args);
 
         if (!_parent.printToConsole(logType)) {
-            return;
-        }
-
-        if (logType == EnumLogType.Debug && !DebugToConsole) {
             return;
         }
 
@@ -78,11 +53,11 @@ public abstract partial class LoggerImpl : LoggerBase {
         Console.ResetColor();
     }
 
-    private void PrintToCorrectLogFile(Vintagestory.Logger parent, EnumLogType logType, string stripped, params object[] args) {
-        string? logFile = parent.getLogFile(logType);
+    private void PrintToCorrectLogFile(EnumLogType logType, string stripped, params object[] args) {
+        string? logFile = _parent.getLogFile(logType);
         if (logFile != null) {
             try {
-                parent.LogToFile(logFile, logType, stripped, args);
+                _parent.LogToFile(logFile, logType, stripped, args);
             } catch (Exception e) when (e is NotSupportedException or ObjectDisposedException) {
                 Console.WriteLine("Unable to write to log file " + logFile);
             }
@@ -90,17 +65,17 @@ public abstract partial class LoggerImpl : LoggerBase {
 
         switch (logType) {
             case EnumLogType.Error or EnumLogType.Fatal:
-                parent.LogToFile(parent.getLogFile(EnumLogType.Event), logType, stripped, args);
+                _parent.LogToFile(_parent.getLogFile(EnumLogType.Event), logType, stripped, args);
                 break;
             case EnumLogType.Event:
-            case EnumLogType.Debug when DebugToEventFile:
-                parent.LogToFile(parent.getLogFile(EnumLogType.Notification), logType, stripped, args);
+            case EnumLogType.Debug:
+                _parent.LogToFile(_parent.getLogFile(EnumLogType.Notification), logType, stripped, args);
                 break;
         }
     }
 
     private void SetupColorsOrNot(EnumLogType logType) {
-        if (!ColorConsole || !_canUseColor) {
+        if (!_canUseColor) {
             return;
         }
         try {
@@ -122,7 +97,7 @@ public abstract partial class LoggerImpl : LoggerBase {
     }
 
     private void WriteToLog(Vintagestory.Logger parent, EnumLogType logType, string format, string stripped, params object[] args) {
-        if (!ColorConsole || !_canUseColor) {
+        if (!_canUseColor) {
             Console.WriteLine(parent.FormatLogEntry(logType, stripped, args));
             return;
         }
@@ -137,7 +112,7 @@ public abstract partial class LoggerImpl : LoggerBase {
         ), args));
     }
 
-    protected static string Strip(string message) {
+    private static string Strip(string message) {
         return ColorCodesRegex().Replace(AnsiCodesRegex().Replace(message, ""), "");
     }
 

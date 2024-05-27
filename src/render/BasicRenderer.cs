@@ -5,7 +5,7 @@ namespace livemap.render;
 
 [PublicAPI]
 public class BasicRenderer : Renderer {
-    public BasicRenderer(LiveMapServer server) : base(server, "basic") { }
+    public BasicRenderer(LiveMap server) : base(server, "basic") { }
 
     public override void ProcessBlockData(int regionX, int regionZ, BlockData blockData) {
         if (TileImage == null) {

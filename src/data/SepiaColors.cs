@@ -44,8 +44,8 @@ public class SepiaColors {
     public byte[] Block2Color { get; private set; }
     public bool[] BlockIsWater { get; private set; }
 
-    public SepiaColors(LiveMapServer server) {
-        int max = server.Api.World.Blocks.Count;
+    public SepiaColors(LiveMap server) {
+        int max = server.Sapi.World.Blocks.Count;
         Block2Color = new byte[max + 1];
         BlockIsWater = new bool[max + 1];
 
@@ -53,7 +53,7 @@ public class SepiaColors {
             ColorsByCode[val.Key] = (uint)SKColor.Parse(val.Value);
         }
 
-        foreach (Block block in server.Api.World.Blocks) {
+        foreach (Block block in server.Sapi.World.Blocks) {
             if (block.BlockMaterial == EnumBlockMaterial.Snow && block.Code.Path.Contains("snowblock")) {
                 Block2Color[block.BlockId] = (byte)ColorsByCode.IndexOfKey("glacier");
                 BlockIsWater[block.BlockId] = false;

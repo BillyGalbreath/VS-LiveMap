@@ -9,7 +9,7 @@ public class SepiaRenderer : Renderer {
     public uint GetColor(int index) => Server.SepiaColors.ColorsByCode.GetValueAtIndex(index);
     public uint GetColor(string id) => Server.SepiaColors.ColorsByCode[id];
 
-    public SepiaRenderer(LiveMapServer server) : base(server, "sepia") { }
+    public SepiaRenderer(LiveMap server) : base(server, "sepia") { }
 
     public override void ProcessBlockData(int regionX, int regionZ, BlockData blockData) {
         if (TileImage == null) {

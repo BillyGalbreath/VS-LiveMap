@@ -6,7 +6,7 @@ namespace livemap.task.data;
 public class JsonTaskManager {
     private readonly List<JsonTask> _tasks = new();
 
-    public JsonTaskManager(LiveMapServer server) {
+    public JsonTaskManager(LiveMap server) {
         _tasks.Add(new MarkersTask(server));
         _tasks.Add(new PlayersTask(server));
         _tasks.Add(new SettingsTask(server));

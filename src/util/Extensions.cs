@@ -10,6 +10,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.Common;
 using Vintagestory.GameContent;
 
 namespace livemap.util;
@@ -20,6 +21,10 @@ public static class Extensions {
 
     public static T? GetField<T>(this object obj, string name) where T : class {
         return obj.GetType().GetField(name, _flags)?.GetValue(obj) as T;
+    }
+
+    public static object? Invoke(this object obj, string name, object?[]? parameters) {
+        return obj.GetType().GetMethod(name, _flags)?.Invoke(obj, parameters);
     }
 
     public static V ComputeIfAbsent<K, V>(this Dictionary<K, V> dict, K key, System.Func<K, V> func) where K : notnull {
@@ -67,6 +72,10 @@ public static class Extensions {
 
     public static Point Size(this IWorldManagerAPI api) {
         return new Point(api.MapSizeX, api.MapSizeZ);
+    }
+
+    public static void UnregisterCommand(this IChatCommandApi api, string name) {
+        ((ChatCommandApi)api).Invoke("UnregisterCommand", new object?[] { name });
     }
 
     public static Dictionary<string, object> GetHealth(this IPlayer player) {

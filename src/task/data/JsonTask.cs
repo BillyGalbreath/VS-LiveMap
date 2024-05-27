@@ -7,12 +7,12 @@ namespace livemap.task.data;
 
 [PublicAPI]
 public abstract class JsonTask {
-    protected readonly LiveMapServer _server;
+    protected readonly LiveMap _server;
     private readonly CancellationTokenSource _cts = new();
 
     private volatile bool _running;
 
-    protected JsonTask(LiveMapServer server) {
+    protected JsonTask(LiveMap server) {
         _server = server;
     }
 
