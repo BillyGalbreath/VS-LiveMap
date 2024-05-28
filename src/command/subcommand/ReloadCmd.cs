@@ -10,7 +10,7 @@ public class ReloadCmd : AbstractCommand {
     ) { }
 
     public override TextCommandResult Execute(TextCommandCallingArgs args) {
-        Server.ReloadConfig();
+        _server.ReloadConfig();
 
         return "reload.done".CommandSuccess();
     }

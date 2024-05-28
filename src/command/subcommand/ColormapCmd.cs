@@ -12,7 +12,7 @@ public class ColormapCmd : AbstractCommand {
     ) { }
 
     public override TextCommandResult Execute(TextCommandCallingArgs args) {
-        Server.SendPacket(new ColormapPacket(), args.Caller.Player);
+        _server.SendPacket(new ColormapPacket(), args.Caller.Player);
 
         return "colormap.requested".CommandSuccess();
     }

@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
+using livemap.data;
 using livemap.util;
 using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
+using Vintagestory.Common.Database;
 
 namespace livemap.task;
 
@@ -13,6 +16,7 @@ namespace livemap.task;
 public sealed class RenderTaskManager {
     private readonly LiveMap _server;
 
+    public readonly ChunkLoader ChunkLoader;
     public RenderTask RenderTask { get; }
 
     public HashSet<int> MicroBlocks { get; }
@@ -28,6 +32,8 @@ public sealed class RenderTaskManager {
 
     public RenderTaskManager(LiveMap server) {
         _server = server;
+
+        ChunkLoader = new ChunkLoader(server.Sapi);
         RenderTask = new RenderTask(server);
 
         MicroBlocks = server.Sapi.World.Blocks
@@ -49,6 +55,19 @@ public sealed class RenderTaskManager {
             .Select(block => block.Id).ToHashSet();
 
         LandBlock = server.Sapi.World.GetBlock(new AssetLocation("game", "soil-low-normal")).Id;
+    }
+
+    public void QueueAll(Vec2i? minChunk = null, Vec2i? maxChunk = null) {
+        // queue up all existing chunks within range
+        foreach (ChunkPos chunk in ChunkLoader.GetAllMapChunkPositions()) {
+            if (minChunk != null && (chunk.X < minChunk.X || chunk.Z < minChunk.Y)) {
+                continue;
+            }
+            if (maxChunk != null && (chunk.X > maxChunk.X || chunk.Z > maxChunk.Y)) {
+                continue;
+            }
+            Queue(chunk.X >> 4, chunk.Z >> 4);
+        }
     }
 
     public void Queue(int regionX, int regionZ) {
@@ -125,8 +144,6 @@ public sealed class RenderTaskManager {
         _thread?.Interrupt();
         _thread = null;
 
-        RenderTask.Dispose();
-
         _bufferQueue.Clear();
         while (_processQueue.TryTake(out _)) { }
 
@@ -136,6 +153,8 @@ public sealed class RenderTaskManager {
 
         MicroBlocks.Clear();
         BlocksToIgnore.Clear();
+
+        ChunkLoader.Dispose();
     }
 
     public TextCommandResult Status() {

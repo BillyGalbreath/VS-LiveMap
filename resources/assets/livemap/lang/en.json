@@ -5,7 +5,13 @@
   "command.error.no-privilege": "Sorry, you don't have the privilege to use this command",
   "command.error.player-only-command": "Sorry, only players can run this command",
 
-  "command.apothemrender.description": "Queue up generated regions in range around a position for renderer",
+  "command.arg.apothem": "the range to render",
+  "command.arg.center": "the center position",
+
+  "command.apothemrender.description": "Queue up generated regions in range around a position/player for renderer",
+  "command.apothemrender.out-of-bounds": "Apothem out of bounds",
+  "command.apothemrender.missing-center-or-player": "Command requires a center position or a player",
+  "command.apothemrender.started": "Apothemrender task has started",
 
   "command.colormap.description": "Sends a request to your client to generate a new colormap. This requires LiveMap mod to also be installed on your client. Your client will generate a new colormap and then send it back to the server.",
   "command.colormap.requested": "Requesting colormap from client",

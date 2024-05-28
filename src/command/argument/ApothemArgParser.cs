@@ -1,13 +1,14 @@
 using JetBrains.Annotations;
+using livemap.util;
 using Vintagestory.API.Common;
 
 namespace livemap.command.argument;
 
 [PublicAPI]
 public class ApothemArgParser : IntArgParser {
-    public ApothemArgParser(string argName, int max) : base(argName, 0, max, 0, true) { }
+    public ApothemArgParser(string argName) : base(argName, 0, true) { }
 
     public override string GetSyntaxExplanation(string indent) {
-        return indent + GetSyntax() + " the apothem range to render";
+        return $"{indent}{GetSyntax()} {"command.arg.apothem".ToLang()}";
     }
 }

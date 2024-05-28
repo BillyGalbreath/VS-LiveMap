@@ -6,7 +6,7 @@ namespace livemap.command;
 
 [PublicAPI]
 public abstract class AbstractCommand {
-    public LiveMap Server { get; }
+    protected readonly LiveMap _server;
 
     public string[] Name { get; }
     public string Description { get; }
@@ -15,7 +15,7 @@ public abstract class AbstractCommand {
     public ICommandArgumentParser[] ArgParsers;
 
     protected AbstractCommand(LiveMap server, string[] name, string? privilege = null, bool requiresPlayer = false, params ICommandArgumentParser[] argParsers) {
-        Server = server;
+        _server = server;
 
         Name = name;
         Description = $"command.{Name[0]}.description".ToLang();

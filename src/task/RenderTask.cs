@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using livemap.data;
 using livemap.render;
 using livemap.util;
 using Vintagestory.API.Common;
@@ -19,11 +18,9 @@ public sealed class RenderTask {
     private readonly BlockPos _mutableBlockPos = new(0);
 
     private readonly LiveMap _server;
-    private readonly ChunkLoader _chunkLoader;
 
     public RenderTask(LiveMap server) {
         _server = server;
-        _chunkLoader = new ChunkLoader(_server.Sapi);
     }
 
     public void ScanRegion(int regionX, int regionZ) {
@@ -33,7 +30,7 @@ public sealed class RenderTask {
             int z1 = regionZ << 4;
             int x2 = x1 + 16;
             int z2 = z1 + 16;
-            IEnumerable<ChunkPos> chunks = _chunkLoader.GetAllMapChunkPositions()
+            IEnumerable<ChunkPos> chunks = _server.RenderTaskManager.ChunkLoader.GetAllMapChunkPositions()
                 .Where(pos => pos.X >= x1 && pos.Z >= z1 && pos.X < x2 && pos.Z < z2);
             BlockData blockData = new();
             foreach (ChunkPos chunkPos in chunks) {
@@ -55,7 +52,7 @@ public sealed class RenderTask {
     private void ScanChunkColumn(ChunkPos chunkPos, BlockData blockData) {
         // get chunkmap from game save
         // this is just basic info about a chunk column, like heightmaps
-        ServerMapChunk? mapChunk = _chunkLoader.GetServerMapChunk(chunkPos);
+        ServerMapChunk? mapChunk = _server.RenderTaskManager.ChunkLoader.GetServerMapChunk(chunkPos);
         if (mapChunk == null) {
             return;
         }
@@ -75,7 +72,7 @@ public sealed class RenderTask {
         // load the actual chunks slices from game save
         ServerChunk?[] chunkSlices = new ServerChunk?[_server.Sapi.WorldManager.MapSizeY >> 5];
         foreach (int y in chunkIndexesToLoad) {
-            chunkSlices[y] = _chunkLoader.GetServerChunk(chunkPos.X, y, chunkPos.Z);
+            chunkSlices[y] = _server.RenderTaskManager.ChunkLoader.GetServerChunk(chunkPos.X, y, chunkPos.Z);
         }
 
         int startX = chunkPos.X << 5;
@@ -131,9 +128,5 @@ public sealed class RenderTask {
     private int GetTopBlockY(ServerMapChunk? mapChunk, int x, int z, int def = 0) {
         ushort? blockY = mapChunk?.RainHeightMap[Mathf.BlockIndex(x, z)];
         return GameMath.Clamp(blockY ?? def, 0, _server.Sapi.WorldManager.MapSizeY - 1);
-    }
-
-    public void Dispose() {
-        _chunkLoader.Dispose();
     }
 }

@@ -46,7 +46,7 @@ public static class Extensions {
     }
 
     public static TextCommandResult CommandError(this string key, params object[]? args) {
-        return TextCommandResult.Success($"command.{key}".ToLang(args));
+        return TextCommandResult.Error($"command.{key}".ToLang(args));
     }
 
     public static TextCommandResult CommandSuccess(this string key, params object[]? args) {
@@ -84,6 +84,24 @@ public static class Extensions {
 
     public static void UnregisterCommand(this IChatCommandApi api, string name) {
         ((ChatCommandApi)api).Invoke("UnregisterCommand", new object?[] { name });
+    }
+
+    public static void AutoSaveNow(this ICoreServerAPI api) {
+        api.Event.RegisterCallback(_ => {
+            IChatCommand command = api.ChatCommands.Get("autosavenow");
+            command.Execute(new TextCommandCallingArgs {
+                LanguageCode = Lang.CurrentLocale,
+                Command = command,
+                SubCmdCode = "autosavenow",
+                Caller = new Caller {
+                    Type = EnumCallerType.Console,
+                    CallerPrivileges = new[] { "*" },
+                    CallerRole = "admin",
+                    FromChatGroupId = 0
+                },
+                RawArgs = new CmdArgs("")
+            });
+        }, 1);
     }
 
     public static Dictionary<string, object> GetHealth(this IPlayer player) {

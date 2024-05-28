@@ -9,6 +9,6 @@ public class StatusCmd : AbstractCommand {
     ) { }
 
     public override TextCommandResult Execute(TextCommandCallingArgs args) {
-        return Server.RenderTaskManager.Status();
+        return _server.RenderTaskManager.Status();
     }
 }
