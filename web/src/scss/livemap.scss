@@ -6,9 +6,16 @@
   cursor: grabbing;
 }
 
+img.leaflet-tile[loaded='false'] {
+  opacity: 0;
+}
+
 img.leaflet-tile {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
+  border: 0 !important;
+  opacity: 1;
+  transition: opacity .5s;
 
   /* See: https://github.com/GoogleChrome/lighthouse/issues/15497#issuecomment-2047385179 */
   mix-blend-mode: color-dodge !important;

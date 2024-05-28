@@ -66,12 +66,19 @@ export class LiveTileLayer extends L.TileLayer {
         return L.Util.template(this._url, L.Util.extend(data, this.options));
     }
 
+    _tileOnLoad(done: L.DoneCallback, tile: HTMLElement): void {
+        super._tileOnLoad(done, tile);
+        tile.setAttribute('loaded', 'true');
+    }
+
     // @method createTile(coords: Object, done?: Function): HTMLElement
     // Called only internally, overrides GridLayer's [`createTile()`](#gridlayer-createtile)
     // to return an `<img>` HTML element with the appropriate image URL given `coords`. The `done`
     // callback is called when the tile has been loaded.
     createTile(coords: L.Coords, done: L.DoneCallback): HTMLImageElement {
         const tile: HTMLImageElement = L.DomUtil.create('img');
+        tile.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+        tile.setAttribute('loaded', 'false');
 
         L.DomEvent.on(tile, 'load', L.Util.bind(this._tileOnLoad, this, done, tile));
         L.DomEvent.on(tile, 'error', L.Util.bind(this._tileOnError, this, done, tile));
