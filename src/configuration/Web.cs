@@ -9,6 +9,8 @@ namespace livemap.configuration;
 public class Web {
     public string Path { get; set; } = "web/";
 
+    public string Url { get; set; } = "http://localhost:8080";
+
     public bool ReadOnly { get; set; }
 
     [JsonConverter(typeof(TileTypeJsonConverter))]

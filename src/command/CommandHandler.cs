@@ -19,7 +19,7 @@ public class CommandHandler {
             .Create(server.ModId)
             .WithDescription("command.description".ToLang())
             .RequiresPrivilege(Privilege.chat)
-            .HandleWith(_ => "no-args-response".CommandSuccess());
+            .HandleWith(_ => "no-args-response".CommandSuccess(server.Config.Web.Url));
 
         RegisterSubCommand(new ColormapCmd(server));
         RegisterSubCommand(new FullRenderCmd(server));
