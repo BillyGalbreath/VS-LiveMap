@@ -31,9 +31,9 @@ All releases can be downloaded from the VintageStory ModDB site at:
 
 A live demo of LiveMap can be accessed at:
 
-[https://vs.pl3x.net/map](https://vs.pl3x.net/map)
+[https://vs.pl3x.net/map/](https://vs.pl3x.net/map/)
 
-![Screenshot of markers on map](https://i.imgur.com/W7xXdMj.png)
+![Screenshot of markers on map](https://raw.githubusercontent.com/BillyGalbreath/VS-LiveMap/master/.github/images/og5.webp)
 
 ## For Developers
 
@@ -60,8 +60,6 @@ dotnet build
 And the final zip will be located at `bin/mods/livemap.zip` if there were no errors.
 
 ## Special Thanks
-<br>
-<br>
 <div align="center">
   <table>
     <tr>
