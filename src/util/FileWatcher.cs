@@ -14,7 +14,6 @@ public class FileWatcher {
     public FileWatcher(LiveMap server) {
         _server = server;
 
-
         _watcher = new FileSystemWatcher(GamePaths.ModConfig) {
             Filter = $"{server.ModId}.json",
             IncludeSubdirectories = false,

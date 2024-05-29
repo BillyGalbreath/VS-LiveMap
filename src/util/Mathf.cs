@@ -26,7 +26,7 @@ public abstract class Mathf {
     }
 
     public static float Lerp(float a, float b, float t) {
-        return a + t * (b - a);
+        return a + (t * (b - a));
     }
 
     public static uint Max(params uint[] numbers) {

@@ -97,7 +97,7 @@ public partial class WebServer {
             MatchCollection matches = FriendlyUrlRegex().Matches(urlLoc);
             if (matches.Count > 0) {
                 string group6 = matches[0].Groups[6].Value;
-                if (group6.Length == 0 && !matches[0].Value.EndsWith("/")) {
+                if (group6.Length == 0 && !matches[0].Value.EndsWith('/')) {
                     context.Response.Redirect($"{context.Request.Url?.OriginalString}/");
                     context.Response.Close();
                     return;

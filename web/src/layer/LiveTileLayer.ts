@@ -1,15 +1,6 @@
 import * as L from 'leaflet';
 import {LiveMap} from '../LiveMap';
 
-// https://stackoverflow.com/a/75848002/3530727
-navigator?.serviceWorker?.register('noerr.js')?.then((): void => {
-        navigator.serviceWorker.controller
-            ? window.dispatchEvent(new CustomEvent('swready'))
-            : navigator.serviceWorker.ready
-                .then((): void => location.reload());
-    }
-);
-
 export class LiveTileLayer extends L.TileLayer {
     declare _url: string;
 
@@ -69,6 +60,11 @@ export class LiveTileLayer extends L.TileLayer {
     _tileOnLoad(done: L.DoneCallback, tile: HTMLElement): void {
         super._tileOnLoad(done, tile);
         tile.setAttribute('loaded', 'true');
+    }
+
+    _tileOnError(done: L.DoneCallback, tile: HTMLElement, e: Error): void {
+        super._tileOnError(done, tile, e);
+        tile.setAttribute('loaded', 'false');
     }
 
     // @method createTile(coords: Object, done?: Function): HTMLElement

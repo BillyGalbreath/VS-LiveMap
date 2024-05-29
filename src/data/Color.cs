@@ -74,7 +74,7 @@ public readonly struct Color {
     /// <returns>Color parsed from string</returns>
     public static uint Parse(string value) {
         string stripped;
-        if (value.StartsWith("#")) {
+        if (value.StartsWith('#')) {
             stripped = value[1..];
         } else if (value.StartsWith("0x", StringComparison.CurrentCultureIgnoreCase)) {
             stripped = value[2..];
@@ -168,10 +168,10 @@ public readonly struct Color {
         }
         hue -= (float)Math.Floor(hue);
         int i = (int)(6 * hue);
-        float f = 6 * hue - i;
+        float f = (6 * hue) - i;
         float p = brightness * (1 - saturation);
-        float q = brightness * (1 - saturation * f);
-        float t = brightness * (1 - saturation * (1 - f));
+        float q = brightness * (1 - (saturation * f));
+        float t = brightness * (1 - (saturation * (1 - f)));
         return i switch {
             0 => Convert(brightness, t, p),
             1 => Convert(q, brightness, p),
