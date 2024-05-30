@@ -14,5 +14,5 @@ public class Config {
 
     public Ui Ui { get; set; } = new();
 
-    public Markers Markers { get; set; } = new();
+    public Layers Layers { get; set; } = new();
 }

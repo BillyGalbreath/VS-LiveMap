@@ -15,13 +15,25 @@ public class PlayersTask : JsonTask {
     protected override async Task TickAsync(CancellationToken cancellationToken) {
         List<Dictionary<string, object?>> players = new();
 
-        List<IPlayer> onlinePlayers = new(_server.Sapi.World.AllOnlinePlayers);
+        List<IPlayer> onlinePlayers = _server.Config.Layers.Players.Enabled ? new List<IPlayer>(_server.Sapi.World.AllOnlinePlayers) : new List<IPlayer>();
         foreach (IPlayer player in onlinePlayers) {
             if (cancellationToken.IsCancellationRequested) {
                 return;
             }
 
             if (player.Entity == null) {
+                return;
+            }
+
+            if (_server.Config.Layers.Players.HideSpectators && player.WorldData.CurrentGameMode == EnumGameMode.Spectator) {
+                return;
+            }
+
+            if (_server.Config.Layers.Players.HideIfSneaking && player.Entity.Controls.Sneak) {
+                return;
+            }
+
+            if (_server.Config.Layers.Players.HideUnderBlocks && player.Entity.SidedPos.Y < player.Entity.World.BlockAccessor.GetRainMapHeightAt(player.Entity.SidedPos.AsBlockPos)) {
                 return;
             }
 
@@ -42,9 +54,9 @@ public class PlayersTask : JsonTask {
         }
 
         string json = JsonConvert.SerializeObject(new Dictionary<string, object?> {
-            {
-                "players", players
-            }
+            { "interval", _server.Config.Layers.Players.UpdateInterval },
+            { "hidden", !_server.Config.Layers.Players.DefaultShowLayer },
+            { "players", players }
         });
 
         if (cancellationToken.IsCancellationRequested) {

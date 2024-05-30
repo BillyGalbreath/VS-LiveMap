@@ -52,7 +52,7 @@ export class Lang {
     }
 
     get players(): string {
-        return this._players ?? 'Players ({cur}/{max})';
+        return this._players ?? 'Players';
     }
 
     get renderers(): string {
