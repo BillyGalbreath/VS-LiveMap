@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using livemap.configuration;
 using livemap.util;
 using Newtonsoft.Json;
 using Vintagestory.API.Common;
@@ -21,29 +22,31 @@ public class PlayersTask : JsonTask {
                 return;
             }
 
-            if (player.Entity == null) {
+            EntityPlayer entity = player.Entity;
+            if (entity == null) {
                 return;
             }
 
-            if (_server.Config.Layers.Players.HideSpectators && player.WorldData.CurrentGameMode == EnumGameMode.Spectator) {
+            Players config = _server.Config.Layers.Players;
+            if (config.HideSpectators && player.WorldData.CurrentGameMode == EnumGameMode.Spectator) {
                 return;
             }
 
-            if (_server.Config.Layers.Players.HideIfSneaking && player.Entity.Controls.Sneak) {
+            if (config.HideIfSneaking && entity.Controls.Sneak) {
                 return;
             }
 
-            if (_server.Config.Layers.Players.HideUnderBlocks && player.Entity.SidedPos.Y < player.Entity.World.BlockAccessor.GetRainMapHeightAt(player.Entity.SidedPos.AsBlockPos)) {
+            if (config.HideUnderBlocks && entity.SidedPos.Y < entity.World.BlockAccessor.GetRainMapHeightAt(entity.SidedPos.AsBlockPos)) {
                 return;
             }
 
             Dictionary<string, object?> dict = new();
             dict.TryAdd("id", player.PlayerUID);
             dict.TryAdd("name", player.PlayerName);
-            dict.TryAdd("avatar", player.Entity.GetAvatar());
+            dict.TryAdd("avatar", entity.GetAvatar());
             dict.TryAdd("role", player.Role.Code); // todo add role color to name
             dict.TryAdd("pos", player.GetPoint());
-            dict.TryAdd("yaw", 90 - ((player.Entity.SidedPos?.Yaw ?? 0) * (180.0 / Math.PI)));
+            dict.TryAdd("yaw", 90 - ((entity.SidedPos?.Yaw ?? 0) * (180.0 / Math.PI)));
             dict.TryAdd("health", player.GetHealth());
             dict.TryAdd("satiety", player.GetSatiety());
             players.Add(dict);
