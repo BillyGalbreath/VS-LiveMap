@@ -4,7 +4,7 @@ namespace livemap.configuration;
 
 [PublicAPI]
 public class Spawn {
-    public bool Enabled { get; set; }
+    public bool Enabled { get; set; } = true;
 
     public int UpdateInterval { get; set; } = 30;
 
