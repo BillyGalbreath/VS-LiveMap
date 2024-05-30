@@ -36,6 +36,8 @@ export class MarkersLayer extends L.LayerGroup {
     private _defaults?: Defaults;
     private _json?: LayerJson;
 
+    private _updating: boolean = false;
+
     constructor(livemap: LiveMap, url: string, interval?: number) {
         super([]);
         this._livemap = livemap;
@@ -58,8 +60,16 @@ export class MarkersLayer extends L.LayerGroup {
         return this._label!;
     }
 
+    set label(label: string) {
+        this._label = label;
+    }
+
     get interval(): number {
         return this._interval!;
+    }
+
+    set interval(interval: number) {
+        this._interval = interval;
     }
 
     get json(): LayerJson {
@@ -72,39 +82,11 @@ export class MarkersLayer extends L.LayerGroup {
         }
     }
 
-    private initial(json: LayerJson): void {
-        this._label = json.label ?? ''; // set _something_ so we don't keep reloading json every tick
-        this._interval = json.interval ?? 300;
-        this._defaults = json.defaults;
-        this._json = json;
-
-        // merge in the custom layer options
-        if (json.options) {
-            this.options = {
-                ...this.options,
-                ...json.options
-            };
-
-            // create any panes needed for this marker
-            this._livemap.createPaneIfNotExist(json.options?.pane);
+    private updateLayer(): void {
+        if (this._updating) {
+            return;
         }
-
-        // insert any custom css
-        if (json.css) {
-            document.head.insertAdjacentHTML('beforeend', `<style id='${this.id}'>${json.css}</style>`);
-        }
-
-        // only add to the map if we are not hiding it by default
-        if (!json.hidden) {
-            // adding to the map makes it visible
-            this.addTo(this._livemap);
-        }
-
-        // add this layer to the layers control
-        this._livemap.layersControl.addOverlay(this, this._label);
-    }
-
-    protected updateLayer(): void {
+        this._updating = true;
         window.fetchJson<LayerJson>(this._url)
             .then((json: LayerJson): void => {
                 if (!this._label) {
@@ -114,16 +96,53 @@ export class MarkersLayer extends L.LayerGroup {
 
                 // refresh markers
                 this.updateMarkers(json);
+                this._updating = false;
             })
             .catch((err: unknown): void => {
+                this._updating = false;
                 console.error(`Error updating markers layer (${this._label})\n`, this, err);
             });
     }
 
-    private updateMarkers(layerJson: LayerJson): void {
+    protected initial(json: object): void {
+        const layerJson: LayerJson = json as LayerJson;
+
+        this._label = layerJson.label ?? ''; // set _something_ so we don't keep reloading json every tick
+        this._interval = layerJson.interval ?? 300;
+        this._defaults = layerJson.defaults;
+        this._json = layerJson;
+
+        // merge in the custom layer options
+        if (layerJson.options) {
+            this.options = {
+                ...this.options,
+                ...layerJson.options
+            };
+
+            // create any panes needed for this marker
+            this._livemap.createPaneIfNotExist(layerJson.options?.pane);
+        }
+
+        // insert any custom css
+        if (layerJson.css) {
+            document.head.insertAdjacentHTML('beforeend', `<style id='${this.id}'>${layerJson.css}</style>`);
+        }
+
+        // only add to the map if we are not hiding it by default
+        if (!layerJson.hidden) {
+            // adding to the map makes it visible
+            this.addTo(this._livemap);
+        }
+
+        // add this layer to the layers control
+        this._livemap.layersControl.addOverlay(this, this._label);
+    }
+
+    protected updateMarkers(json: object): void {
         const toRemove: string[] = [...this._markers.keys()];
 
         // get all markers from json
+        const layerJson: LayerJson = json as LayerJson;
         layerJson.markers.forEach((markerJson: MarkerJson): void => {
             try {
                 const marker: Marker | undefined = this._markers.get(markerJson.id);

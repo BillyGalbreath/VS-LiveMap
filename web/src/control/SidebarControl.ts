@@ -67,8 +67,4 @@ export class SidebarControl {
     public show(show: boolean): void {
         this._dom.className = show ? 'show' : '';
     }
-
-    public tick(): void {
-        //
-    }
 }

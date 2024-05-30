@@ -187,7 +187,6 @@ export class LiveMap extends L.Map {
             if (document.visibilityState === 'visible') {
                 this.tileLayerControl.tick(count);
                 this.layersControl.tick(count);
-                this.sidebarControl.tick();
             }
         } catch (e) {
             console.error(`Error processing tick (${count})\n`, e);

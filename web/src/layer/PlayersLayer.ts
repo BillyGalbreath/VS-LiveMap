@@ -15,17 +15,13 @@ export class PlayersLayer extends MarkersLayer {
     private _max: number = 0;
 
     constructor(livemap: LiveMap) {
-        super(livemap, '', 1);
+        super(livemap, 'data/players.json');
         this._dom = L.DomUtil.create('ul');
 
         this.options = {
             ...this.options,
             pane: 'players'
         };
-
-        // add this layer to the layers control and map
-        livemap.layersControl.addOverlay(this, livemap.settings.lang.players);
-        livemap.addLayer(this);
     }
 
     get dom(): HTMLElement {
@@ -44,14 +40,22 @@ export class PlayersLayer extends MarkersLayer {
         return this._players.values();
     }
 
-    protected override updateLayer(): void {
-        window.fetchJson<Players>('data/players.json')
-            .then((json: Players): void => {
-                this.updatePlayers(json);
-            })
-            .catch((err: unknown): void => {
-                console.error(`Error loading players list data\n`, err);
-            });
+    protected override initial(json: object): void {
+        const players: Players = json as Players;
+
+        this.label = this._livemap.settings.lang.players;
+        this.interval = players.interval;
+        this._livemap.layersControl.addOverlay(this, this.label);
+        if (!players.hidden && !this._livemap.hasLayer(this)) {
+            this._livemap.addLayer(this);
+        }
+    }
+
+    protected override updateMarkers(json: object): void {
+        const players: Players = json as Players;
+
+        // update players in marker layer and sidebar
+        this.updatePlayers(players);
 
         // todo update player counts in sidebar legend
         /*this._legend.textContent = this._livemap.settings.lang.players
@@ -59,6 +63,7 @@ export class PlayersLayer extends MarkersLayer {
             .replace(/{max}/g, this.max.toString());/*/
 
         // todo follow highlighted player
+        //
     }
 
     private updatePlayers(json: Players): void {
