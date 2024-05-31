@@ -16,8 +16,10 @@ public class FullRenderCmd : AbstractCommand {
         }
 
         new Thread(_ => {
-            _server.RenderTaskManager.QueueAll();
-            _server.Sapi.AutoSaveNow();
+            if (_server.RenderTaskManager != null) {
+                _server.RenderTaskManager.QueueAll();
+                _server.Sapi.AutoSaveNow();
+            }
         }).Start();
 
         return "fullrender.started".CommandSuccess();

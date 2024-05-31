@@ -1,3 +1,4 @@
+using livemap.util;
 using Vintagestory.API.Common;
 
 namespace livemap.command.subcommand;
@@ -9,6 +10,7 @@ public class StatusCmd : AbstractCommand {
     ) { }
 
     public override TextCommandResult Execute(TextCommandCallingArgs args) {
-        return _server.RenderTaskManager.Status();
+        (int buffer, int process) = _server.RenderTaskManager?.GetCounts() ?? (0, 0);
+        return process == 0 ? "status.idle".CommandSuccess(buffer) : "status.running".CommandSuccess(process);
     }
 }

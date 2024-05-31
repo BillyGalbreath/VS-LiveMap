@@ -1,19 +1,18 @@
 using System;
 using System.Collections.Generic;
 
-namespace livemap.task.data;
+namespace livemap.task;
 
-public class JsonTaskManager {
-    private readonly List<JsonTask> _tasks = new();
+public class AsyncTaskManager {
+    private readonly List<AsyncTask> _tasks = new();
 
-    public JsonTaskManager(LiveMap server) {
+    public AsyncTaskManager(LiveMap server) {
         _tasks.Add(new MarkersTask(server));
-        _tasks.Add(new PlayersTask(server));
         _tasks.Add(new SettingsTask(server));
     }
 
     public void Tick() {
-        foreach (JsonTask task in _tasks) {
+        foreach (AsyncTask task in _tasks) {
             try {
                 task.Tick();
             } catch (Exception e) {
@@ -23,7 +22,7 @@ public class JsonTaskManager {
     }
 
     public void Dispose() {
-        foreach (JsonTask task in _tasks) {
+        foreach (AsyncTask task in _tasks) {
             try {
                 task.Dispose();
             } catch (Exception e) {

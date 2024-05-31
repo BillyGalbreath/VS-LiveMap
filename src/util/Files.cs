@@ -50,9 +50,9 @@ public abstract class Files {
         }
     }
 
-    public static async Task WriteJsonAsync(string path, string json, CancellationToken token) {
+    public static async Task WriteJsonAsync(string path, string json, CancellationToken cancellationToken) {
         FileInfo file = new(path);
         GamePaths.EnsurePathExists(file.Directory!.FullName);
-        await File.WriteAllTextAsync(file.FullName, json, token);
+        await File.WriteAllTextAsync(file.FullName, json, cancellationToken);
     }
 }

@@ -8,13 +8,11 @@ namespace livemap.render;
 
 [PublicAPI]
 public abstract class Renderer : Keyed {
-    public LiveMap Server { get; }
     public string Id { get; }
 
     public TileImage? TileImage { get; set; }
 
-    protected Renderer(LiveMap server, string id) {
-        Server = server;
+    protected Renderer(string id) {
         Id = id;
     }
 
@@ -23,7 +21,7 @@ public abstract class Renderer : Keyed {
     }
 
     public virtual void SaveImage() {
-        TileImage?.Save(Server, Id);
+        TileImage?.Save(Id);
     }
 
     public virtual void CalculateShadows() {
@@ -39,7 +37,7 @@ public abstract class Renderer : Keyed {
             return (0, defY);
         }
         int id, y;
-        if (Server.RenderTaskManager.BlocksToIgnore.Contains(block.Top)) {
+        if (LiveMap.Api.RenderTaskManager?.BlocksToIgnore.Contains(block.Top) ?? false) {
             id = block.Under;
             y = block.Y - 1;
         } else {

@@ -3,16 +3,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 
-namespace livemap.task.data;
+namespace livemap.task;
 
 [PublicAPI]
-public abstract class JsonTask {
+public abstract class AsyncTask {
     protected readonly LiveMap _server;
     private readonly CancellationTokenSource _cts = new();
 
     private volatile bool _running;
 
-    protected JsonTask(LiveMap server) {
+    protected AsyncTask(LiveMap server) {
         _server = server;
     }
 

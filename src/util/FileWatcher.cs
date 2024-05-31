@@ -56,7 +56,7 @@ public class FileWatcher {
         // wait for other changes to process
         _server.Sapi.Event.RegisterCallback(_ => {
             // reload the config
-            _server.ReloadConfig();
+            _server.Reload();
 
             // wait some more to remove this change from the queue since the reload triggers another write
             _server.Sapi.Event.RegisterCallback(_ => {

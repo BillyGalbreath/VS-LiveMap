@@ -34,7 +34,7 @@ public sealed class RenderTaskManager {
         _server = server;
 
         ChunkLoader = new ChunkLoader(server.Sapi);
-        RenderTask = new RenderTask(server);
+        RenderTask = new RenderTask(server, this);
 
         MicroBlocks = server.Sapi.World.Blocks
             .Where(block => block.Code != null)
@@ -157,7 +157,7 @@ public sealed class RenderTaskManager {
         ChunkLoader.Dispose();
     }
 
-    public TextCommandResult Status() {
-        return _processQueue.Count == 0 ? "status.idle".CommandSuccess(_bufferQueue.Count) : "status.running".CommandSuccess(_processQueue.Count);
+    public (int, int) GetCounts() {
+        return (_bufferQueue.Count, _processQueue.Count);
     }
 }

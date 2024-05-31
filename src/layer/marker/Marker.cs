@@ -53,7 +53,7 @@ public abstract class Marker {
     /// <exception cref="Newtonsoft.Json.JsonSerializationException">Error serializing object to json</exception>
     public string ToJson() {
         return JsonConvert.SerializeObject(this, new JsonSerializerSettings {
-            Formatting = Formatting.Indented,
+            Formatting = Formatting.None,
             NullValueHandling = NullValueHandling.Ignore,
             DefaultValueHandling = DefaultValueHandling.Ignore,
             ContractResolver = new CamelCasePropertyNamesContractResolver()

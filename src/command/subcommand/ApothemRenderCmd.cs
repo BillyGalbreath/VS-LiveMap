@@ -39,11 +39,13 @@ public class ApothemRenderCmd : AbstractCommand {
         }
 
         new Thread(_ => {
-            _server.RenderTaskManager.QueueAll(
-                new Vec2i(Math.Max(0, pos.X - apothem) >> 5, Math.Max(0, pos.Y - apothem) >> 5),
-                new Vec2i(Math.Min(mapX, pos.X + apothem) >> 5, Math.Min(mapZ, pos.Y + apothem) >> 5)
-            );
-            _server.Sapi.AutoSaveNow();
+            if (_server.RenderTaskManager != null) {
+                _server.RenderTaskManager.QueueAll(
+                    new Vec2i(Math.Max(0, pos.X - apothem) >> 5, Math.Max(0, pos.Y - apothem) >> 5),
+                    new Vec2i(Math.Min(mapX, pos.X + apothem) >> 5, Math.Min(mapZ, pos.Y + apothem) >> 5)
+                );
+                _server.Sapi.AutoSaveNow();
+            }
         }).Start();
 
         return "apothemrender.started".CommandSuccess();

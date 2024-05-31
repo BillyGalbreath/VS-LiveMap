@@ -7,18 +7,29 @@ using livemap.render;
 using livemap.util;
 using Newtonsoft.Json;
 
-namespace livemap.task.data;
+namespace livemap.task;
 
-public sealed class SettingsTask : JsonTask {
+public sealed class SettingsTask : AsyncTask {
+    // we don't really need to update this, except on reload
+    private const int _interval = int.MaxValue;
+
+    private long _lastUpdate;
+
     public SettingsTask(LiveMap server) : base(server) { }
 
     protected override async Task TickAsync(CancellationToken cancellationToken) {
+        long now = DateTimeOffset.Now.ToUnixTimeSeconds();
+        if (now - _lastUpdate < _interval) {
+            return;
+        }
+        _lastUpdate = now;
+
         Dictionary<string, object?> dict = new();
         dict.TryAdd("friendlyUrls", true);
         dict.TryAdd("playerList", true);
         dict.TryAdd("playerMarkers", true);
         dict.TryAdd("maxPlayers", _server.Sapi.Server.Config.MaxClients);
-        dict.TryAdd("interval", 30);
+        dict.TryAdd("interval", _interval);
         dict.TryAdd("size", _server.Sapi.WorldManager.Size());
         dict.TryAdd("spawn", _server.Sapi.World.DefaultSpawnPosition.ToPoint());
         dict.TryAdd("web", new Dictionary<string, object?> {

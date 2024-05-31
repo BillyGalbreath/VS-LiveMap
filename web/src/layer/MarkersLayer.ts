@@ -139,21 +139,25 @@ export class MarkersLayer extends L.LayerGroup {
     }
 
     protected updateMarkers(json: object): void {
+        // list of all current markers
         const toRemove: string[] = [...this._markers.keys()];
 
         // get all markers from json
         const layerJson: LayerJson = json as LayerJson;
-        layerJson.markers.forEach((markerJson: MarkerJson): void => {
+        layerJson.markers?.forEach((markerJson: MarkerJson): void => {
             try {
-                const marker: Marker | undefined = this._markers.get(markerJson.id);
-                if (marker) {
-                    // update existing marker
-                    marker.update(markerJson);
-                    toRemove.remove(markerJson.id);
+                this.mergeOptions(markerJson);
+                let marker: Marker | undefined = this._markers.get(markerJson.id);
+                if (!marker) {
+                    // new marker
+                    marker = this.createType(markerJson).addTo(this);
+                    this._markers.set(markerJson.id, marker);
                 } else {
-                    // create new marker
-                    this.createMarker(markerJson);
+                    // existing marker - do not remove
+                    toRemove.remove(markerJson.id);
                 }
+                // update marker data
+                marker.update(markerJson);
             } catch (e) {
                 console.error(`Error refreshing markers in layer (${this._label})\n`, this, markerJson, e);
             }
@@ -166,7 +170,7 @@ export class MarkersLayer extends L.LayerGroup {
         });
     }
 
-    private createMarker(json: MarkerJson): void {
+    private mergeOptions(json: MarkerJson): void {
         // merge in default options, if any
         if (this._defaults) {
             if (this._defaults.options) {
@@ -181,7 +185,7 @@ export class MarkersLayer extends L.LayerGroup {
         }
 
         // set to correct pane from layer if needed
-        const layerPane: string | undefined = this.json.options?.pane;
+        const layerPane: string | undefined = this._json?.options?.pane;
         if (layerPane !== undefined) {
             // layer has custom pane set
             if (json.options?.pane === undefined) {
@@ -192,11 +196,6 @@ export class MarkersLayer extends L.LayerGroup {
                 }
             }
         }
-
-        // create new marker from json, add to layer, and store
-        const marker: Marker = this.createType(json).addTo(this);
-        marker.update(json);
-        this._markers.set(json.id, marker);
     }
 
     private createType(json: MarkerJson): Marker {

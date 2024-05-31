@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.IO;
+using JetBrains.Annotations;
 using livemap.command;
 using livemap.configuration;
 using livemap.data;
@@ -6,8 +7,9 @@ using livemap.httpd;
 using livemap.network;
 using livemap.registry;
 using livemap.task;
-using livemap.task.data;
 using livemap.util;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
@@ -33,8 +35,8 @@ public sealed class LiveMap {
     public LayerRegistry LayerRegistry { get; }
     public RendererRegistry RendererRegistry { get; }
 
-    public JsonTaskManager JsonTaskManager { get; }
-    public RenderTaskManager RenderTaskManager { get; }
+    public AsyncTaskManager? AsyncTaskManager { get; private set; }
+    public RenderTaskManager? RenderTaskManager { get; private set; }
 
     public WebServer? WebServer { get; }
 
@@ -55,7 +57,7 @@ public sealed class LiveMap {
         GamePaths.EnsurePathExists(Files.DataDir);
 
         _configFileWatcher = new FileWatcher(this);
-        ReloadConfig();
+        Reload();
 
         Files.ExtractWebFiles(this);
 
@@ -67,7 +69,7 @@ public sealed class LiveMap {
         LayerRegistry = new LayerRegistry();
         RendererRegistry = new RendererRegistry();
 
-        JsonTaskManager = new JsonTaskManager(this);
+        AsyncTaskManager = new AsyncTaskManager(this);
         RenderTaskManager = new RenderTaskManager(this);
         WebServer = new WebServer(this);
 
@@ -77,7 +79,8 @@ public sealed class LiveMap {
         // things to do on first game tick
         Sapi.Event.RegisterCallback(_ => {
             Colormap.LoadFromDisk(Sapi.World);
-            RendererRegistry.RegisterBuiltIns(this);
+            RendererRegistry.RegisterBuiltIns();
+            LayerRegistry.RegisterBuiltIns();
         }, 1);
 
         _gameTickTaskId = Sapi.Event.RegisterGameTickListener(OnGameTick, 1000, 1000);
@@ -87,11 +90,20 @@ public sealed class LiveMap {
             .SetMessageHandler<ColormapPacket>(ReceiveColormap);
     }
 
-    public void ReloadConfig() {
+    public void Reload() {
+        AsyncTaskManager?.Dispose();
+        AsyncTaskManager = null;
+
+        RenderTaskManager?.Dispose();
+        RenderTaskManager = null;
+
         LoadConfig();
         SaveConfig();
 
         WebServer?.Reload();
+
+        AsyncTaskManager = new AsyncTaskManager(this);
+        RenderTaskManager = new RenderTaskManager(this);
     }
 
     public void LoadConfig() {
@@ -100,7 +112,18 @@ public sealed class LiveMap {
 
     public void SaveConfig() {
         _configFileWatcher.IgnoreChanges = true;
-        Sapi.StoreModConfig(Config, $"{ModId}.json");
+
+        FileInfo fileInfo = new(Path.Combine(GamePaths.ModConfig, $"{ModId}.json"));
+        GamePaths.EnsurePathExists(fileInfo.Directory!.FullName);
+        File.WriteAllText(fileInfo.FullName, JsonConvert.SerializeObject(Config,
+            new JsonSerializerSettings {
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            }
+        ));
+
         Sapi.Event.RegisterCallback(_ => _configFileWatcher.IgnoreChanges = false, 100);
     }
 
@@ -110,12 +133,12 @@ public sealed class LiveMap {
 
     private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason) {
         // queue it up, it will process when the game saves
-        RenderTaskManager.Queue(chunkCoord.X >> 4, chunkCoord.Z >> 4);
+        RenderTaskManager?.Queue(chunkCoord.X >> 4, chunkCoord.Z >> 4);
     }
 
     private void OnGameWorldSave() {
         // delay a bit to ensure chunks actually save to disk first
-        Sapi.Event.RegisterCallback(_ => RenderTaskManager.ProcessQueue(), 1000);
+        Sapi.Event.RegisterCallback(_ => RenderTaskManager?.ProcessQueue(), 1000);
     }
 
     // this method ticks every 1000ms on the game thread
@@ -127,7 +150,7 @@ public sealed class LiveMap {
         WebServer?.Run();
 
         // todo - update player positions, public waypoints, etc
-        JsonTaskManager.Tick();
+        AsyncTaskManager?.Tick();
     }
 
     internal void ReceiveColormap(IServerPlayer player, ColormapPacket packet) {
@@ -158,8 +181,11 @@ public sealed class LiveMap {
 
         CommandHandler.Dispose();
 
-        JsonTaskManager.Dispose();
-        RenderTaskManager.Dispose();
+        AsyncTaskManager?.Dispose();
+        AsyncTaskManager = null;
+
+        RenderTaskManager?.Dispose();
+        RenderTaskManager = null;
 
         LayerRegistry.Dispose();
         RendererRegistry.Dispose();

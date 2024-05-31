@@ -7,9 +7,9 @@ using livemap.layer;
 using livemap.util;
 using Newtonsoft.Json;
 
-namespace livemap.task.data;
+namespace livemap.task;
 
-public class MarkersTask : JsonTask {
+public class MarkersTask : AsyncTask {
     private readonly Dictionary<string, long> _lastUpdate = new();
 
     public MarkersTask(LiveMap server) : base(server) { }
@@ -17,7 +17,7 @@ public class MarkersTask : JsonTask {
     protected override async Task TickAsync(CancellationToken cancellationToken) {
         List<string> layerIds = new();
 
-        long now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        long now = DateTimeOffset.Now.ToUnixTimeSeconds();
 
         List<Layer> layers = new(_server.LayerRegistry.Values);
         foreach (Layer layer in layers) {
@@ -25,22 +25,24 @@ public class MarkersTask : JsonTask {
                 return;
             }
 
-            layerIds.Add(layer.Id);
+            // private layers write to special json files
+            // we won't be processing these the normal way
+            if (!layer.Private) {
+                layerIds.Add(layer.Id);
+            }
 
+            // check if it's time to write to disk
             long lastUpdate = _lastUpdate.GetValueOrDefault(layer.Id, 0);
-            if (now - lastUpdate > Math.Max(layer.Interval ?? 0, 0)) {
-                try {
-                    _lastUpdate.TryAdd(layer.Id, now);
-                    string layerJson = JsonConvert.SerializeObject(layer);
+            if (now - lastUpdate < Math.Max(layer.Interval ?? 0, 0)) {
+                continue;
+            }
+            _lastUpdate[layer.Id] = now;
 
-                    if (cancellationToken.IsCancellationRequested) {
-                        return;
-                    }
-
-                    await Files.WriteJsonAsync(Path.Combine(Files.MarkerDir, $"{layer.Id}.json"), layerJson, cancellationToken);
-                } catch (Exception e) {
-                    await Console.Error.WriteLineAsync(e.ToString());
-                }
+            // finally write to disk
+            try {
+                await layer.WriteToDisk(cancellationToken);
+            } catch (Exception e) {
+                await Console.Error.WriteLineAsync(e.ToString());
             }
         }
 

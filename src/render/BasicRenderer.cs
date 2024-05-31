@@ -5,7 +5,7 @@ namespace livemap.render;
 
 [PublicAPI]
 public class BasicRenderer : Renderer {
-    public BasicRenderer(LiveMap server) : base(server, "basic") { }
+    public BasicRenderer() : base("basic") { }
 
     public override void ProcessBlockData(int regionX, int regionZ, BlockData blockData) {
         if (TileImage == null) {
@@ -22,7 +22,7 @@ public class BasicRenderer : Renderer {
                 (int id, int y) = ProcessBlock(block);
 
                 uint color = 0;
-                if (Server.Colormap.TryGet(id, out uint[]? colors)) {
+                if (LiveMap.Api.Colormap.TryGet(id, out uint[]? colors)) {
                     color = colors[GameMath.MurmurHash3Mod(x, y, z, colors.Length)];
                 }
 

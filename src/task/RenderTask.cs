@@ -18,9 +18,11 @@ public sealed class RenderTask {
     private readonly BlockPos _mutableBlockPos = new(0);
 
     private readonly LiveMap _server;
+    private readonly RenderTaskManager _renderTaskManager;
 
-    public RenderTask(LiveMap server) {
+    public RenderTask(LiveMap server, RenderTaskManager renderTaskManager) {
         _server = server;
+        _renderTaskManager = renderTaskManager;
     }
 
     public void ScanRegion(int regionX, int regionZ) {
@@ -30,7 +32,8 @@ public sealed class RenderTask {
             int z1 = regionZ << 4;
             int x2 = x1 + 16;
             int z2 = z1 + 16;
-            IEnumerable<ChunkPos> chunks = _server.RenderTaskManager.ChunkLoader.GetAllMapChunkPositions()
+
+            IEnumerable<ChunkPos> chunks = _renderTaskManager.ChunkLoader.GetAllMapChunkPositions()
                 .Where(pos => pos.X >= x1 && pos.Z >= z1 && pos.X < x2 && pos.Z < z2);
             BlockData blockData = new();
             foreach (ChunkPos chunkPos in chunks) {
@@ -52,7 +55,7 @@ public sealed class RenderTask {
     private void ScanChunkColumn(ChunkPos chunkPos, BlockData blockData) {
         // get chunkmap from game save
         // this is just basic info about a chunk column, like heightmaps
-        ServerMapChunk? mapChunk = _server.RenderTaskManager.ChunkLoader.GetServerMapChunk(chunkPos);
+        ServerMapChunk? mapChunk = _renderTaskManager.ChunkLoader.GetServerMapChunk(chunkPos);
         if (mapChunk == null) {
             return;
         }
@@ -72,7 +75,7 @@ public sealed class RenderTask {
         // load the actual chunks slices from game save
         ServerChunk?[] chunkSlices = new ServerChunk?[_server.Sapi.WorldManager.MapSizeY >> 5];
         foreach (int y in chunkIndexesToLoad) {
-            chunkSlices[y] = _server.RenderTaskManager.ChunkLoader.GetServerChunk(chunkPos.X, y, chunkPos.Z);
+            chunkSlices[y] = _renderTaskManager.ChunkLoader.GetServerChunk(chunkPos.X, y, chunkPos.Z);
         }
 
         int startX = chunkPos.X << 5;
@@ -118,11 +121,11 @@ public sealed class RenderTask {
     }
 
     private void CheckForMicroBlocks(int x, int y, int z, ServerChunk serverChunk, ref int top) {
-        if (!_server.RenderTaskManager.MicroBlocks.Contains(top)) {
+        if (!_renderTaskManager.MicroBlocks.Contains(top)) {
             return;
         }
         serverChunk.BlockEntities.TryGetValue(_mutableBlockPos.Set(x, y, z), out BlockEntity? be);
-        top = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _server.RenderTaskManager.LandBlock;
+        top = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _renderTaskManager.LandBlock;
     }
 
     private int GetTopBlockY(ServerMapChunk? mapChunk, int x, int z, int def = 0) {
