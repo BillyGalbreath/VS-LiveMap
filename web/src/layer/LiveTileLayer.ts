@@ -73,7 +73,6 @@ export class LiveTileLayer extends L.TileLayer {
     // callback is called when the tile has been loaded.
     createTile(coords: L.Coords, done: L.DoneCallback): HTMLImageElement {
         const tile: HTMLImageElement = L.DomUtil.create('img');
-        tile.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
         tile.setAttribute('loaded', 'false');
 
         L.DomEvent.on(tile, 'load', L.Util.bind(this._tileOnLoad, this, done, tile));
