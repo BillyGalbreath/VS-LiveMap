@@ -8,7 +8,7 @@ namespace livemap.layer.marker.options;
 /// Optional settings for <see cref="TooltipOptions"/> and <see cref="PopupOptions"/> overlays
 /// </summary>
 [PublicAPI]
-public abstract class DivOverlayOptions : InteractiveLayerOptions {
+public class DivOverlayOptions : InteractiveLayerOptions {
     /// <summary>
     /// The offset of this overlay position
     /// </summary>

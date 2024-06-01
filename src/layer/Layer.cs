@@ -35,6 +35,12 @@ public abstract class Layer : Keyed {
     [JsonProperty(Order = 999)]
     public virtual List<Marker> Markers { get; } = new();
 
+    /// <summary>
+    /// Custom CSS for this layer's map pane
+    /// </summary>
+    [JsonProperty(Order = 1000)]
+    public virtual string? Css { get; set; }
+
     [JsonIgnore]
     public virtual string Filename => Path.Combine(Files.MarkerDir, $"{Id}.json");
 

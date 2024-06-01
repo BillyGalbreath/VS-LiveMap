@@ -10,7 +10,7 @@ namespace livemap.layer.marker.options;
 /// </remarks>
 /// </summary>
 [PublicAPI]
-public abstract class InteractiveLayerOptions : LayerOptions {
+public class InteractiveLayerOptions : LayerOptions {
     /// <summary>
     /// When <see langword="true"/>, a mouse event on this marker will trigger the same event on the map
     /// </summary>

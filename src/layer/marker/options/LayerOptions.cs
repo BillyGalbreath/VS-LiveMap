@@ -10,7 +10,7 @@ namespace livemap.layer.marker.options;
 /// </remarks>
 /// </summary>
 [PublicAPI]
-public abstract class LayerOptions : BaseOptions {
+public class LayerOptions : BaseOptions {
     /// <summary>
     /// Map pane where this marker will be added
     /// </summary>

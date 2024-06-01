@@ -4,6 +4,8 @@ using System.Numerics;
 using System.Reflection;
 using JetBrains.Annotations;
 using livemap.data;
+using livemap.layer.marker.options;
+using Newtonsoft.Json;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
@@ -102,6 +104,10 @@ public static class Extensions {
                 RawArgs = new CmdArgs("")
             });
         }, 1);
+    }
+
+    public static T DeepCopy<T>(this T self) where T: BaseOptions {
+        return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(self))!;
     }
 
     public static Dictionary<string, object> GetHealth(this IPlayer player) {

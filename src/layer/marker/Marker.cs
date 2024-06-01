@@ -10,7 +10,7 @@ namespace livemap.layer.marker;
 /// Represents a marker on the map
 /// </summary>
 [PublicAPI]
-public abstract class Marker {
+public class Marker {
     /// <summary>
     /// Type identifier for the marker
     /// </summary>

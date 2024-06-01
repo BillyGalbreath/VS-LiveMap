@@ -12,7 +12,7 @@ namespace livemap.layer.marker.options;
 /// Do not use it directly
 /// </remarks>
 [PublicAPI]
-public abstract class PathOptions : InteractiveLayerOptions {
+public class PathOptions : InteractiveLayerOptions {
     /// <summary>
     /// Whether to draw stroke along the path. Set it to <see langword="false"/> to disable borders on polygons or circles
     /// </summary>
