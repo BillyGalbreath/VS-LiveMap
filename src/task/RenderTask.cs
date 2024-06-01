@@ -28,13 +28,14 @@ public sealed class RenderTask {
     public void ScanRegion(int regionX, int regionZ) {
         try {
             // check for existing chunks only in this region
-            int x1 = regionX << 4;
-            int z1 = regionZ << 4;
-            int x2 = x1 + 16;
-            int z2 = z1 + 16;
+            int chunkX1 = regionX << 4;
+            int chunkZ1 = regionZ << 4;
+            int chunkX2 = chunkX1 + 16;
+            int chunkZ2 = chunkZ1 + 16;
 
+            // get blockdata from all chunks
             IEnumerable<ChunkPos> chunks = _renderTaskManager.ChunkLoader.GetAllMapChunkPositions()
-                .Where(pos => pos.X >= x1 && pos.Z >= z1 && pos.X < x2 && pos.Z < z2);
+                .Where(chunkPos => chunkPos.X >= chunkX1 && chunkPos.Z >= chunkZ1 && chunkPos.X < chunkX2 && chunkPos.Z < chunkZ2);
             BlockData blockData = new();
             foreach (ChunkPos chunkPos in chunks) {
                 ScanChunkColumn(chunkPos, blockData);
@@ -55,7 +56,7 @@ public sealed class RenderTask {
     private void ScanChunkColumn(ChunkPos chunkPos, BlockData blockData) {
         // get chunkmap from game save
         // this is just basic info about a chunk column, like heightmaps
-        ServerMapChunk? mapChunk = _renderTaskManager.ChunkLoader.GetServerMapChunk(chunkPos);
+        ServerMapChunk? mapChunk = _renderTaskManager.ChunkLoader.GetServerMapChunk(ChunkPos.ToChunkIndex(chunkPos.X, chunkPos.Y, chunkPos.Z));
         if (mapChunk == null) {
             return;
         }
@@ -75,7 +76,7 @@ public sealed class RenderTask {
         // load the actual chunks slices from game save
         ServerChunk?[] chunkSlices = new ServerChunk?[_server.Sapi.WorldManager.MapSizeY >> 5];
         foreach (int y in chunkIndexesToLoad) {
-            chunkSlices[y] = _renderTaskManager.ChunkLoader.GetServerChunk(chunkPos.X, y, chunkPos.Z);
+            chunkSlices[y] = _renderTaskManager.ChunkLoader.GetServerChunk(ChunkPos.ToChunkIndex(chunkPos.X, y, chunkPos.Z));
         }
 
         int startX = chunkPos.X << 5;

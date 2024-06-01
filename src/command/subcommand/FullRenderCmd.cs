@@ -1,6 +1,7 @@
 using System.Threading;
 using livemap.util;
 using Vintagestory.API.Common;
+using Vintagestory.Common.Database;
 
 namespace livemap.command.subcommand;
 
@@ -16,10 +17,15 @@ public class FullRenderCmd : AbstractCommand {
         }
 
         new Thread(_ => {
-            if (_server.RenderTaskManager != null) {
-                _server.RenderTaskManager.QueueAll();
-                _server.Sapi.AutoSaveNow();
+            if (_server.RenderTaskManager == null) {
+                return;
             }
+            // queue up all existing chunks in the whole world
+            foreach (ChunkPos regionPos in _server.RenderTaskManager.ChunkLoader.GetAllServerMapRegionPositions()) {
+                _server.RenderTaskManager.Queue(regionPos.X, regionPos.Z);
+            }
+            // trigger autosave to process queue
+            _server.Sapi.AutoSaveNow();
         }).Start();
 
         return "fullrender.started".CommandSuccess();

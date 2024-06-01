@@ -6,6 +6,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.Common.Database;
 
 namespace livemap.command.subcommand;
 
@@ -29,23 +30,33 @@ public class ApothemRenderCmd : AbstractCommand {
             return "apothemrender.out-of-bounds".CommandError();
         }
 
-        Vec2i? pos = args[1] as Vec2i;
-        if (pos == null) {
+        Vec2i? blockPos = args[1] as Vec2i;
+        if (blockPos == null) {
             if (args.Caller.Player == null) {
                 return "apothemrender.missing-center-or-player".CommandError();
             }
             EntityPos sided = args.Caller.Player.Entity.SidedPos;
-            pos = new Vec2i((int)sided.X, (int)sided.Z);
+            blockPos = new Vec2i((int)sided.X, (int)sided.Z);
         }
 
         new Thread(_ => {
-            if (_server.RenderTaskManager != null) {
-                _server.RenderTaskManager.QueueAll(
-                    new Vec2i(Math.Max(0, pos.X - apothem) >> 5, Math.Max(0, pos.Y - apothem) >> 5),
-                    new Vec2i(Math.Min(mapX, pos.X + apothem) >> 5, Math.Min(mapZ, pos.Y + apothem) >> 5)
-                );
-                _server.Sapi.AutoSaveNow();
+            if (_server.RenderTaskManager == null) {
+                return;
             }
+            // queue up all existing chunks within range
+            Vec2i min = new(Math.Max(0, blockPos.X - apothem) >> 9, Math.Max(0, blockPos.Y - apothem) >> 9);
+            Vec2i max = new(Math.Min(mapX, blockPos.X + apothem) >> 9, Math.Min(mapZ, blockPos.Y + apothem) >> 9);
+            foreach (ChunkPos regionPos in _server.RenderTaskManager.ChunkLoader.GetAllServerMapRegionPositions()) {
+                if (min != null && (regionPos.X < min.X || regionPos.Z < min.Y)) {
+                    continue;
+                }
+                if (max != null && (regionPos.X > max.X || regionPos.Z > max.Y)) {
+                    continue;
+                }
+                _server.RenderTaskManager.Queue(regionPos.X, regionPos.Z);
+            }
+            // trigger autosave to process queue
+            _server.Sapi.AutoSaveNow();
         }).Start();
 
         return "apothemrender.started".CommandSuccess();

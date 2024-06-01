@@ -7,8 +7,6 @@ using JetBrains.Annotations;
 using livemap.data;
 using livemap.util;
 using Vintagestory.API.Common;
-using Vintagestory.API.MathTools;
-using Vintagestory.Common.Database;
 
 namespace livemap.task;
 
@@ -55,19 +53,6 @@ public sealed class RenderTaskManager {
             .Select(block => block.Id).ToHashSet();
 
         LandBlock = server.Sapi.World.GetBlock(new AssetLocation("game", "soil-low-normal")).Id;
-    }
-
-    public void QueueAll(Vec2i? minChunk = null, Vec2i? maxChunk = null) {
-        // queue up all existing chunks within range
-        foreach (ChunkPos chunk in ChunkLoader.GetAllMapChunkPositions()) {
-            if (minChunk != null && (chunk.X < minChunk.X || chunk.Z < minChunk.Y)) {
-                continue;
-            }
-            if (maxChunk != null && (chunk.X > maxChunk.X || chunk.Z > maxChunk.Y)) {
-                continue;
-            }
-            Queue(chunk.X >> 4, chunk.Z >> 4);
-        }
     }
 
     public void Queue(int regionX, int regionZ) {

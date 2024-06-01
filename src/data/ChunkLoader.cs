@@ -21,76 +21,68 @@ public class ChunkLoader {
 
     public ChunkLoader(ICoreServerAPI api) {
         _server = (api.World as ServerMain)!;
-        string filename = _server
-            .GetField<ChunkServerThread>("chunkThread")!
-            .GetField<GameDatabase>("gameDatabase")!
-            .GetField<SQLiteDBConnection>("conn")!
-            .GetField<string>("databaseFileName")!;
-        /*_sqliteConn = _server
-            .GetField<ChunkServerThread>("chunkThread")!
-            .GetField<GameDatabase>("gameDatabase")!
-            .GetField<SQLiteDBConnection>("conn")!
-            .GetField<SqliteConnection>("sqliteConn")!;*/
-        _sqliteConn = new SqliteConnection(new DbConnectionStringBuilder {
-            { "Data Source", filename },
+        // do not use server's connection, create our own to prevent issues
+        (_sqliteConn = new SqliteConnection(new DbConnectionStringBuilder {
+            {
+                "Data Source", _server
+                    .GetField<ChunkServerThread>("chunkThread")!
+                    .GetField<GameDatabase>("gameDatabase")!
+                    .GetField<SQLiteDBConnection>("conn")!
+                    .GetField<string>("databaseFileName")!
+            },
             { "Pooling", "false" },
             { "Mode", "ReadOnly" }
-        }.ToString());
-        _sqliteConn.Open();
+        }.ToString())).Open();
         _chunkDataPool = new ChunkDataPool(32, _server);
     }
 
-    public IEnumerable<ChunkPos> GetAllMapChunkPositions() {
-        using SqliteCommand cmd = _sqliteConn.CreateCommand();
-        cmd.CommandText = "SELECT position FROM mapchunk";
-        using SqliteDataReader reader = cmd.ExecuteReader();
+    public IEnumerable<ChunkPos> GetAllServerMapRegionPositions() {
+        using SqliteCommand sqlite = _sqliteConn.CreateCommand();
+        sqlite.CommandText = "SELECT position, data FROM mapregion";
+        using SqliteDataReader reader = sqlite.ExecuteReader();
         while (reader.Read()) {
             yield return ChunkPos.FromChunkIndex_saveGamev2((ulong)(long)reader["position"]);
         }
     }
 
-    public ServerMapChunk? GetServerMapChunk(int x, int y, int z) {
-        return GetServerMapChunk(ChunkPos.ToChunkIndex(x, y, z));
-    }
 
-    public ServerMapChunk? GetServerMapChunk(ChunkPos position) {
-        return GetServerMapChunk(ChunkPos.ToChunkIndex(position.X, position.Y, position.Z));
-    }
-
-    private ServerMapChunk? GetServerMapChunk(ulong position) {
-        byte[]? mapChunk = GetChunk(position, "mapchunk");
-        return mapChunk == null ? null : ServerMapChunk.FromBytes(mapChunk);
-    }
-
-    public ServerChunk? GetServerChunk(int x, int y, int z) {
-        return GetServerChunk(ChunkPos.ToChunkIndex(x, y, z));
-    }
-
-    private ServerChunk? GetServerChunk(ulong position) {
-        byte[]? data = GetChunk(position, "chunk");
-        if (data == null) {
-            return null;
+    public IEnumerable<ChunkPos> GetAllMapChunkPositions() {
+        using SqliteCommand sqlite = _sqliteConn.CreateCommand();
+        sqlite.CommandText = "SELECT position FROM mapchunk";
+        using SqliteDataReader reader = sqlite.ExecuteReader();
+        while (reader.Read()) {
+            yield return ChunkPos.FromChunkIndex_saveGamev2((ulong)(long)reader["position"]);
         }
+    }
 
-        ServerChunk chunk = ServerChunk.FromBytes(data, _chunkDataPool, _server);
+    public ServerMapRegion GetServerMapRegion(ulong position) {
+        byte[]? regionData = GetTableData(position, "mapregion");
+        ServerMapRegion? serverMapChunk = ServerMapRegion.FromBytes(regionData);
+        return serverMapChunk;
+    }
+
+    public ServerMapChunk? GetServerMapChunk(ulong position) {
+        byte[]? mapChunkData = GetTableData(position, "mapchunk");
+        return mapChunkData == null ? null : ServerMapChunk.FromBytes(mapChunkData);
+    }
+
+    public ServerChunk? GetServerChunk(ulong position) {
+        byte[]? chunkData = GetTableData(position, "chunk");
+        ServerChunk? chunk = chunkData == null ? null : ServerChunk.FromBytes(chunkData, _chunkDataPool, _server);
         chunk?.Unpack_ReadOnly();
         return chunk;
     }
 
-    private byte[]? GetChunk(ulong position, string tableName) {
-        SqliteCommand cmd = _sqliteConn.CreateCommand();
-        cmd.CommandText = $"SELECT data FROM {tableName} WHERE position=@position";
-        cmd.Parameters.Add(CreateParameter("position", DbType.UInt64, position, cmd));
-        using SqliteDataReader dataReader = cmd.ExecuteReader();
-        return dataReader.Read() ? dataReader["data"] as byte[] : null;
-    }
-
-    private static DbParameter CreateParameter(string parameterName, DbType dbType, object? value, DbCommand command) {
-        DbParameter dbParameter = command.CreateParameter();
-        dbParameter.ParameterName = parameterName;
-        dbParameter.DbType = dbType;
-        dbParameter.Value = value;
-        return dbParameter;
+    private byte[]? GetTableData(ulong index, string name) {
+        SqliteCommand sqlite = _sqliteConn.CreateCommand();
+        sqlite.CommandText = $"SELECT data FROM {name} WHERE position=@pos";
+        sqlite.Parameters.Add(new SqliteParameter {
+            ParameterName = "pos",
+            DbType = DbType.UInt64,
+            Value = index
+        });
+        using SqliteDataReader reader = sqlite.ExecuteReader();
+        return reader.Read() ? reader["data"] as byte[] : null;
     }
 
     public void Dispose() {
