@@ -4,7 +4,7 @@ namespace livemap.configuration;
 
 [PublicAPI]
 public class Zoom {
-    public int Default { get; set; }
+    public int Default { get; set; } = 0;
 
     public int MaxIn { get; set; } = -3;
 

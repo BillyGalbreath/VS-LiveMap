@@ -119,7 +119,7 @@ public sealed class LiveMap {
             new JsonSerializerSettings {
                 Formatting = Formatting.Indented,
                 NullValueHandling = NullValueHandling.Ignore,
-                DefaultValueHandling = DefaultValueHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.Include,
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             }
         ));

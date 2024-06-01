@@ -4,7 +4,7 @@ namespace livemap.configuration;
 
 [PublicAPI]
 public class Config {
-    public bool DebugMode { get; set; }
+    public bool DebugMode { get; set; } = false;
 
     public Httpd Httpd { get; set; } = new();
 

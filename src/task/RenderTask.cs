@@ -6,6 +6,7 @@ using livemap.render;
 using livemap.util;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Util;
 using Vintagestory.Common.Database;
 using Vintagestory.GameContent;
 using Vintagestory.Server;
@@ -27,6 +28,11 @@ public sealed class RenderTask {
 
     public void ScanRegion(int regionX, int regionZ) {
         try {
+            ServerMapRegion? region = _renderTaskManager.ChunkLoader.GetMapRegion(ChunkPos.ToChunkIndex(regionX, 0, regionZ));
+            if (region == null) {
+                return;
+            }
+
             // check for existing chunks only in this region
             int chunkX1 = regionX << 4;
             int chunkZ1 = regionZ << 4;
@@ -38,7 +44,7 @@ public sealed class RenderTask {
                 .Where(chunkPos => chunkPos.X >= chunkX1 && chunkPos.Z >= chunkZ1 && chunkPos.X < chunkX2 && chunkPos.Z < chunkZ2);
             BlockData blockData = new();
             foreach (ChunkPos chunkPos in chunks) {
-                ScanChunkColumn(chunkPos, blockData);
+                ScanChunkColumn(region, chunkPos, blockData);
             }
 
             // process the region through all the renderers
@@ -53,10 +59,10 @@ public sealed class RenderTask {
         }
     }
 
-    private void ScanChunkColumn(ChunkPos chunkPos, BlockData blockData) {
+    private void ScanChunkColumn(ServerMapRegion region, ChunkPos chunkPos, BlockData blockData) {
         // get chunkmap from game save
         // this is just basic info about a chunk column, like heightmaps
-        ServerMapChunk? mapChunk = _renderTaskManager.ChunkLoader.GetServerMapChunk(ChunkPos.ToChunkIndex(chunkPos.X, chunkPos.Y, chunkPos.Z));
+        ServerMapChunk? mapChunk = _renderTaskManager.ChunkLoader.GetMapChunk(ChunkPos.ToChunkIndex(chunkPos.X, chunkPos.Y, chunkPos.Z));
         if (mapChunk == null) {
             return;
         }
@@ -73,10 +79,28 @@ public sealed class RenderTask {
             }
         }
 
+        // check which chunk slices need to be loaded to get specific structure data
+        region.GeneratedStructures?
+            .Where(s =>
+                s.Code.Contains("trader") ||
+                s.Code.Contains("gates")
+            )
+            .Where(s =>
+                (chunkPos.X << 5) < s.Location.MaxX &&
+                (chunkPos.Z << 5) < s.Location.MaxZ &&
+                (chunkPos.X << 5) + 32 > s.Location.MinX &&
+                (chunkPos.Z << 5) + 32 > s.Location.MinZ
+            )
+            .Foreach(s => {
+                for (int y = s.Location.Y1 >> 5; y <= s.Location.Y2 >> 5; y++) {
+                    chunkIndexesToLoad.AddIfNotExists(y);
+                }
+            });
+
         // load the actual chunks slices from game save
         ServerChunk?[] chunkSlices = new ServerChunk?[_server.Sapi.WorldManager.MapSizeY >> 5];
         foreach (int y in chunkIndexesToLoad) {
-            chunkSlices[y] = _renderTaskManager.ChunkLoader.GetServerChunk(ChunkPos.ToChunkIndex(chunkPos.X, y, chunkPos.Z));
+            chunkSlices[y] = _renderTaskManager.ChunkLoader.GetChunk(ChunkPos.ToChunkIndex(chunkPos.X, y, chunkPos.Z));
         }
 
         int startX = chunkPos.X << 5;
@@ -95,6 +119,38 @@ public sealed class RenderTask {
         foreach ((string _, Renderer renderer) in _server.RendererRegistry) {
             renderer.ScanChunkColumn(chunkPos, blockData);
         }
+
+        // process things from structures
+        // todo - wipe things that are no longer there
+        chunkSlices.Foreach(chunk => {
+            if (_server.Config.Layers.Translocators.Enabled) {
+                chunk?.BlockEntities.Values.Foreach(be => {
+                    if (be is not BlockEntityStaticTranslocator { TargetLocation: not null } tl) {
+                        return;
+                    }
+
+                    BlockPos pos = tl.Pos;
+                    BlockPos loc = tl.TargetLocation;
+
+                    // save tl to file
+                    Logger.Warn($"Translocator at {pos} points to {loc}");
+                });
+            }
+            if (_server.Config.Layers.Traders.Enabled) {
+                chunk?.Entities.Foreach(e => {
+                    if (e is not EntityTrader trader) {
+                        return;
+                    }
+
+                    string type = trader.GetName();
+                    string? name = trader.WatchedAttributes.GetTreeAttribute("nametag")?.GetString("name");
+                    BlockPos pos = trader.Pos.AsBlockPos;
+
+                    // save trader to file
+                    Logger.Warn($"Trader at {pos} is named {name} (type: {type})");
+                });
+            }
+        });
     }
 
     private BlockData.Data ScanBlockColumn(int x, int z, ServerMapChunk? mapChunk, ServerChunk?[] chunkSlices) {

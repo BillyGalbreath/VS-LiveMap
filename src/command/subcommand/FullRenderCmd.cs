@@ -21,7 +21,7 @@ public class FullRenderCmd : AbstractCommand {
                 return;
             }
             // queue up all existing chunks in the whole world
-            foreach (ChunkPos regionPos in _server.RenderTaskManager.ChunkLoader.GetAllServerMapRegionPositions()) {
+            foreach (ChunkPos regionPos in _server.RenderTaskManager.ChunkLoader.GetAllMapRegionPositions()) {
                 _server.RenderTaskManager.Queue(regionPos.X, regionPos.Z);
             }
             // trigger autosave to process queue

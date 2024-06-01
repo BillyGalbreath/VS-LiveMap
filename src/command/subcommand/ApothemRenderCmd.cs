@@ -46,7 +46,7 @@ public class ApothemRenderCmd : AbstractCommand {
             // queue up all existing chunks within range
             Vec2i min = new(Math.Max(0, blockPos.X - apothem) >> 9, Math.Max(0, blockPos.Y - apothem) >> 9);
             Vec2i max = new(Math.Min(mapX, blockPos.X + apothem) >> 9, Math.Min(mapZ, blockPos.Y + apothem) >> 9);
-            foreach (ChunkPos regionPos in _server.RenderTaskManager.ChunkLoader.GetAllServerMapRegionPositions()) {
+            foreach (ChunkPos regionPos in _server.RenderTaskManager.ChunkLoader.GetAllMapRegionPositions()) {
                 if (min != null && (regionPos.X < min.X || regionPos.Z < min.Y)) {
                     continue;
                 }

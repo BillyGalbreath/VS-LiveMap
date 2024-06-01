@@ -10,9 +10,9 @@ public class Players {
 
     public bool DefaultShowLayer { get; set; } = true;
 
-    public bool HideUnderBlocks { get; set; }
+    public bool HideUnderBlocks { get; set; } = false;
 
-    public bool HideIfSneaking { get; set; }
+    public bool HideIfSneaking { get; set; } = false;
 
     public bool HideSpectators { get; set; } = true;
 }

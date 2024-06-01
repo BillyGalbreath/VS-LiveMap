@@ -11,7 +11,7 @@ public class Web {
 
     public string Url { get; set; } = "http://localhost:8080";
 
-    public bool ReadOnly { get; set; }
+    public bool ReadOnly { get; set; } = false;
 
     [JsonConverter(typeof(TileTypeJsonConverter))]
     public TileType TileType { get; set; } = TileType.Webp;
