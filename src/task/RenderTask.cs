@@ -69,6 +69,36 @@ public sealed class RenderTask {
 
         // check which chunk slices need to be loaded to get the top surface block
         List<int> chunkIndexesToLoad = new();
+        FindChunksToLoad(region, mapChunk, chunkPos, chunkIndexesToLoad);
+
+        // load the actual chunks slices from game save
+        ServerChunk?[] chunkSlices = new ServerChunk?[_server.Sapi.WorldManager.MapSizeY >> 5];
+        foreach (int y in chunkIndexesToLoad) {
+            chunkSlices[y] = _renderTaskManager.ChunkLoader.GetChunk(ChunkPos.ToChunkIndex(chunkPos.X, y, chunkPos.Z));
+        }
+
+        int startX = chunkPos.X << 5;
+        int startZ = chunkPos.Z << 5;
+        int endX = startX + 32;
+        int endZ = startZ + 32;
+
+        // scan every block column in the chunk
+        for (int x = startX; x < endX; x++) {
+            for (int z = startZ; z < endZ; z++) {
+                blockData.Set(x & 511, z & 511, ScanBlockColumn(x & 31, z & 31, mapChunk, chunkSlices));
+            }
+        }
+
+        // process the chunk through all the renderers
+        foreach ((string _, Renderer renderer) in _server.RendererRegistry) {
+            renderer.ScanChunkColumn(chunkPos, blockData);
+        }
+
+        // process things from structures
+        ProcessStructures(chunkSlices);
+    }
+
+    private void FindChunksToLoad(ServerMapRegion region, ServerMapChunk? mapChunk, ChunkPos chunkPos, List<int> chunkIndexesToLoad) {
         for (int x = 0; x < 32; x++) {
             for (int z = 0; z < 32; z++) {
                 int y = GetTopBlockY(mapChunk, x, z) >> 5;
@@ -96,31 +126,9 @@ public sealed class RenderTask {
                     chunkIndexesToLoad.AddIfNotExists(y);
                 }
             });
+    }
 
-        // load the actual chunks slices from game save
-        ServerChunk?[] chunkSlices = new ServerChunk?[_server.Sapi.WorldManager.MapSizeY >> 5];
-        foreach (int y in chunkIndexesToLoad) {
-            chunkSlices[y] = _renderTaskManager.ChunkLoader.GetChunk(ChunkPos.ToChunkIndex(chunkPos.X, y, chunkPos.Z));
-        }
-
-        int startX = chunkPos.X << 5;
-        int startZ = chunkPos.Z << 5;
-        int endX = startX + 32;
-        int endZ = startZ + 32;
-
-        // scan every block column in the chunk
-        for (int x = startX; x < endX; x++) {
-            for (int z = startZ; z < endZ; z++) {
-                blockData.Set(x & 511, z & 511, ScanBlockColumn(x & 31, z & 31, mapChunk, chunkSlices));
-            }
-        }
-
-        // process the chunk through all the renderers
-        foreach ((string _, Renderer renderer) in _server.RendererRegistry) {
-            renderer.ScanChunkColumn(chunkPos, blockData);
-        }
-
-        // process things from structures
+    private void ProcessStructures(ServerChunk?[] chunkSlices) {
         // todo - wipe things that are no longer there
         chunkSlices.Foreach(chunk => {
             if (_server.Config.Layers.Translocators.Enabled) {
