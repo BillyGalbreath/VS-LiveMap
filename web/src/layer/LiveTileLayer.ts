@@ -59,12 +59,12 @@ export class LiveTileLayer extends L.TileLayer {
 
     _tileOnLoad(done: L.DoneCallback, tile: HTMLElement): void {
         super._tileOnLoad(done, tile);
-        tile.setAttribute('loaded', 'true');
+        //tile.setAttribute('loaded', 'true');
     }
 
     _tileOnError(done: L.DoneCallback, tile: HTMLElement, e: Error): void {
         super._tileOnError(done, tile, e);
-        tile.setAttribute('loaded', 'false');
+        //tile.setAttribute('loaded', 'false');
     }
 
     // @method createTile(coords: Object, done?: Function): HTMLElement
@@ -73,7 +73,7 @@ export class LiveTileLayer extends L.TileLayer {
     // callback is called when the tile has been loaded.
     createTile(coords: L.Coords, done: L.DoneCallback): HTMLImageElement {
         const tile: HTMLImageElement = L.DomUtil.create('img');
-        tile.setAttribute('loaded', 'false');
+        //tile.setAttribute('loaded', 'false');
 
         L.DomEvent.on(tile, 'load', L.Util.bind(this._tileOnLoad, this, done, tile));
         L.DomEvent.on(tile, 'error', L.Util.bind(this._tileOnError, this, done, tile));
