@@ -7,6 +7,7 @@ using livemap.render;
 using livemap.util;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.Common.Database;
 using Vintagestory.GameContent;
@@ -68,6 +69,11 @@ public sealed class RenderTask {
             return;
         }
 
+        // do not render incomplete chunks
+        if (mapChunk.CurrentIncompletePass < EnumWorldGenPass.Done) {
+            return;
+        }
+
         // check which chunk slices need to be loaded to get the top surface block
         List<int> chunkIndexesToLoad = new();
         FindChunksToLoad(region, mapChunk, chunkPos, chunkIndexesToLoad);
@@ -99,7 +105,7 @@ public sealed class RenderTask {
         ProcessStructures(chunkPos, chunkSlices);
     }
 
-    private void FindChunksToLoad(ServerMapRegion region, ServerMapChunk? mapChunk, ChunkPos chunkPos, List<int> chunkIndexesToLoad) {
+    private void FindChunksToLoad(ServerMapRegion region, ServerMapChunk mapChunk, ChunkPos chunkPos, List<int> chunkIndexesToLoad) {
         for (int x = 0; x < 32; x++) {
             for (int z = 0; z < 32; z++) {
                 int y = GetTopBlockY(mapChunk, x, z) >> 5;
@@ -172,7 +178,7 @@ public sealed class RenderTask {
         tradersLayer?.SetTraders(chunkIndex, traders);
     }
 
-    private BlockData.Data ScanBlockColumn(int x, int z, ServerMapChunk? mapChunk, ServerChunk?[] chunkSlices) {
+    private BlockData.Data ScanBlockColumn(int x, int z, ServerMapChunk mapChunk, ServerChunk?[] chunkSlices) {
         int y = 0;
         int top = 0;
         int under = 0;
@@ -204,8 +210,8 @@ public sealed class RenderTask {
         top = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _renderTaskManager.LandBlock;
     }
 
-    private int GetTopBlockY(ServerMapChunk? mapChunk, int x, int z, int def = 0) {
-        ushort? blockY = mapChunk?.RainHeightMap[Mathf.BlockIndex(x, z)];
-        return GameMath.Clamp(blockY ?? def, 0, _server.Sapi.WorldManager.MapSizeY - 1);
+    private int GetTopBlockY(ServerMapChunk mapChunk, int x, int z) {
+        ushort blockY = mapChunk.RainHeightMap[Mathf.BlockIndex(x, z)];
+        return GameMath.Clamp(blockY, 0, _server.Sapi.WorldManager.MapSizeY - 1);
     }
 }
