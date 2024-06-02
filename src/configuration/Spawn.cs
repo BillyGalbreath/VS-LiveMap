@@ -1,10 +1,8 @@
-using JetBrains.Annotations;
 using livemap.layer.marker.options.type;
 using Point = livemap.data.Point;
 
 namespace livemap.configuration;
 
-[PublicAPI]
 public class Spawn {
     public bool Enabled { get; set; } = true;
 

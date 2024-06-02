@@ -1,5 +1,4 @@
 using System;
-using JetBrains.Annotations;
 using livemap.command.subcommand;
 using livemap.util;
 using Vintagestory.API.Common;
@@ -7,7 +6,6 @@ using Vintagestory.API.Server;
 
 namespace livemap.command;
 
-[PublicAPI]
 public class CommandHandler {
     private readonly LiveMap _server;
     private readonly IChatCommand _chatCommand;

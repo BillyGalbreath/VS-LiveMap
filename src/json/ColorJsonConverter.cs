@@ -1,5 +1,4 @@
 using System;
-using JetBrains.Annotations;
 using livemap.data;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -9,7 +8,6 @@ namespace livemap.json;
 /// <summary>
 /// Converter for Color to/from string/uint
 /// </summary>
-[PublicAPI]
 public class ColorJsonConverter : JsonConverter {
     /// <inheritdoc/>
     public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) {

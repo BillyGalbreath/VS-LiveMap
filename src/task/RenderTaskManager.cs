@@ -3,14 +3,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using JetBrains.Annotations;
 using livemap.data;
 using livemap.util;
 using Vintagestory.API.Common;
 
 namespace livemap.task;
 
-[PublicAPI]
 public sealed class RenderTaskManager {
     private readonly LiveMap _server;
 

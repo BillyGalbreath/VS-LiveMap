@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using livemap.layer.marker;
 using livemap.layer.marker.options;
 using livemap.registry;
@@ -12,7 +11,6 @@ using Newtonsoft.Json.Serialization;
 
 namespace livemap.layer;
 
-[PublicAPI]
 public abstract class Layer : Keyed {
     [JsonProperty(Order = -10)]
     public string Id { get; }
@@ -64,6 +62,6 @@ public abstract class Layer : Keyed {
             return;
         }
 
-        await Files.WriteJsonAsync(Path.Combine(Files.MarkerDir, $"{Id}.json"), layerJson, cancellationToken);
+        await Files.WriteJsonAsync(Filename, layerJson, cancellationToken);
     }
 }

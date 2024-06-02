@@ -1,5 +1,4 @@
 using System;
-using JetBrains.Annotations;
 using livemap.data;
 using livemap.layer.marker.options.type;
 using Newtonsoft.Json;
@@ -12,7 +11,6 @@ namespace livemap.layer.marker;
 /// <remarks>
 /// You can fill in these polyline shapes with the <see cref="Polygon"/>
 /// </remarks>
-[PublicAPI]
 public class Polyline : Marker {
     /// <summary>
     /// Absolute (not relative to spawn) world coordinates for the polyline's points

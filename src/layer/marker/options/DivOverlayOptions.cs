@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using livemap.data;
 using Newtonsoft.Json;
 
@@ -7,7 +6,6 @@ namespace livemap.layer.marker.options;
 /// <summary>
 /// Optional settings for <see cref="TooltipOptions"/> and <see cref="PopupOptions"/> overlays
 /// </summary>
-[PublicAPI]
 public class DivOverlayOptions : InteractiveLayerOptions {
     /// <summary>
     /// The offset of this overlay position

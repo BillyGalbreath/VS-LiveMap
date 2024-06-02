@@ -1,10 +1,8 @@
-using JetBrains.Annotations;
 using SkiaSharp;
 using Vintagestory.API.Datastructures;
 
 namespace livemap.tile;
 
-[PublicAPI]
 public class TileType {
     public static readonly OrderedDictionary<string, TileType> Types = new();
 

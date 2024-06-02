@@ -1,6 +1,3 @@
-﻿using JetBrains.Annotations;
+﻿namespace livemap.network;
 
-namespace livemap.network;
-
-[PublicAPI]
 public abstract class Packet { }

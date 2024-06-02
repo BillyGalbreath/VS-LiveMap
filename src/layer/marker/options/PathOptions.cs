@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using livemap.data;
 using Newtonsoft.Json;
 
@@ -11,7 +10,6 @@ namespace livemap.layer.marker.options;
 /// <remarks>
 /// Do not use it directly
 /// </remarks>
-[PublicAPI]
 public class PathOptions : InteractiveLayerOptions {
     /// <summary>
     /// Whether to draw stroke along the path. Set it to <see langword="false"/> to disable borders on polygons or circles

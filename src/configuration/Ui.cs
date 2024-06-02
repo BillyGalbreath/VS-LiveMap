@@ -1,8 +1,5 @@
-using JetBrains.Annotations;
-
 namespace livemap.configuration;
 
-[PublicAPI]
 public class Ui {
     public string Attribution { get; set; } = "<a href='https://mods.vintagestory.at/livemap' target='_blank'>Livemap</a> &copy;2024";
 

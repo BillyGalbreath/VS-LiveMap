@@ -1,11 +1,9 @@
 using System;
-using JetBrains.Annotations;
 using livemap.json;
 using Newtonsoft.Json;
 
 namespace livemap.data;
 
-[PublicAPI]
 [JsonConverter(typeof(OpacityJsonConverter))]
 public readonly struct Opacity {
     private readonly byte _value;

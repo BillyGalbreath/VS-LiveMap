@@ -1,9 +1,7 @@
-using JetBrains.Annotations;
 using Vintagestory.API.Datastructures;
 
 namespace livemap.registry;
 
-[PublicAPI]
 public abstract class Registry<T> : OrderedDictionary<string, T>, Keyed where T : Keyed {
     public string Id { get; }
 

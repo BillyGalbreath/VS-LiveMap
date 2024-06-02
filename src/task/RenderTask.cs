@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using livemap.layer.builtin;
 using livemap.render;
 using livemap.util;
@@ -15,7 +14,6 @@ using Vintagestory.Server;
 
 namespace livemap.task;
 
-[PublicAPI]
 public sealed class RenderTask {
     // let's not create too many of these, so we don't kill the GC
     private readonly BlockPos _mutableBlockPos = new(0);

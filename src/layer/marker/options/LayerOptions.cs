@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace livemap.layer.marker.options;
@@ -9,7 +8,6 @@ namespace livemap.layer.marker.options;
 /// Do not use it directly
 /// </remarks>
 /// </summary>
-[PublicAPI]
 public class LayerOptions : BaseOptions {
     /// <summary>
     /// Map pane where this marker will be added

@@ -1,12 +1,10 @@
 using System;
-using JetBrains.Annotations;
 using livemap.tile;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace livemap.json;
 
-[PublicAPI]
 public class TileTypeJsonConverter : JsonConverter {
     public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) {
         if (value is TileType) {

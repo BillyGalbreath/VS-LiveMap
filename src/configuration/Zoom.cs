@@ -1,8 +1,5 @@
-using JetBrains.Annotations;
-
 namespace livemap.configuration;
 
-[PublicAPI]
 public class Zoom {
     public int Default { get; set; } = 0;
 

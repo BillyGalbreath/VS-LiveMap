@@ -1,5 +1,4 @@
 using System;
-using JetBrains.Annotations;
 using livemap.data;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -9,7 +8,6 @@ namespace livemap.json;
 /// <summary>
 /// Converter for Opacity to/from double/byte
 /// </summary>
-[PublicAPI]
 public class OpacityJsonConverter : JsonConverter {
     /// <inheritdoc/>
     public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) {

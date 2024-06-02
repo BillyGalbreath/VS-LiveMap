@@ -1,5 +1,4 @@
 using System;
-using JetBrains.Annotations;
 using livemap.layer.marker.options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -9,7 +8,6 @@ namespace livemap.layer.marker;
 /// <summary>
 /// Represents a marker on the map
 /// </summary>
-[PublicAPI]
 public class Marker {
     /// <summary>
     /// Type identifier for the marker

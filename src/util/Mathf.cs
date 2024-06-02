@@ -1,9 +1,7 @@
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace livemap.util;
 
-[PublicAPI]
 public abstract class Mathf {
     public static long AsLong(int x, int z) {
         return (x & 0xFFFFFFFF) | (z & 0xFFFFFFFF) << 32;

@@ -1,12 +1,10 @@
 using System;
-using JetBrains.Annotations;
 using livemap.registry;
 using livemap.tile;
 using Vintagestory.Common.Database;
 
 namespace livemap.render;
 
-[PublicAPI]
 public abstract class Renderer : Keyed {
     public string Id { get; }
 

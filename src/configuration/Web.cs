@@ -1,11 +1,9 @@
-using JetBrains.Annotations;
 using livemap.json;
 using livemap.tile;
 using Newtonsoft.Json;
 
 namespace livemap.configuration;
 
-[PublicAPI]
 public class Web {
     public string Path { get; set; } = "web/";
 

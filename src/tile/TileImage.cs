@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using JetBrains.Annotations;
 using livemap.configuration;
 using livemap.util;
 using SkiaSharp;
@@ -12,7 +11,6 @@ using Vintagestory.GameContent;
 
 namespace livemap.tile;
 
-[PublicAPI]
 public unsafe class TileImage {
     private readonly SKBitmap _bitmap;
     private readonly byte* _bitmapPtr;

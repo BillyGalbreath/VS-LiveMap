@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace livemap.layer.marker.options;
@@ -9,7 +8,6 @@ namespace livemap.layer.marker.options;
 /// Do not use it directly
 /// </remarks>
 /// </summary>
-[PublicAPI]
 public class InteractiveLayerOptions : LayerOptions {
     /// <summary>
     /// When <see langword="true"/>, a mouse event on this marker will trigger the same event on the map

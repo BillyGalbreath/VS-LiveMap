@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using livemap.data;
 using Newtonsoft.Json;
 
@@ -7,7 +6,6 @@ namespace livemap.layer.marker.options;
 /// <summary>
 /// Optional settings for popup overlays
 /// </summary>
-[PublicAPI]
 public class PopupOptions : DivOverlayOptions {
     /// <summary>
     /// Maximum width of the popup, in pixels

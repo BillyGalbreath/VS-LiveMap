@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using livemap.data;
 using Newtonsoft.Json;
 
@@ -7,7 +6,6 @@ namespace livemap.layer.marker.options;
 /// <summary>
 /// Optional settings for tooltip overlays
 /// </summary>
-[PublicAPI]
 public class TooltipOptions : DivOverlayOptions {
     /// <summary>
     /// Direction where to open the tooltip

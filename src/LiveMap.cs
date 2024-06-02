@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using JetBrains.Annotations;
 using livemap.command;
 using livemap.configuration;
 using livemap.data;
@@ -17,7 +16,6 @@ using Vintagestory.API.Server;
 
 namespace livemap;
 
-[PublicAPI]
 public sealed class LiveMap {
     public static LiveMap Api { get; private set; } = null!;
 

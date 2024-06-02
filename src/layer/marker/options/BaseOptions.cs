@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-
 namespace livemap.layer.marker.options;
 
 /// <summary>
@@ -8,5 +6,4 @@ namespace livemap.layer.marker.options;
 /// <remarks>
 /// Do not use it directly
 /// </remarks>
-[PublicAPI]
 public interface BaseOptions { }

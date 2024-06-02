@@ -1,5 +1,4 @@
 using System;
-using JetBrains.Annotations;
 using livemap.json;
 using Newtonsoft.Json;
 
@@ -8,7 +7,6 @@ namespace livemap.data;
 /// <summary>
 /// Represents a point on the map
 /// </summary>
-[PublicAPI]
 [JsonConverter(typeof(PointJsonConverter))]
 public readonly struct Point {
     /// <summary>

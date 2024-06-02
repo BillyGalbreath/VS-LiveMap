@@ -1,11 +1,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 
 namespace livemap.task;
 
-[PublicAPI]
 public abstract class AsyncTask {
     protected readonly LiveMap _server;
     private readonly CancellationTokenSource _cts = new();

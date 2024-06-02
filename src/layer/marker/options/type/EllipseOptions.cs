@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace livemap.layer.marker.options.type;
@@ -6,7 +5,6 @@ namespace livemap.layer.marker.options.type;
 /// <summary>
 /// Optional settings for the <see cref="Ellipse"/> marker
 /// </summary>
-[PublicAPI]
 public class EllipseOptions : PathOptions {
     /// <summary>
     /// The semi-major and semi-minor axis in blocks

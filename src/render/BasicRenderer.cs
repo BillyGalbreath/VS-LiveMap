@@ -1,9 +1,7 @@
-﻿using JetBrains.Annotations;
-using Vintagestory.API.MathTools;
+﻿using Vintagestory.API.MathTools;
 
 namespace livemap.render;
 
-[PublicAPI]
 public class BasicRenderer : Renderer {
     public BasicRenderer() : base("basic") { }
 

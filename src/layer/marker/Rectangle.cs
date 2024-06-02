@@ -1,5 +1,4 @@
 using System;
-using JetBrains.Annotations;
 using livemap.data;
 using livemap.layer.marker.options.type;
 using Newtonsoft.Json;
@@ -13,7 +12,6 @@ namespace livemap.layer.marker;
 /// This is mostly used to show specific areas/sections of the world such as protected claims, cities, nations, etc.<br/>
 /// You can make more detailed shapes with the Polygon
 /// </remarks>
-[PublicAPI]
 public class Rectangle : Marker {
     /// <summary>
     /// Absolute (not relative to spawn) world coordinates for the rectangle's points

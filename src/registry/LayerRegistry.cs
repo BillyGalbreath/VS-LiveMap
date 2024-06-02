@@ -1,10 +1,8 @@
-using JetBrains.Annotations;
 using livemap.layer;
 using livemap.layer.builtin;
 
 namespace livemap.registry;
 
-[PublicAPI]
 public class LayerRegistry : Registry<Layer> {
     public PlayersLayer? Players { get; private set; }
     public SpawnLayer? Spawn { get; private set; }

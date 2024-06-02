@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using livemap.data;
 using Newtonsoft.Json;
 
@@ -7,7 +6,6 @@ namespace livemap.layer.marker.options.type;
 /// <summary>
 /// Optional settings for the <see cref="Icon"/> marker
 /// </summary>
-[PublicAPI]
 public class IconOptions : InteractiveLayerOptions {
     /// <summary>
     /// Text for the browser tooltip that appear on marker hover (no tooltip by default)

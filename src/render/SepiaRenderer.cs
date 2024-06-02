@@ -1,8 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿namespace livemap.render;
 
-namespace livemap.render;
-
-[PublicAPI]
 public class SepiaRenderer : Renderer {
     public static bool IsWater(int? id) => id == null || LiveMap.Api.SepiaColors.BlockIsWater[(int)id];
     public static byte GetIndex(int id) => LiveMap.Api.SepiaColors.Block2Color[id];

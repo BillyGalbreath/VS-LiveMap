@@ -1,5 +1,4 @@
 using System;
-using JetBrains.Annotations;
 using livemap.data;
 using livemap.layer.marker.options.type;
 using Newtonsoft.Json;
@@ -13,7 +12,6 @@ namespace livemap.layer.marker;
 /// This is mostly used to mark specific points in the world such as players, translocators, traders, cities, etc.<br/>
 /// You can highlight entire areas instead of just a point with the <see cref="Polygon"/>
 /// </remarks>
-[PublicAPI]
 public class Icon : Marker {
     /// <summary>
     /// Absolute (not relative to spawn) world coordinates for the icon's anchor

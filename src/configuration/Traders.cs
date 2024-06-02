@@ -1,11 +1,9 @@
-using JetBrains.Annotations;
 using livemap.layer.marker.options;
 using livemap.layer.marker.options.type;
 using Point = livemap.data.Point;
 
 namespace livemap.configuration;
 
-[PublicAPI]
 public class Traders {
     public bool Enabled { get; set; } = false;
 

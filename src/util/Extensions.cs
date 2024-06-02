@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Reflection;
-using JetBrains.Annotations;
 using livemap.data;
 using livemap.layer.marker.options;
 using Newtonsoft.Json;
@@ -17,7 +16,6 @@ using Vintagestory.GameContent;
 
 namespace livemap.util;
 
-[PublicAPI]
 public static class Extensions {
     private const BindingFlags _flags = BindingFlags.NonPublic | BindingFlags.Instance;
 
@@ -106,7 +104,7 @@ public static class Extensions {
         }, 1);
     }
 
-    public static T DeepCopy<T>(this T self) where T: BaseOptions {
+    public static T DeepCopy<T>(this T self) where T : BaseOptions {
         return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(self))!;
     }
 

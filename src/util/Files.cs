@@ -2,13 +2,11 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 
 namespace livemap.util;
 
-[PublicAPI]
 public abstract class Files {
     public static string SavegameIdentifier { get; internal set; } = null!;
     public static string DataDir => Path.Combine(GamePaths.DataPath, "ModData", SavegameIdentifier, "LiveMap");

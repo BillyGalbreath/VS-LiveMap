@@ -4,13 +4,11 @@ using System.Net;
 using System.Net.Mime;
 using System.Text.RegularExpressions;
 using System.Threading;
-using JetBrains.Annotations;
 using livemap.util;
 using MimeTypes;
 
 namespace livemap.httpd;
 
-[PublicAPI]
 public partial class WebServer {
     [GeneratedRegex(@"^(.*\/)?(.+)\/([+-]?\d+)\/([+-]?\d+)\/([+-]?\d+)(\/.*)?")]
     private static partial Regex FriendlyUrlRegex();

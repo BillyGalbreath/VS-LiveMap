@@ -1,8 +1,5 @@
-using JetBrains.Annotations;
-
 namespace livemap.configuration;
 
-[PublicAPI]
 public class Httpd {
     public bool Enabled { get; set; } = true;
 

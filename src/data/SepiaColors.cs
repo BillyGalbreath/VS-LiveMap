@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using SkiaSharp;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
 namespace livemap.data;
 
-[PublicAPI]
 public class SepiaColors {
     public static string GetDefaultMapColorCode(EnumBlockMaterial material) {
         return material switch {

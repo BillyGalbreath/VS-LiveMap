@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading;
-using JetBrains.Annotations;
 using livemap.network;
 using livemap.util;
 using Newtonsoft.Json;
@@ -12,7 +11,6 @@ using Vintagestory.API.Common;
 
 namespace livemap.data;
 
-[PublicAPI]
 public sealed class Colormap {
     private readonly Dictionary<string, uint[]> _colorsByName = new();
 

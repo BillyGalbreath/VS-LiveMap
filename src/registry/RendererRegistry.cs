@@ -1,9 +1,7 @@
-using JetBrains.Annotations;
 using livemap.render;
 
 namespace livemap.registry;
 
-[PublicAPI]
 public class RendererRegistry : Registry<Renderer> {
     public static BasicRenderer? Basic { get; private set; }
     public static SepiaRenderer? Sepia { get; private set; }

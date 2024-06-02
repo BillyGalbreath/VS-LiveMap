@@ -1,8 +1,5 @@
-using JetBrains.Annotations;
-
 namespace livemap.configuration;
 
-[PublicAPI]
 public class Config {
     public bool DebugMode { get; set; } = false;
 

@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using JetBrains.Annotations;
 using livemap.json;
 using livemap.util;
 using Newtonsoft.Json;
@@ -10,7 +9,6 @@ namespace livemap.data;
 /// <summary>
 /// Represents a 24 bit Color
 /// </summary>
-[PublicAPI]
 [JsonConverter(typeof(ColorJsonConverter))]
 public readonly struct Color {
     private readonly uint _value;

@@ -1,9 +1,7 @@
 using System.Collections.Generic;
-using JetBrains.Annotations;
 
 namespace livemap.render;
 
-[PublicAPI]
 public class BlockData {
     private readonly Data[] _data = new Data[512 * 512];
 
@@ -23,7 +21,6 @@ public class BlockData {
         return ((z & 511) * 512) + (x & 511);
     }
 
-    [PublicAPI]
     public class Data {
         public int Y { get; }
         public int Top { get; }

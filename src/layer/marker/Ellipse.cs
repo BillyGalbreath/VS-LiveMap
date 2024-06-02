@@ -1,5 +1,4 @@
 using System;
-using JetBrains.Annotations;
 using livemap.data;
 using livemap.layer.marker.options.type;
 using Newtonsoft.Json;
@@ -12,7 +11,6 @@ namespace livemap.layer.marker;
 /// <remarks>
 /// You can make perfect circles with the <see cref="Circle"/>
 /// </remarks>
-[PublicAPI]
 public class Ellipse : Marker {
     /// <summary>
     /// Absolute (not relative to spawn) world coordinates for the ellipse's center
