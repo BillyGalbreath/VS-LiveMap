@@ -19,7 +19,7 @@ LiveMap is a Google Maps-like map for Vintage Story that can be viewed in a brow
 
 ## Features
 
-* *todo*
+*  *todo*
 
 ## Downloads and Releases
 
