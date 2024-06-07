@@ -6,6 +6,7 @@ export class Player {
     private _name: string;
     private _avatar: string;
     private _role: string;
+    private _color: string;
     private _pos: Point;
     private _yaw: number;
     private _health: Value;
@@ -16,6 +17,7 @@ export class Player {
         this._name = player?.name ?? '';
         this._avatar = player?.avatar ?? '';
         this._role = player?.role ?? '';
+        this._color = player?.color ?? '';
         this._pos = player?.pos ? Point.of(player.pos) : new Point(0, 0);
         this._yaw = player?.yaw ?? 0;
         this._health = new Value(player?.health);
@@ -36,6 +38,10 @@ export class Player {
 
     get role(): string {
         return this._role;
+    }
+
+    get color(): string {
+        return this._color;
     }
 
     get pos(): Point {
@@ -59,6 +65,7 @@ export class Player {
         this._name = data.name;
         this._avatar = data.avatar;
         this._role = data.role;
+        this._color = data.color;
         this._pos = data.pos;
         this._yaw = data.yaw;
         this._health = data.health;

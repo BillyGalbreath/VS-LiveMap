@@ -20,6 +20,51 @@ public readonly struct Color {
     public Color(string value) : this(Parse(value)) { }
 
     /// <summary>
+    /// Create a new Color from double array
+    /// </summary>
+    /// <param name="value">the double array value of the Color (<c>"[r, g, b, a]"</c>)</param>
+    public Color(double[] value) : this(
+        value.Length > 3 ? value[3] : value[0],
+        value.Length > 3 ? value[0] : value[1],
+        value.Length > 3 ? value[1] : value[2],
+        value.Length > 3 ? value[2] : 1
+    ) { }
+
+    /// <summary>
+    /// Create a new Color from double values
+    /// </summary>
+    /// <param name="r">the double value for red (0.0 - 1.0)</param>
+    /// <param name="g">the double value for green (0.0 - 1.0)</param>
+    /// <param name="b">the double value for blue (0.0 - 1.0)</param>
+    public Color(double r, double g, double b) : this(1, r, g, b) { }
+
+    /// <summary>
+    /// Create a new Color from double values
+    /// </summary>
+    /// <param name="a">the double value for alpha (0.0 - 1.0)</param>
+    /// <param name="r">the double value for red (0.0 - 1.0)</param>
+    /// <param name="g">the double value for green (0.0 - 1.0)</param>
+    /// <param name="b">the double value for blue (0.0 - 1.0)</param>
+    public Color(double a, double r, double g, double b) : this((uint)(a * 0xFF), (uint)(r * 0xFF), (uint)(g * 0xFF), (uint)(b * 0xFF)) { }
+
+    /// <summary>
+    /// Create a new Color from uint values
+    /// </summary>
+    /// <param name="r">the uint value for red (0x0 - 0xFF)</param>
+    /// <param name="g">the uint value for green (0x0 - 0xFF)</param>
+    /// <param name="b">the uint value for blue (0x0 - 0xFF)</param>
+    public Color(uint r, uint g, uint b) : this(1, r, g, b) { }
+
+    /// <summary>
+    /// Create a new Color from uint values
+    /// </summary>
+    /// <param name="a">the uint value for alpha (0x0 - 0xFF)</param>
+    /// <param name="r">the uint value for red (0x0 - 0xFF)</param>
+    /// <param name="g">the uint value for green (0x0 - 0xFF)</param>
+    /// <param name="b">the uint value for blue (0x0 - 0xFF)</param>
+    public Color(uint a, uint r, uint g, uint b) : this((a << 24) | (r << 16) | (g << 8) | (b << 0)) { }
+
+    /// <summary>
     /// Create a new Color from uint
     /// </summary>
     /// <param name="value">the uint value of the Color (<c>0xRRGGBB</c>)</param>
@@ -35,7 +80,16 @@ public readonly struct Color {
     /// Returns the string hex value of this Color
     /// </summary>
     /// <returns>string hex value</returns>
-    public override string ToString() => $"#{_value:X6}";
+    public override string ToString() => ToString(true);
+
+    /// <summary>
+    /// Returns the string hex value of this Color
+    /// </summary>
+    /// <returns>string hex value</returns>
+    public string ToString(bool alpha) {
+        string str = $"{_value:X6}";
+        return $"#{(alpha || str.Length == 6 ? str : str[2..])}";
+    }
 
     /// <summary>
     /// Implicit cast string to Color

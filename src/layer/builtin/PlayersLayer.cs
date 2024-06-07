@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using livemap.configuration;
+using livemap.data;
 using livemap.layer.marker;
 using livemap.util;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
+using Vintagestory.API.Server;
 
 namespace livemap.layer.builtin;
 
@@ -31,8 +35,8 @@ public class PlayersLayer : Layer {
         List<Dictionary<string, object?>> players = new();
 
         if (Config.Enabled) {
-            List<IPlayer> onlinePlayers = new(LiveMap.Api.Sapi.World.AllOnlinePlayers);
-            foreach (IPlayer player in onlinePlayers) {
+            List<IServerPlayer> onlinePlayers = new(LiveMap.Api.Sapi.World.AllOnlinePlayers.Cast<IServerPlayer>());
+            foreach (IServerPlayer player in onlinePlayers) {
                 if (cancellationToken.IsCancellationRequested) {
                     return;
                 }
@@ -63,7 +67,7 @@ public class PlayersLayer : Layer {
         await Files.WriteJsonAsync(Filename, json, cancellationToken);
     }
 
-    private static void ProcessPlayer(IPlayer player, List<Dictionary<string, object?>> players) {
+    private static void ProcessPlayer(IServerPlayer player, List<Dictionary<string, object?>> players) {
         EntityPlayer entity = player.Entity;
         if (entity == null) {
             return;
@@ -81,11 +85,17 @@ public class PlayersLayer : Layer {
             return;
         }
 
+        Color? color = null;
+        if (player.Entitlements?.Count > 0 && GlobalConstants.playerColorByEntitlement.TryGetValue(player.Entitlements[0].Code, out double[]? arr)) {
+            color = new Color(arr);
+        }
+
         Dictionary<string, object?> dict = new();
         dict.TryAdd("id", player.PlayerUID);
         dict.TryAdd("name", player.PlayerName);
         dict.TryAdd("avatar", entity.GetAvatar());
-        dict.TryAdd("role", player.Role.Code); // todo add role color to name
+        dict.TryAdd("role", player.Role.Code);
+        dict.TryAdd("color", color?.ToString(false));
         dict.TryAdd("pos", player.GetPoint());
         dict.TryAdd("yaw", 90 - ((entity.SidedPos?.Yaw ?? 0) * (180.0 / Math.PI)));
         dict.TryAdd("health", player.GetHealth());

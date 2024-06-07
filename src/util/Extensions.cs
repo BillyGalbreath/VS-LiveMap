@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Reflection;
 using livemap.data;
 using livemap.layer.marker.options;
@@ -23,18 +22,6 @@ public static class Extensions {
         return obj.GetType().GetField(name, _flags)?.GetValue(obj) as T;
     }
 
-    public static object? Invoke(this object obj, string name, object?[]? parameters) {
-        return obj.GetType().GetMethod(name, _flags)?.Invoke(obj, parameters);
-    }
-
-    public static V ComputeIfAbsent<K, V>(this Dictionary<K, V> dict, K key, System.Func<K, V> func) where K : notnull {
-        if (!dict.TryGetValue(key, out V? value)) {
-            value = func.Invoke(key);
-            dict.Add(key, value);
-        }
-        return value;
-    }
-
     public static void AddIfNotExists<T>(this List<T> list, T value) {
         if (!list.Contains(value)) {
             list.Add(value);
@@ -54,20 +41,8 @@ public static class Extensions {
     }
 
     public static Point GetPoint(this IPlayer player) {
-        return player.Entity.GetPoint();
-    }
-
-    public static Point GetPoint(this EntityPlayer player) {
-        EntityPos pos = player.SidedPos;
+        EntityPos pos = player.Entity.SidedPos;
         return new Point(pos.X, pos.Z);
-    }
-
-    public static uint ToColor(this Vector4 vec) {
-        int b = (int)(vec.X * 0xFF);
-        int g = (int)(vec.Y * 0xFF);
-        int r = (int)(vec.Z * 0xFF);
-        int a = (int)(vec.W * 0xFF);
-        return (uint)(a << 24 | r << 16 | g << 8 | b);
     }
 
     public static Point ToPoint(this BlockPos pos) {
@@ -83,7 +58,7 @@ public static class Extensions {
     }
 
     public static void UnregisterCommand(this IChatCommandApi api, string name) {
-        ((ChatCommandApi)api).Invoke("UnregisterCommand", new object?[] { name });
+        ((ChatCommandApi)api).GetType().GetMethod("UnregisterCommand", _flags)?.Invoke(api, new object?[] { name });
     }
 
     public static void AutoSaveNow(this ICoreServerAPI api) {

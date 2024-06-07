@@ -38,7 +38,7 @@ public sealed class LiveMap {
 
     public WebServer? WebServer { get; }
 
-    internal readonly LiveMapMod _mod;
+    private readonly LiveMapMod _mod;
     private readonly FileWatcher _configFileWatcher;
     private readonly long _gameTickTaskId;
 
@@ -151,7 +151,7 @@ public sealed class LiveMap {
         AsyncTaskManager?.Tick();
     }
 
-    internal void ReceiveColormap(IServerPlayer player, ColormapPacket packet) {
+    private void ReceiveColormap(IServerPlayer player, ColormapPacket packet) {
         if (!player.HasPrivilege(Privilege.root)) {
             player.SendMessage(GlobalConstants.CurrentChatGroup, "command.error.no-privilege".ToLang(), EnumChatType.CommandError);
             Logger.Warn($"Ignoring colormap packet from non-privileged user {player.PlayerName}");

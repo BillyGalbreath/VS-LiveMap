@@ -156,6 +156,11 @@ export class PlayersLayer extends MarkersLayer {
         img.alt = `${player.name}'s Avatar`;
 
         const p: HTMLParagraphElement = L.DomUtil.create('p', '', li);
+        if (player.color?.length > 0) {
+            p.style.color = player.color;
+            p.style.fontWeight = '700';
+            p.style.textShadow = '1px 1px 2px #000000E5';
+        }
         p.innerText = player.name;
     }
 
@@ -164,7 +169,8 @@ export class PlayersLayer extends MarkersLayer {
     }
 
     private tooltip(player: Player): string {
-        return `<ul><li><img src='${player.avatar}' alt='avatar'></li><li>${player.name}<div style='${this.stat(player.health, 3)}'><p></p></div><div style='${this.stat(player.satiety, 300)};--height:6px'><p></p></div></li></ul>`
+        const nameStyle: string = player.color?.length > 0 ? ` style='color:${player.color};font-weight:700;text-shadow:1px 1px 2px #000000E5'` : '';
+        return `<ul><li><img src='${player.avatar}' alt='avatar'></li><li${nameStyle}>${player.name}<div style='${this.stat(player.health, 3)}'><p></p></div><div style='${this.stat(player.satiety, 300)};--height:6px'><p></p></div></li></ul>`
     }
 
     private stat(value: Value, divisor: number): string {
