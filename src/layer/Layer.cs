@@ -7,7 +7,6 @@ using livemap.layer.marker.options;
 using livemap.registry;
 using livemap.util;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace livemap.layer;
 
@@ -51,12 +50,7 @@ public abstract class Layer : Keyed {
     }
 
     public virtual async Task WriteToDisk(CancellationToken cancellationToken) {
-        string layerJson = JsonConvert.SerializeObject(this, new JsonSerializerSettings {
-            Formatting = Formatting.None,
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Ignore,
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
-        });
+        string layerJson = JsonConvert.SerializeObject(this, Files.JsonSerializerMinifiedSettings);
 
         if (cancellationToken.IsCancellationRequested) {
             return;

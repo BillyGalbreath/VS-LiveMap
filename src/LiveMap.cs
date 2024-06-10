@@ -8,7 +8,6 @@ using livemap.registry;
 using livemap.task;
 using livemap.util;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
@@ -113,14 +112,8 @@ public sealed class LiveMap {
 
         FileInfo fileInfo = new(Path.Combine(GamePaths.ModConfig, $"{ModId}.json"));
         GamePaths.EnsurePathExists(fileInfo.Directory!.FullName);
-        File.WriteAllText(fileInfo.FullName, JsonConvert.SerializeObject(Config,
-            new JsonSerializerSettings {
-                Formatting = Formatting.Indented,
-                NullValueHandling = NullValueHandling.Ignore,
-                DefaultValueHandling = DefaultValueHandling.Include,
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            }
-        ));
+        string json = JsonConvert.SerializeObject(Config, Files.JsonSerializerPrettySettings);
+        File.WriteAllText(fileInfo.FullName, json);
 
         Sapi.Event.RegisterCallback(_ => _configFileWatcher.IgnoreChanges = false, 100);
     }

@@ -137,10 +137,35 @@ public sealed class RenderTask {
         ulong chunkIndex = chunkPos.ToChunkIndex();
 
         TradersLayer? tradersLayer = _server.LayerRegistry.Traders;
+        TranslocatorsLayer? translocatorsLayer = _server.LayerRegistry.Translocators;
+
+        if (tradersLayer == null && translocatorsLayer == null) {
+            return;
+        }
 
         HashSet<TradersLayer.Trader> traders = new();
+        HashSet<TranslocatorsLayer.Translocator> translocators = new();
 
         chunkSlices.Foreach(chunk => {
+            if (_server.Config.Layers.Traders.Enabled && tradersLayer != null) {
+                chunk?.Entities.Foreach(e => {
+                    if (e is not EntityTrader trader) {
+                        return;
+                    }
+
+                    Vec3i pos = trader.Pos.ToVec3i();
+                    if (pos.Y < e.World.SeaLevel) {
+                        return;
+                    }
+
+                    string type = trader.GetName();
+                    string? name = trader.WatchedAttributes.GetTreeAttribute("nametag")?.GetString("name");
+
+                    traders.Add(new TradersLayer.Trader(type, name, pos));
+                    Logger.Warn($"Trader at {pos} is named {name} (type: {type})");
+                });
+            }
+
             if (_server.Config.Layers.Translocators.Enabled) {
                 chunk?.BlockEntities.Values.Foreach(be => {
                     if (be is not BlockEntityStaticTranslocator { TargetLocation: not null } tl) {
@@ -154,26 +179,10 @@ public sealed class RenderTask {
                     Logger.Warn($"Translocator at {pos} points to {loc}");
                 });
             }
-
-            if (tradersLayer != null) {
-                if (_server.Config.Layers.Traders.Enabled) {
-                    chunk?.Entities.Foreach(e => {
-                        if (e is not EntityTrader trader) {
-                            return;
-                        }
-
-                        string type = trader.GetName();
-                        string? name = trader.WatchedAttributes.GetTreeAttribute("nametag")?.GetString("name");
-                        BlockPos pos = trader.Pos.AsBlockPos;
-
-                        traders.Add(new TradersLayer.Trader(type, name, pos));
-                        Logger.Warn($"Trader at {pos} is named {name} (type: {type})");
-                    });
-                }
-            }
         });
 
         tradersLayer?.SetTraders(chunkIndex, traders);
+        translocatorsLayer?.SetTranslocators(chunkIndex, translocators);
     }
 
     private BlockData.Data ScanBlockColumn(int x, int z, ServerMapChunk mapChunk, ServerChunk?[] chunkSlices) {

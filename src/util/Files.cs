@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 
@@ -15,6 +17,20 @@ public abstract class Files {
     public static string JsonDir => Path.Combine(WebDir, "data");
     public static string MarkerDir => Path.Combine(JsonDir, "markers");
     public static string TilesDir => Path.Combine(WebDir, "tiles");
+
+    public static readonly JsonSerializerSettings JsonSerializerMinifiedSettings = new() {
+        Formatting = Formatting.None,
+        NullValueHandling = NullValueHandling.Ignore,
+        DefaultValueHandling = DefaultValueHandling.Ignore,
+        ContractResolver = new CamelCasePropertyNamesContractResolver()
+    };
+
+    public static readonly JsonSerializerSettings JsonSerializerPrettySettings = new() {
+        Formatting = Formatting.Indented,
+        NullValueHandling = NullValueHandling.Ignore,
+        DefaultValueHandling = DefaultValueHandling.Include,
+        ContractResolver = new CamelCasePropertyNamesContractResolver()
+    };
 
     internal static void ExtractWebFiles(LiveMap server) {
         GamePaths.EnsurePathExists(DataDir);

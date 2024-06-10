@@ -1,3 +1,4 @@
+using livemap.layer.marker.options;
 using livemap.layer.marker.options.type;
 using Point = livemap.data.Point;
 
@@ -14,6 +15,16 @@ public class Translocators {
         Title = "",
         Alt = "",
         IconUrl = "#svg-spiral",
-        IconSize = new Point(16, 16)
+        IconSize = new Point(16, 16),
+        Pane = "translocators"
     };
+
+    public TooltipOptions? Tooltip { get; set; } = new() {
+        Direction = "top",
+        Content = "{0}<br>{1}"
+    };
+
+    public PopupOptions? Popup { get; set; }
+
+    public string? Css { get; set; } = "";
 }

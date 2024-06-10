@@ -1,7 +1,7 @@
 using System;
 using livemap.layer.marker.options;
+using livemap.util;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace livemap.layer.marker;
 
@@ -50,12 +50,7 @@ public class Marker {
     /// <returns>JSON string representing this object</returns>
     /// <exception cref="Newtonsoft.Json.JsonSerializationException">Error serializing object to json</exception>
     public string ToJson() {
-        return JsonConvert.SerializeObject(this, new JsonSerializerSettings {
-            Formatting = Formatting.None,
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Ignore,
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
-        });
+        return JsonConvert.SerializeObject(this, Files.JsonSerializerMinifiedSettings);
     }
 
     /// <summary>

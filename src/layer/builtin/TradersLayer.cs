@@ -1,10 +1,14 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using livemap.configuration;
 using livemap.layer.marker;
 using livemap.layer.marker.options;
 using livemap.util;
+using Newtonsoft.Json;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
@@ -45,20 +49,60 @@ public class TradersLayer : Layer {
 
     private static Traders Config => LiveMap.Api.Config.Layers.Traders;
 
-    private readonly ConcurrentDictionary<ulong, HashSet<Trader>> _knownTraders = new();
+    private readonly ConcurrentDictionary<ulong, HashSet<Trader>> _knownTraders;
+    private readonly string _knownFile;
 
-    public TradersLayer() : base("traders", "lang.traders".ToLang()) { }
+    private bool _dirty;
+
+    public TradersLayer() : base("traders", "lang.traders".ToLang()) {
+        _knownFile = Path.Combine(Files.JsonDir, $"{Id}.json");
+
+        ConcurrentDictionary<ulong, HashSet<Trader>>? traders = null;
+        if (File.Exists(_knownFile)) {
+            try {
+                string json = File.ReadAllText(_knownFile);
+                traders = JsonConvert.DeserializeObject<ConcurrentDictionary<ulong, HashSet<Trader>>>(json);
+            } catch (Exception) {
+                // ignored
+            }
+        }
+
+        _knownTraders = traders ?? new ConcurrentDictionary<ulong, HashSet<Trader>>();
+    }
 
     public void SetTraders(ulong chunkIndex, HashSet<Trader> traders) {
-        _knownTraders[chunkIndex] = traders;
+        if (traders.Count == 0) {
+            _knownTraders.Remove(chunkIndex);
+        } else {
+            _knownTraders[chunkIndex] = traders;
+        }
+        _dirty = true;
+    }
+
+    public override async Task WriteToDisk(CancellationToken cancellationToken) {
+        if (_dirty) {
+            string knownJson = JsonConvert.SerializeObject(_knownTraders, Files.JsonSerializerMinifiedSettings);
+
+            if (cancellationToken.IsCancellationRequested) {
+                return;
+            }
+
+            await Files.WriteJsonAsync(_knownFile, knownJson, cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested) {
+                return;
+            }
+        }
+
+        await base.WriteToDisk(cancellationToken);
     }
 
     public class Trader {
         public readonly string Type;
         public readonly string? Name;
-        public readonly BlockPos Pos;
+        public readonly Vec3i Pos;
 
-        public Trader(string type, string? name, BlockPos pos) {
+        public Trader(string type, string? name, Vec3i pos) {
             Type = type;
             Name = name;
             Pos = pos;

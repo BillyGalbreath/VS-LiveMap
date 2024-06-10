@@ -9,7 +9,6 @@ using livemap.data;
 using livemap.layer.marker;
 using livemap.util;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Server;
@@ -53,12 +52,7 @@ public class PlayersLayer : Layer {
             { "interval", Config.UpdateInterval },
             { "hidden", !Config.DefaultShowLayer },
             { "players", players }
-        }, new JsonSerializerSettings {
-            Formatting = Formatting.None,
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Ignore,
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
-        });
+        }, Files.JsonSerializerMinifiedSettings);
 
         if (cancellationToken.IsCancellationRequested) {
             return;

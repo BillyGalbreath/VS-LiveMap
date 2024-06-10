@@ -53,6 +53,14 @@ public static class Extensions {
         return new Point(Math.Round(pos.X, 1), Math.Round(pos.Z, 1));
     }
 
+    public static Point ToPoint(this Vec3i pos) {
+        return new Point(pos.X, pos.Z);
+    }
+
+    public static Vec3i ToVec3i(this EntityPos pos) {
+        return new Vec3i((int)pos.X, (int)pos.Y, (int)pos.Z);
+    }
+
     public static Point Size(this IWorldManagerAPI api) {
         return new Point(api.MapSizeX, api.MapSizeZ);
     }
