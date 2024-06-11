@@ -146,20 +146,22 @@ public sealed class RenderTask {
         HashSet<TradersLayer.Trader> traders = new();
         HashSet<TranslocatorsLayer.Translocator> translocators = new();
 
+        int seaLevel = _server.Sapi.World.SeaLevel;
+
         chunkSlices.Foreach(chunk => {
             if (_server.Config.Layers.Traders.Enabled && tradersLayer != null) {
-                chunk?.Entities.Foreach(e => {
-                    if (e is not EntityTrader trader) {
+                chunk?.Entities.Foreach(entity => {
+                    if (entity is not EntityTrader trader) {
                         return;
                     }
 
                     Vec3i pos = trader.Pos.ToVec3i();
-                    if (pos.Y < e.World.SeaLevel) {
+                    if (pos.Y < seaLevel) {
                         return;
                     }
 
                     string type = trader.GetName();
-                    string? name = trader.WatchedAttributes.GetTreeAttribute("nametag")?.GetString("name");
+                    string name = trader.WatchedAttributes.GetTreeAttribute("nametag")?.GetString("name") ?? "Unknown Name";
 
                     traders.Add(new TradersLayer.Trader(type, name, pos));
                     Logger.Warn($"Trader at {pos} is named {name} (type: {type})");
@@ -167,8 +169,8 @@ public sealed class RenderTask {
             }
 
             if (_server.Config.Layers.Translocators.Enabled) {
-                chunk?.BlockEntities.Values.Foreach(be => {
-                    if (be is not BlockEntityStaticTranslocator { TargetLocation: not null } tl) {
+                chunk?.BlockEntities.Values.Foreach(blockEntity => {
+                    if (blockEntity is not BlockEntityStaticTranslocator { TargetLocation: not null } tl) {
                         return;
                     }
 

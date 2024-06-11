@@ -10,8 +10,7 @@ using Newtonsoft.Json;
 namespace livemap.task;
 
 public sealed class SettingsTask : AsyncTask {
-    // we don't really need to update this, except on reload
-    private const int _interval = int.MaxValue;
+    private const int _interval = 30;
 
     private long _lastUpdate;
 
@@ -26,8 +25,8 @@ public sealed class SettingsTask : AsyncTask {
 
         Dictionary<string, object?> dict = new();
         dict.TryAdd("friendlyUrls", true);
-        dict.TryAdd("playerList", true);
-        dict.TryAdd("playerMarkers", true);
+        dict.TryAdd("playerList", _server.Config.Layers.Players.Enabled);
+        dict.TryAdd("playerMarkers", _server.Config.Layers.Players.Enabled);
         dict.TryAdd("maxPlayers", _server.Sapi.Server.Config.MaxClients);
         dict.TryAdd("interval", _interval);
         dict.TryAdd("size", _server.Sapi.WorldManager.Size());

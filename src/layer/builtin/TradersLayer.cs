@@ -99,10 +99,10 @@ public class TradersLayer : Layer {
 
     public class Trader {
         public readonly string Type;
-        public readonly string? Name;
+        public readonly string Name;
         public readonly Vec3i Pos;
 
-        public Trader(string type, string? name, Vec3i pos) {
+        public Trader(string type, string name, Vec3i pos) {
             Type = type;
             Name = name;
             Pos = pos;

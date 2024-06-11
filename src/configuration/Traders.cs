@@ -5,11 +5,11 @@ using Point = livemap.data.Point;
 namespace livemap.configuration;
 
 public class Traders {
-    public bool Enabled { get; set; } = false;
+    public bool Enabled { get; set; } = true;
 
     public int UpdateInterval { get; set; } = 30;
 
-    public bool DefaultShowLayer { get; set; } = true;
+    public bool DefaultShowLayer { get; set; } = false;
 
     public IconOptions IconOptions { get; set; } = new() {
         Title = "",

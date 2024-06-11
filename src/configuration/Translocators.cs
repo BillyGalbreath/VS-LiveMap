@@ -9,7 +9,7 @@ public class Translocators {
 
     public int UpdateInterval { get; set; } = 30;
 
-    public bool DefaultShowLayer { get; set; } = true;
+    public bool DefaultShowLayer { get; set; } = false;
 
     public IconOptions IconOptions { get; set; } = new() {
         Title = "",
