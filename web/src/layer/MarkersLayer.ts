@@ -28,6 +28,8 @@ export class MarkersLayer extends L.LayerGroup {
     protected readonly _livemap: LiveMap;
     private readonly _url: string;
 
+    // @ts-ignore
+    private _cluster?;
     private readonly _markers: Map<string, Marker> = new Map();
 
     private _id?: string;
@@ -130,10 +132,14 @@ export class MarkersLayer extends L.LayerGroup {
             document.head.insertAdjacentHTML('beforeend', `<style id='${this.id}'>${layerJson.css}</style>`);
         }
 
+        // create and add the cluster to this layer
+        this._cluster = this.createCluster(layerJson);
+        this.addLayer(this._cluster);
+
         // only add to the map if we are not hiding it by default
         if (!layerJson.hidden) {
             // adding to the map makes it visible
-            this.addTo(this._livemap);
+            this._livemap.addLayer(this);
         }
 
         // add this layer to the layers control
@@ -152,7 +158,7 @@ export class MarkersLayer extends L.LayerGroup {
                 let marker: Marker | undefined = this._markers.get(markerJson.id);
                 if (!marker) {
                     // new marker
-                    marker = this.createType(markerJson).addTo(this);
+                    marker = this.createType(markerJson).addTo(this._cluster);
                     this._markers.set(markerJson.id, marker);
                 } else {
                     // existing marker - do not remove
@@ -216,5 +222,35 @@ export class MarkersLayer extends L.LayerGroup {
                 return new Rectangle(this, json);
         }
         throw new Error(`Invalid marker type (${json.type})`);
+    }
+
+    private createCluster(layerJson: LayerJson): L.MarkerCluster {
+        let clusterOptions: L.MarkerClusterOptions = {
+            animate: true,
+            animateAddingMarkers: false,
+            //iconCreateFunction: (cluster: L.MarkerCluster) => L.divIcon(cluster.getAllChildMarkers()?.[0]?.options?.icon?.options ?? {}),
+            iconCreateFunction: (cluster: L.MarkerCluster) => {
+                const count: number = cluster.getChildCount();
+                const color: string = `color:${(count < 10 ? '#365fab' : (count < 100 ? '#4c71b4' : '#6283bd'))}`;
+                const options: L.IconOptions | L.DivIconOptions | undefined = cluster.getAllChildMarkers()?.[0]?.options?.icon?.options;
+                return L.divIcon({
+                    ...options,
+                    html: `<svg preserveAspectRatio='none' width='100%' height='100%' style='${color}'><use href='${options?.iconUrl}'></use></svg><span>${count}</span>`
+                });
+            },
+            disableClusteringAtZoom: this._livemap.settings.zoom.maxout - 2,
+            maxClusterRadius: 120,
+            removeOutsideVisibleBounds: true,
+            showCoverageOnHover: true,
+            spiderfyOnMaxZoom: false,
+            zoomToBoundsOnClick: true
+        };
+
+        const pane: string | undefined = layerJson.markers?.[0]?.options?.pane;
+        if ((pane?.length ?? 0) > 0) {
+            clusterOptions.clusterPane = pane;
+        }
+
+        return L.markerClusterGroup(clusterOptions);
     }
 }

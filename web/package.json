@@ -9,6 +9,7 @@
     "css-loader": "^6.10.0",
     "css-minimizer-webpack-plugin": "^6.0.0",
     "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
     "mini-css-extract-plugin": "^2.8.1",
     "sass": "^1.75.0",
     "sass-loader": "^14.2.1",

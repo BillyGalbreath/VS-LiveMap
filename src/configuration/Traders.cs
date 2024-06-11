@@ -26,5 +26,5 @@ public class Traders {
 
     public PopupOptions? Popup { get; set; }
 
-    public string? Css { get; set; } = ".leaflet-traders-pane .leaflet-marker-icon { color: #204EA2; filter: drop-shadow(1px 0 0 black) drop-shadow(-1px 0 0 black) drop-shadow(0 1px 0 black) drop-shadow(0 -1px 0 black)}";
+    public string? Css { get; set; } = ".leaflet-traders-pane .leaflet-marker-icon{color:#204EA2;filter:drop-shadow(1px 0 0 black) drop-shadow(-1px 0 0 black) drop-shadow(0 1px 0 black) drop-shadow(0 -1px 0 black)} .leaflet-traders-pane span{position:relative;top:-22px;display:block;text-align:center;color:black;filter: drop-shadow(1px 0 0 #a5b8d9) drop-shadow(-1px 0 0 #a5b8d9) drop-shadow(0 1px 0 #a5b8d9) drop-shadow(0 -1px 0 #a5b8d9)}";
 }
