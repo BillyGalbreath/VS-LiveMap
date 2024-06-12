@@ -109,8 +109,6 @@ export class MarkersLayer extends L.LayerGroup {
     protected initial(json: object): void {
         const layerJson: LayerJson = json as LayerJson;
 
-        console.log(layerJson);
-
         this._label = layerJson.label ?? ''; // set _something_ so we don't keep reloading json every tick
         this._interval = layerJson.interval ?? 300;
         this._defaults = layerJson.defaults;
@@ -239,7 +237,7 @@ export class MarkersLayer extends L.LayerGroup {
                 });
             },
             disableClusteringAtZoom: this._livemap.settings.zoom.maxout - 2,
-            maxClusterRadius: 120,
+            maxClusterRadius: 80,
             removeOutsideVisibleBounds: true,
             showCoverageOnHover: true,
             spiderfyOnMaxZoom: false,
