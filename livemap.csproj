@@ -26,7 +26,7 @@
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <DebugType>true</DebugType>
+        <DebugType>full</DebugType>
         <DebugSymbols>true</DebugSymbols>
         <ExcludeGeneratedDebugSymbol>false</ExcludeGeneratedDebugSymbol>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
