@@ -164,7 +164,7 @@ public sealed class RenderTask {
                     string name = trader.WatchedAttributes.GetTreeAttribute("nametag")?.GetString("name") ?? "Unknown Name";
 
                     traders.Add(new TradersLayer.Trader(type, name, pos));
-                    Logger.Warn($"Trader at {pos} is named {name} (type: {type})");
+                    Logger.Debug($"Trader at {pos} is named {name} (type: {type})");
                 });
             }
 
@@ -178,7 +178,7 @@ public sealed class RenderTask {
                     BlockPos loc = tl.TargetLocation;
 
                     // save tl to file
-                    Logger.Warn($"Translocator at {pos} points to {loc}");
+                    Logger.Debug($"Translocator at {pos} points to {loc}");
                 });
             }
         });
