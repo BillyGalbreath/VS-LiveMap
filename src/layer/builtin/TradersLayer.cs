@@ -32,8 +32,7 @@ public class TradersLayer : Layer {
                     if (popup?.Content != null) {
                         popup.Content = string.Format(popup.Content, trader.Name, trader.Type);
                     }
-                    string id = $"trader:{trader.Pos.X},{trader.Pos.Y},{trader.Pos.Z}";
-                    list.Add(new Icon(id, trader.Pos.ToPoint(), Config.IconOptions) {
+                    list.Add(new Icon($"trader:{trader.Id}", trader.Pos.ToPoint(), Config.IconOptions) {
                         Tooltip = tooltip,
                         Popup = popup
                     });
@@ -99,11 +98,13 @@ public class TradersLayer : Layer {
 
     public class Trader {
         public readonly string Type;
+        public readonly long Id;
         public readonly string Name;
         public readonly Vec3i Pos;
 
-        public Trader(string type, string name, Vec3i pos) {
+        public Trader(string type, long id, string name, Vec3i pos) {
             Type = type;
+            Id = id;
             Name = name;
             Pos = pos;
         }

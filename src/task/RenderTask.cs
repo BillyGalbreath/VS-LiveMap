@@ -160,10 +160,11 @@ public sealed class RenderTask {
                         return;
                     }
 
+                    long id = trader.EntityId;
                     string type = trader.GetName();
                     string name = trader.WatchedAttributes.GetTreeAttribute("nametag")?.GetString("name") ?? "Unknown Name";
 
-                    traders.Add(new TradersLayer.Trader(type, name, pos));
+                    traders.Add(new TradersLayer.Trader(type, id, name, pos));
                     Logger.Debug($"Trader at {pos} is named {name} (type: {type})");
                 });
             }
