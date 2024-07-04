@@ -1,23 +1,30 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using HarmonyLib;
 using livemap.data;
 using livemap.network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.Common;
 
 namespace livemap;
 
+[HarmonyPatch]
 public sealed class LiveMapClient {
     private static BlockPos? _overridePos;
 
+    private readonly LiveMapMod _mod;
     private readonly ICoreClientAPI _api;
     private readonly ILogger _logger;
+    private readonly Harmony _harmony;
 
     private IClientNetworkChannel? _channel;
 
     public LiveMapClient(LiveMapMod mod, ICoreClientAPI api) {
+        _mod = mod;
         _api = api;
         _logger = mod.Mod.Logger;
 
@@ -38,6 +45,9 @@ public sealed class LiveMapClient {
                     _channel.SendPacket(new ColormapPacket { RawColormap = colormap.Serialize() });
                 }
             });
+
+        _harmony = new Harmony(mod.Mod.Info.ModID);
+        _harmony.PatchAll();
     }
 
     private Colormap? GenerateColormap() {
@@ -72,8 +82,22 @@ public sealed class LiveMapClient {
         return colormap;
     }
 
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(GameCalendar), "get_YearRel")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public static bool PreYearRel(IGameCalendar __instance, ref float __result) {
+        if (_overridePos == null) {
+            return true;
+        }
+
+        __result = __instance.GetHemisphere(_overridePos) == EnumHemisphere.North ? 0.6f : 0.1f;
+        return false;
+    }
+
     public void Dispose() {
         _channel = null;
         _overridePos = null;
+        _harmony.UnpatchAll(_mod.Mod.Info.ModID);
     }
 }
