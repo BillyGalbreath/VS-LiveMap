@@ -55,6 +55,9 @@ public partial class WebServer {
                 (_listener = new HttpListener { Prefixes = { $"http://*:{port}/" } }).Start();
             } catch (Exception e) {
                 Logger.Error("Internal webserver has failed to start");
+                if (e is HttpListenerException { ErrorCode: 5 }) {
+                    Logger.Error("Check LiveMap Wiki for possible fixes: https://vs.pl3x.net/livemap-access-denied");
+                }
                 Logger.Error(e.ToString());
                 _running = false;
                 _stopped = true;
