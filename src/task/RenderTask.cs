@@ -5,6 +5,7 @@ using livemap.layer.builtin;
 using livemap.render;
 using livemap.util;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
@@ -54,7 +55,8 @@ public sealed class RenderTask {
                 renderer.CalculateShadows();
                 renderer.SaveImage();
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Logger.Warn(e.ToString());
         }
     }
@@ -161,7 +163,7 @@ public sealed class RenderTask {
                     }
 
                     long id = trader.EntityId;
-                    string type = trader.GetName();
+                    string type = Lang.Get($"item-creature-{trader.Code.Path}");
                     string name = trader.WatchedAttributes.GetTreeAttribute("nametag")?.GetString("name") ?? "Unknown Name";
 
                     traders.Add(new TradersLayer.Trader(type, id, name, pos));
@@ -200,12 +202,14 @@ public sealed class RenderTask {
                 top = serverChunk.Data[Mathf.BlockIndex(x, y, z)];
                 CheckForMicroBlocks(x, y, z, serverChunk, ref top);
             }
+
             serverChunk = chunkSlices[(y - 1) >> 5];
             if (serverChunk != null) {
                 under = serverChunk.Data[Mathf.BlockIndex(x, y - 1, z)];
                 CheckForMicroBlocks(x, y - 1, z, serverChunk, ref under);
             }
-        } catch (Exception) {
+        }
+        catch (Exception) {
             // ignore
         }
 
@@ -216,6 +220,7 @@ public sealed class RenderTask {
         if (!_renderTaskManager.MicroBlocks.Contains(top)) {
             return;
         }
+
         serverChunk.BlockEntities.TryGetValue(_mutableBlockPos.Set(x, y, z), out BlockEntity? be);
         top = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _renderTaskManager.LandBlock;
     }

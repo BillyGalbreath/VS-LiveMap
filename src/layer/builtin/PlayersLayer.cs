@@ -91,7 +91,7 @@ public class PlayersLayer : Layer {
         dict.TryAdd("role", player.Role.Code);
         dict.TryAdd("color", color?.ToString(false));
         dict.TryAdd("pos", player.GetPoint());
-        dict.TryAdd("yaw", 90 - ((entity.SidedPos?.Yaw ?? 0) * (180.0 / Math.PI)));
+        dict.TryAdd("yaw", 180 - ((entity.SidedPos?.Yaw ?? 0) * (180.0 / Math.PI)));
         dict.TryAdd("health", player.GetHealth());
         dict.TryAdd("satiety", player.GetSatiety());
 
