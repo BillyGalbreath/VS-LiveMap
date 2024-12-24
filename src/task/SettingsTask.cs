@@ -24,7 +24,7 @@ public sealed class SettingsTask : AsyncTask {
         _lastUpdate = now;
 
         Dictionary<string, object?> dict = new();
-        dict.TryAdd("friendlyUrls", true);
+        dict.TryAdd("friendlyUrls", _server.Config.Web.FriendlyUrls);
         dict.TryAdd("playerList", _server.Config.Layers.Players.Enabled);
         dict.TryAdd("playerMarkers", _server.Config.Layers.Players.Enabled);
         dict.TryAdd("maxPlayers", _server.Sapi.Server.Config.MaxClients);

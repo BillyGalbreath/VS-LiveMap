@@ -15,4 +15,6 @@ public class Web {
     public TileType TileType { get; set; } = TileType.Webp;
 
     public int TileQuality { get; set; } = 100;
+
+    public bool FriendlyUrls { get; set; } = false;
 }
