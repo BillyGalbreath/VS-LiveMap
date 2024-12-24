@@ -3,8 +3,12 @@
 public class SepiaRenderer : Renderer {
     public static bool IsWater(int? id) => id == null || LiveMap.Api.SepiaColors.BlockIsWater[(int)id];
     public static byte GetIndex(int id) => LiveMap.Api.SepiaColors.Block2Color[id];
-    public static uint GetColor(int index) => LiveMap.Api.SepiaColors.ColorsByCode.GetValueAtIndex(index);
     public static uint GetColor(string id) => LiveMap.Api.SepiaColors.ColorsByCode[id];
+    public static uint GetColor(int index) {
+        return index >= 0 && index < LiveMap.Api.SepiaColors.ColorsByCode.Count
+            ? LiveMap.Api.SepiaColors.ColorsByCode.GetValueAtIndex(index)
+            : GetColor("ocean");
+    }
 
     public SepiaRenderer() : base("sepia") { }
 
