@@ -1,28 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <PackageId>livemap</PackageId>
-        <Title>LiveMap</Title>
-        <Ver>0.0.13</Ver>
-        <Version Condition="'$(BUILD_NUMBER)' != ''">$(Ver)-b$(BUILD_NUMBER)</Version>
-        <Version Condition="'$(BUILD_NUMBER)' == ''">$(Ver)-SNAPSHOT</Version>
-        <Authors>BillyGalbreath</Authors>
-        <Company>Pl3x</Company>
-        <Description>LiveMap is a browser-based world map viewer for Vintage Story</Description>
-        <Copyright>Copyright (c) 2024 William Blake Galbreath</Copyright>
-        <PackageIcon>modicon.png</PackageIcon>
-        <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageProjectUrl>https://mods.vintagestory.at/livemap</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/billygalbreath/vs-livemap</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <RepositoryBranch>master</RepositoryBranch>
-        <PackageType>Dependency</PackageType>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <TargetFramework>net8.0</TargetFramework>
+
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -30,7 +14,6 @@
         <DebugSymbols>true</DebugSymbols>
         <ExcludeGeneratedDebugSymbol>false</ExcludeGeneratedDebugSymbol>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <OutputPath>bin\mods\mod</OutputPath>
     </PropertyGroup>
 
     <ItemGroup>
@@ -39,10 +22,6 @@
         <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" IncludeAssets="compile;runtime" PrivateAssets="all" />
         <None Include="LICENSE;README.md;resources/**" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" Link="%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
-
-    <Target Name="_ResolveCopyLocalNuGetPkgXmls" AfterTargets="ResolveReferences">
-        <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).xml')" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)'!='' and Exists('%(RootDir)%(Directory)%(Filename).xml')" />
-    </Target>
 
     <Target Name="InstallAndRunNpm" AfterTargets="PostBuildEvent">
         <Exec Command="npm install" WorkingDirectory="web" />
@@ -77,13 +56,8 @@
         />
     </Target>
 
-    <Target Name="PackZip" AfterTargets="FilterIndexHtml">
-        <MakeDir Directories="bin\mods\mod" />
-        <ItemGroup>
-            <FilesToDelete Include="bin\**\*.nupkg" />
-        </ItemGroup>
-        <Delete Files="@(FilesToDelete)" />
-        <ZipDirectory DestinationFile="bin/livemap-$(Version).zip" SourceDirectory="$(TargetDir)" Overwrite="true" />
+    <Target Name="Package" AfterTargets="FilterIndexHtml">
+        <ZipDirectory DestinationFile="bin/$(TargetName).zip" SourceDirectory="$(TargetDir)" Overwrite="true" />
     </Target>
 
 </Project>

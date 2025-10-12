@@ -92,7 +92,7 @@ public static class Extensions {
     }
 
     public static Dictionary<string, object> GetHealth(this IPlayer player) {
-        EntityBehaviorHealth health = player.Entity.GetBehavior<EntityBehaviorHealth>();
+        EntityBehaviorHealth? health = player.Entity.GetBehavior<EntityBehaviorHealth>();
         return new Dictionary<string, object> {
             { "cur", health?.Health ?? 15 },
             { "max", health?.MaxHealth ?? 15 }
@@ -100,7 +100,7 @@ public static class Extensions {
     }
 
     public static Dictionary<string, object> GetSatiety(this IPlayer player) {
-        EntityBehaviorHunger satiety = player.Entity.GetBehavior<EntityBehaviorHunger>();
+        EntityBehaviorHunger? satiety = player.Entity.GetBehavior<EntityBehaviorHunger>();
         return new Dictionary<string, object> {
             { "cur", satiety?.Saturation ?? 1500 },
             { "max", satiety?.MaxSaturation ?? 1500 }
