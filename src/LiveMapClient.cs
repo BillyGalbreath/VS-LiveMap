@@ -1,11 +1,10 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
 using HarmonyLib;
 using livemap.data;
 using livemap.network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.Common;
@@ -40,10 +39,24 @@ public sealed class LiveMapClient {
 
                 Colormap? colormap = GenerateColormap();
 
-                if (colormap != null && _channel is { Connected: true }) {
-                    _logger.Event("Sending generated colormap to server");
-                    _channel.SendPacket(new ColormapPacket { RawColormap = colormap.Serialize() });
+                if (colormap == null || _channel is not { Connected: true }) {
+                    return;
                 }
+
+                _logger.Event("Sending generated colormap to server");
+                string json = colormap.Serialize();
+
+                FileInfo fileInfo = new(Path.Combine(GamePaths.ModConfig, "colormap.json"));
+                try {
+                    File.WriteAllText(fileInfo.FullName, json);
+                    _logger.Event($"Wrote colormap to disk.");
+                }
+                catch (Exception e) {
+                    _logger.Event($"Error sending colormap to server: {e}");
+                }
+
+                // todo - rework this so it doesnt send one giant packet
+                _channel.SendPacket(new ColormapPacket { RawColormap = json }.Compress());
             });
 
         _harmony = new Harmony(mod.Mod.Info.ModID);
@@ -64,6 +77,7 @@ public sealed class LiveMapClient {
                 if (_overridePos == null) {
                     return null;
                 }
+
                 uint baseColor = Color.Reverse((uint)block.GetColor(_api, _overridePos));
                 uint[] colors = new uint[30];
                 for (int i = 0; i < colors.Length; i++) {
@@ -71,9 +85,11 @@ public sealed class LiveMapClient {
                     uint color = Color.Blend(baseColor, randColor, 0.4F);
                     colors[i] = color & 0xFFFFFF;
                 }
+
                 colormap.Add(block.Code.ToString(), colors);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             _logger.Error(e.ToString());
         }
 

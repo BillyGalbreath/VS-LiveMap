@@ -51,7 +51,7 @@ public sealed class Colormap {
 
     public void LoadFromPacket(IWorldAccessor world, ColormapPacket packet) {
         new Thread(_ => {
-            if (Deserialize(packet.RawColormap)) {
+            if (Deserialize(packet.Decompress().RawColormap)) {
                 SaveToDisk();
                 RefreshIds(world);
                 Logger.Info("Colormap saved to disk");

@@ -151,7 +151,7 @@ public sealed class LiveMap {
             return;
         }
 
-        if (string.IsNullOrEmpty(packet.RawColormap)) {
+        if (string.IsNullOrEmpty(packet.RawBase64String)) {
             player.SendMessage(GlobalConstants.CurrentChatGroup, "command.colormap.empty".ToLang(), EnumChatType.CommandError);
             Logger.Warn($"Received empty colormap from {player.PlayerName}");
             return;
