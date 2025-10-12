@@ -1,4 +1,3 @@
-using System;
 using System.Globalization;
 using livemap.json;
 using livemap.util;
@@ -17,7 +16,8 @@ public readonly struct Color {
     /// Create a new Color from string
     /// </summary>
     /// <param name="value">the uint value of the Color (<c>"#RRGGBB"</c>)</param>
-    public Color(string value) : this(Parse(value)) { }
+    public Color(string value) : this(Parse(value)) {
+    }
 
     /// <summary>
     /// Create a new Color from double array
@@ -28,7 +28,8 @@ public readonly struct Color {
         value.Length > 3 ? value[0] : value[1],
         value.Length > 3 ? value[1] : value[2],
         value.Length > 3 ? value[2] : 1
-    ) { }
+    ) {
+    }
 
     /// <summary>
     /// Create a new Color from double values
@@ -36,7 +37,8 @@ public readonly struct Color {
     /// <param name="r">the double value for red (0.0 - 1.0)</param>
     /// <param name="g">the double value for green (0.0 - 1.0)</param>
     /// <param name="b">the double value for blue (0.0 - 1.0)</param>
-    public Color(double r, double g, double b) : this(1, r, g, b) { }
+    public Color(double r, double g, double b) : this(1, r, g, b) {
+    }
 
     /// <summary>
     /// Create a new Color from double values
@@ -45,7 +47,8 @@ public readonly struct Color {
     /// <param name="r">the double value for red (0.0 - 1.0)</param>
     /// <param name="g">the double value for green (0.0 - 1.0)</param>
     /// <param name="b">the double value for blue (0.0 - 1.0)</param>
-    public Color(double a, double r, double g, double b) : this((uint)(a * 0xFF), (uint)(r * 0xFF), (uint)(g * 0xFF), (uint)(b * 0xFF)) { }
+    public Color(double a, double r, double g, double b) : this((uint)(a * 0xFF), (uint)(r * 0xFF), (uint)(g * 0xFF), (uint)(b * 0xFF)) {
+    }
 
     /// <summary>
     /// Create a new Color from uint values
@@ -53,7 +56,8 @@ public readonly struct Color {
     /// <param name="r">the uint value for red (0x0 - 0xFF)</param>
     /// <param name="g">the uint value for green (0x0 - 0xFF)</param>
     /// <param name="b">the uint value for blue (0x0 - 0xFF)</param>
-    public Color(uint r, uint g, uint b) : this(1, r, g, b) { }
+    public Color(uint r, uint g, uint b) : this(1, r, g, b) {
+    }
 
     /// <summary>
     /// Create a new Color from uint values
@@ -62,7 +66,8 @@ public readonly struct Color {
     /// <param name="r">the uint value for red (0x0 - 0xFF)</param>
     /// <param name="g">the uint value for green (0x0 - 0xFF)</param>
     /// <param name="b">the uint value for blue (0x0 - 0xFF)</param>
-    public Color(uint a, uint r, uint g, uint b) : this((a << 24) | (r << 16) | (g << 8) | (b << 0)) { }
+    public Color(uint a, uint r, uint g, uint b) : this((a << 24) | (r << 16) | (g << 8) | (b << 0)) {
+    }
 
     /// <summary>
     /// Create a new Color from uint
@@ -128,13 +133,17 @@ public readonly struct Color {
         string stripped;
         if (value.StartsWith('#')) {
             stripped = value[1..];
-        } else if (value.StartsWith("0x", StringComparison.CurrentCultureIgnoreCase)) {
+        }
+        else if (value.StartsWith("0x", StringComparison.CurrentCultureIgnoreCase)) {
             stripped = value[2..];
-        } else if (value.StartsWith("&h", StringComparison.CurrentCultureIgnoreCase)) {
+        }
+        else if (value.StartsWith("&h", StringComparison.CurrentCultureIgnoreCase)) {
             stripped = value[2..];
-        } else {
+        }
+        else {
             stripped = value;
         }
+
         string lastSix = stripped[^Math.Min(stripped.Length, 6)..];
         return uint.Parse(lastSix, NumberStyles.HexNumber);
     }
@@ -192,32 +201,40 @@ public readonly struct Color {
         float hue;
         if (saturation == 0) {
             hue = 0;
-        } else {
+        }
+        else {
             float delta = diff * 6;
             if (red == max) {
                 hue = (green - blue) / delta;
-            } else if (green == max) {
+            }
+            else if (green == max) {
                 hue = (1 / 3F) + ((blue - red) / delta);
-            } else {
+            }
+            else {
                 hue = (2 / 3F) + ((red - green) / delta);
             }
+
             if (hue < 0) {
                 hue++;
             }
         }
-        return new[] { hue, saturation, max / 255F };
+
+        return [hue, saturation, max / 255F];
     }
 
     public static Color Hsb2Rgb(float hue, float saturation, float brightness) {
         if (saturation == 0) {
             return Convert(brightness, brightness, brightness);
         }
+
         if (brightness is < 0 or > 1) {
             throw new ArgumentOutOfRangeException(nameof(brightness), "brightness must be between 0 and 1");
         }
+
         if (saturation is < 0 or > 1) {
             throw new ArgumentOutOfRangeException(nameof(saturation), "saturation must be between 0 and 1");
         }
+
         hue -= (float)Math.Floor(hue);
         int i = (int)(6 * hue);
         float f = (6 * hue) - i;

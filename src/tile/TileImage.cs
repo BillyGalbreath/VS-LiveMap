@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
 using livemap.configuration;
 using livemap.util;
 using SkiaSharp;
@@ -36,23 +33,23 @@ public unsafe class TileImage {
         int imgX = blockX & 511;
         int imgZ = blockZ & 511;
 
-        ((uint*)(_bitmapPtr + (imgZ * _bitmapRowBytes)))[imgX] = argb;
+        ((uint*)(_bitmapPtr + imgZ * _bitmapRowBytes))[imgX] = argb;
 
         _shadowMap[(imgZ << 9) + imgX] = (byte)(_shadowMap[(imgZ << 9) + imgX] * yDiff);
     }
 
     public void CalculateShadows() {
-        byte[] shadowMapCopy = _shadowMap.ToArray();
+        byte[] shadowMapCopy = [.. _shadowMap];
         BlurTool.Blur(_shadowMap, 512, 512, 2);
         for (int i = 0; i < _shadowMap.Length; i++) {
-            float shadow = (int)(((_shadowMap[i] / 128F) - 1F) * 5F) / 5F;
-            shadow += ((((shadowMapCopy[i] / 128F) - 1F) * 5F) % 1F) / 5F;
+            float shadow = (int)((_shadowMap[i] / 128F - 1F) * 5F) / 5F;
+            shadow += (shadowMapCopy[i] / 128F - 1F) * 5F % 1F / 5F;
 
             int imgX = i & 511;
             int imgZ = i >> 9;
 
-            uint* row = (uint*)(_bitmapPtr + (imgZ * _bitmapRowBytes));
-            row[imgX] = (uint)(row[imgX] == 0 ? 0 : ColorUtil.ColorMultiply3Clamped((int)row[imgX], (shadow * 1.4F) + 1F));
+            uint* row = (uint*)(_bitmapPtr + imgZ * _bitmapRowBytes);
+            row[imgX] = (uint)(row[imgX] == 0 ? 0 : ColorUtil.ColorMultiply3Clamped((int)row[imgX], shadow * 1.4F + 1F));
         }
     }
 
@@ -72,14 +69,16 @@ public unsafe class TileImage {
                     using FileStream outStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
                     bitmap.Encode(config.Web.TileType.Format, config.Web.TileQuality).SaveTo(outStream);
                     bitmap.Dispose();
-                } else {
+                }
+                else {
                     using FileStream outStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
                     _bitmap.Encode(config.Web.TileType.Format, config.Web.TileQuality).SaveTo(outStream);
                 }
             }
 
             _bitmap.Dispose();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Logger.Error(e.ToString());
         }
     }
@@ -92,7 +91,7 @@ public unsafe class TileImage {
         int pngRowBytes = png.RowBytes;
         for (int x = 0; x < 512; x += step) {
             for (int z = 0; z < 512; z += step) {
-                uint argb = ((uint*)(_bitmapPtr + (z * _bitmapRowBytes)))[x];
+                uint argb = ((uint*)(_bitmapPtr + z * _bitmapRowBytes))[x];
                 if (argb == 0) {
                     // skipping 0 prevents overwrite existing
                     // parts of the buffer of existing images
@@ -104,7 +103,7 @@ public unsafe class TileImage {
                     argb = DownSample(x, z, argb, step);
                 }
 
-                ((uint*)(pngPtr + ((baseZ + (z >> zoom)) * pngRowBytes)))[baseX + (x >> zoom)] = argb;
+                ((uint*)(pngPtr + (baseZ + (z >> zoom)) * pngRowBytes))[baseX + (x >> zoom)] = argb;
             }
         }
     }
@@ -114,7 +113,7 @@ public unsafe class TileImage {
         for (int i = 0; i < step; i++) {
             for (int j = 0; j < step; j++) {
                 if (i != 0 && j != 0) {
-                    argb = ((uint*)(_bitmapPtr + ((z + j) * _bitmapRowBytes)))[x + i];
+                    argb = ((uint*)(_bitmapPtr + (z + j) * _bitmapRowBytes))[x + i];
                 }
 
                 a += argb >> 24 & 0xFF;

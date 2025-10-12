@@ -1,5 +1,4 @@
-﻿using System.IO;
-using livemap.command;
+﻿using livemap.command;
 using livemap.configuration;
 using livemap.data;
 using livemap.httpd;
@@ -63,8 +62,8 @@ public sealed class LiveMap {
 
         CommandHandler = new CommandHandler(this);
 
-        LayerRegistry = new LayerRegistry();
-        RendererRegistry = new RendererRegistry();
+        LayerRegistry = [];
+        RendererRegistry = [];
 
         AsyncTaskManager = new AsyncTaskManager(this);
         RenderTaskManager = new RenderTaskManager(this);

@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using SkiaSharp;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -39,7 +37,7 @@ public class SepiaColors {
         { "glacier", "#E0E0C0" }
     };
 
-    public OrderedDictionary<string, uint> ColorsByCode { get; } = new();
+    public OrderedDictionary<string, uint> ColorsByCode { get; } = [];
 
     public byte[] Block2Color { get; private set; }
     public bool[] BlockIsWater { get; private set; }
@@ -73,7 +71,7 @@ public class SepiaColors {
     public void Dispose() {
         ColorsByCode.Clear();
         HexColorsByCode.Clear();
-        Block2Color = Array.Empty<byte>();
-        BlockIsWater = Array.Empty<bool>();
+        Block2Color = [];
+        BlockIsWater = [];
     }
 }

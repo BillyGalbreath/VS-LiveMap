@@ -1,7 +1,3 @@
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Vintagestory.API.Common;
@@ -57,7 +53,8 @@ public abstract class Files {
                 Logger.Debug($"Saving asset from zip to disk {path}");
                 GamePaths.EnsurePathExists(Path.GetDirectoryName(destPath));
                 File.WriteAllBytes(destPath, asset.Data);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 Logger.Error($"Error saving asset to disk {path}");
                 Logger.Error(e.ToString());
             }

@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-
 namespace livemap.task;
 
 public class AsyncTaskManager {
-    private readonly List<AsyncTask> _tasks = new();
+    private readonly List<AsyncTask> _tasks = [];
 
     public AsyncTaskManager(LiveMap server) {
         _tasks.Add(new MarkersTask(server));
@@ -15,7 +12,8 @@ public class AsyncTaskManager {
         foreach (AsyncTask task in _tasks) {
             try {
                 task.Tick();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 Console.Error.WriteLine(e.ToString());
             }
         }
@@ -25,7 +23,8 @@ public class AsyncTaskManager {
         foreach (AsyncTask task in _tasks) {
             try {
                 task.Dispose();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 Console.Error.WriteLine(e.ToString());
             }
         }

@@ -1,18 +1,13 @@
-using System;
 using livemap.registry;
 using livemap.tile;
 using Vintagestory.Common.Database;
 
 namespace livemap.render;
 
-public abstract class Renderer : Keyed {
-    public string Id { get; }
+public abstract class Renderer(string id) : Keyed {
+    public string Id { get; } = id;
 
     public TileImage? TileImage { get; set; }
-
-    protected Renderer(string id) {
-        Id = id;
-    }
 
     public virtual void AllocateImage(int regionX, int regionZ) {
         TileImage = new TileImage(regionX, regionZ);
@@ -26,22 +21,27 @@ public abstract class Renderer : Keyed {
         TileImage?.CalculateShadows();
     }
 
-    public virtual void ScanChunkColumn(ChunkPos chunkPos, BlockData blockData) { }
+    public virtual void ScanChunkColumn(ChunkPos chunkPos, BlockData blockData) {
+    }
 
-    public virtual void ProcessBlockData(int regionX, int regionZ, BlockData blockData) { }
+    public virtual void ProcessBlockData(int regionX, int regionZ, BlockData blockData) {
+    }
 
     public virtual (int, int) ProcessBlock(BlockData.Data? block, int defY = 0) {
         if (block == null) {
             return (0, defY);
         }
+
         int id, y;
         if (LiveMap.Api.RenderTaskManager?.BlocksToIgnore.Contains(block.Top) ?? false) {
             id = block.Under;
             y = block.Y - 1;
-        } else {
+        }
+        else {
             id = block.Top;
             y = block.Y;
         }
+
         return (id, y);
     }
 

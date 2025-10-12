@@ -1,9 +1,4 @@
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using livemap.configuration;
 using livemap.layer.marker;
 using livemap.layer.marker.options;
@@ -21,17 +16,19 @@ public class TradersLayer : Layer {
 
     public override List<Marker> Markers {
         get {
-            List<Marker> list = new();
+            List<Marker> list = [];
             _knownTraders.Values.Foreach(traders => {
                 traders.Foreach(trader => {
                     TooltipOptions? tooltip = Config.Tooltip?.DeepCopy();
                     if (tooltip?.Content != null) {
                         tooltip.Content = string.Format(tooltip.Content, trader.Name, trader.Type);
                     }
+
                     PopupOptions? popup = Config.Popup?.DeepCopy();
                     if (popup?.Content != null) {
                         popup.Content = string.Format(popup.Content, trader.Name, trader.Type);
                     }
+
                     list.Add(new Icon($"trader:{trader.Id}", trader.Pos.ToPoint(), Config.IconOptions) {
                         Tooltip = tooltip,
                         Popup = popup
@@ -61,7 +58,8 @@ public class TradersLayer : Layer {
             try {
                 string json = File.ReadAllText(_knownFile);
                 traders = JsonConvert.DeserializeObject<ConcurrentDictionary<ulong, HashSet<Trader>>>(json);
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 // ignored
             }
         }
@@ -72,9 +70,11 @@ public class TradersLayer : Layer {
     public void SetTraders(ulong chunkIndex, HashSet<Trader> traders) {
         if (traders.Count == 0) {
             _knownTraders.Remove(chunkIndex);
-        } else {
+        }
+        else {
             _knownTraders[chunkIndex] = traders;
         }
+
         _dirty = true;
     }
 
@@ -96,17 +96,10 @@ public class TradersLayer : Layer {
         await base.WriteToDisk(cancellationToken);
     }
 
-    public class Trader {
-        public readonly string Type;
-        public readonly long Id;
-        public readonly string Name;
-        public readonly Vec3i Pos;
-
-        public Trader(string type, long id, string name, Vec3i pos) {
-            Type = type;
-            Id = id;
-            Name = name;
-            Pos = pos;
-        }
+    public class Trader(string type, long id, string name, Vec3i pos) {
+        public readonly string Type = type;
+        public readonly long Id = id;
+        public readonly string Name = name;
+        public readonly Vec3i Pos = pos;
     }
 }

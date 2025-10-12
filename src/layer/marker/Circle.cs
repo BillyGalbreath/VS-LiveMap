@@ -1,4 +1,3 @@
-using System;
 using livemap.data;
 using livemap.layer.marker.options.type;
 using Newtonsoft.Json;
@@ -25,7 +24,8 @@ public class Circle : Marker {
     /// <summary>
     /// Create a new circle at 0,0 with a random id
     /// </summary>
-    public Circle() : this(Guid.NewGuid().ToString(), new Point(0, 0)) { }
+    public Circle() : this(Guid.NewGuid().ToString(), new Point(0, 0)) {
+    }
 
     /// <summary>
     /// Create a new circle

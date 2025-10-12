@@ -1,4 +1,3 @@
-using System;
 using livemap.data;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -14,6 +13,7 @@ public class PointJsonConverter : JsonConverter {
         if (value is not Point point) {
             return;
         }
+
         writer.WriteStartArray();
         point = point.Floor();
         writer.WriteValue((int)point.X);

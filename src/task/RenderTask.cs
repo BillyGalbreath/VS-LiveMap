@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using livemap.layer.builtin;
 using livemap.render;
 using livemap.util;
@@ -15,21 +12,13 @@ using Vintagestory.Server;
 
 namespace livemap.task;
 
-public sealed class RenderTask {
+public sealed class RenderTask(LiveMap server, RenderTaskManager renderTaskManager) {
     // let's not create too many of these, so we don't kill the GC
     private readonly BlockPos _mutableBlockPos = new(0);
 
-    private readonly LiveMap _server;
-    private readonly RenderTaskManager _renderTaskManager;
-
-    public RenderTask(LiveMap server, RenderTaskManager renderTaskManager) {
-        _server = server;
-        _renderTaskManager = renderTaskManager;
-    }
-
     public void ScanRegion(int regionX, int regionZ) {
         try {
-            ServerMapRegion? region = _renderTaskManager.ChunkLoader.GetMapRegion(ChunkPos.ToChunkIndex(regionX, 0, regionZ));
+            ServerMapRegion? region = renderTaskManager.ChunkLoader.GetMapRegion(ChunkPos.ToChunkIndex(regionX, 0, regionZ));
             if (region == null) {
                 return;
             }
@@ -41,7 +30,7 @@ public sealed class RenderTask {
             int chunkZ2 = chunkZ1 + 16;
 
             // get blockdata from all chunks
-            IEnumerable<ChunkPos> chunks = _renderTaskManager.ChunkLoader.GetAllMapChunkPositions()
+            IEnumerable<ChunkPos> chunks = renderTaskManager.ChunkLoader.GetAllMapChunkPositions()
                 .Where(chunkPos => chunkPos.X >= chunkX1 && chunkPos.Z >= chunkZ1 && chunkPos.X < chunkX2 && chunkPos.Z < chunkZ2);
             BlockData blockData = new();
             foreach (ChunkPos chunkPos in chunks) {
@@ -49,7 +38,7 @@ public sealed class RenderTask {
             }
 
             // process the region through all the renderers
-            foreach ((string _, Renderer renderer) in _server.RendererRegistry) {
+            foreach ((string _, Renderer renderer) in server.RendererRegistry) {
                 renderer.AllocateImage(regionX, regionZ);
                 renderer.ProcessBlockData(regionX, regionZ, blockData);
                 renderer.CalculateShadows();
@@ -64,7 +53,7 @@ public sealed class RenderTask {
     private void ScanChunkColumn(ServerMapRegion region, ChunkPos chunkPos, BlockData blockData) {
         // get chunkmap from game save
         // this is just basic info about a chunk column, like heightmaps
-        ServerMapChunk? mapChunk = _renderTaskManager.ChunkLoader.GetMapChunk(ChunkPos.ToChunkIndex(chunkPos.X, chunkPos.Y, chunkPos.Z));
+        ServerMapChunk? mapChunk = renderTaskManager.ChunkLoader.GetMapChunk(ChunkPos.ToChunkIndex(chunkPos.X, chunkPos.Y, chunkPos.Z));
         if (mapChunk == null) {
             return;
         }
@@ -75,13 +64,13 @@ public sealed class RenderTask {
         }
 
         // check which chunk slices need to be loaded to get the top surface block
-        List<int> chunkIndexesToLoad = new();
+        List<int> chunkIndexesToLoad = [];
         FindChunksToLoad(region, mapChunk, chunkPos, chunkIndexesToLoad);
 
         // load the actual chunks slices from game save
-        ServerChunk?[] chunkSlices = new ServerChunk?[_server.Sapi.WorldManager.MapSizeY >> 5];
+        ServerChunk?[] chunkSlices = new ServerChunk?[server.Sapi.WorldManager.MapSizeY >> 5];
         foreach (int y in chunkIndexesToLoad) {
-            chunkSlices[y] = _renderTaskManager.ChunkLoader.GetChunk(ChunkPos.ToChunkIndex(chunkPos.X, y, chunkPos.Z));
+            chunkSlices[y] = renderTaskManager.ChunkLoader.GetChunk(ChunkPos.ToChunkIndex(chunkPos.X, y, chunkPos.Z));
         }
 
         int startX = chunkPos.X << 5;
@@ -97,7 +86,7 @@ public sealed class RenderTask {
         }
 
         // process the chunk through all the renderers
-        foreach ((string _, Renderer renderer) in _server.RendererRegistry) {
+        foreach ((string _, Renderer renderer) in server.RendererRegistry) {
             renderer.ScanChunkColumn(chunkPos, blockData);
         }
 
@@ -138,20 +127,20 @@ public sealed class RenderTask {
     private void ProcessStructures(ChunkPos chunkPos, ServerChunk?[] chunkSlices) {
         ulong chunkIndex = chunkPos.ToChunkIndex();
 
-        TradersLayer? tradersLayer = _server.LayerRegistry.Traders;
-        TranslocatorsLayer? translocatorsLayer = _server.LayerRegistry.Translocators;
+        TradersLayer? tradersLayer = server.LayerRegistry.Traders;
+        TranslocatorsLayer? translocatorsLayer = server.LayerRegistry.Translocators;
 
         if (tradersLayer == null && translocatorsLayer == null) {
             return;
         }
 
-        HashSet<TradersLayer.Trader> traders = new();
-        HashSet<TranslocatorsLayer.Translocator> translocators = new();
+        HashSet<TradersLayer.Trader> traders = [];
+        HashSet<TranslocatorsLayer.Translocator> translocators = [];
 
-        int seaLevel = _server.Sapi.World.SeaLevel;
+        int seaLevel = server.Sapi.World.SeaLevel;
 
         chunkSlices.Foreach(chunk => {
-            if (_server.Config.Layers.Traders.Enabled && tradersLayer != null) {
+            if (server.Config.Layers.Traders.Enabled && tradersLayer != null) {
                 chunk?.Entities.Foreach(entity => {
                     if (entity is not EntityTrader trader) {
                         return;
@@ -171,7 +160,7 @@ public sealed class RenderTask {
                 });
             }
 
-            if (_server.Config.Layers.Translocators.Enabled) {
+            if (server.Config.Layers.Translocators.Enabled) {
                 chunk?.BlockEntities.Values.Foreach(blockEntity => {
                     if (blockEntity is not BlockEntityStaticTranslocator { TargetLocation: not null } tl) {
                         return;
@@ -217,16 +206,16 @@ public sealed class RenderTask {
     }
 
     private void CheckForMicroBlocks(int x, int y, int z, ServerChunk serverChunk, ref int top) {
-        if (!_renderTaskManager.MicroBlocks.Contains(top)) {
+        if (!renderTaskManager.MicroBlocks.Contains(top)) {
             return;
         }
 
         serverChunk.BlockEntities.TryGetValue(_mutableBlockPos.Set(x, y, z), out BlockEntity? be);
-        top = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : _renderTaskManager.LandBlock;
+        top = be is BlockEntityMicroBlock bemb ? bemb.BlockIds[0] : renderTaskManager.LandBlock;
     }
 
     private int GetTopBlockY(ServerMapChunk mapChunk, int x, int z) {
         ushort blockY = mapChunk.RainHeightMap[Mathf.BlockIndex(x, z)];
-        return GameMath.Clamp(blockY, 0, _server.Sapi.WorldManager.MapSizeY - 1);
+        return GameMath.Clamp(blockY, 0, server.Sapi.WorldManager.MapSizeY - 1);
     }
 }

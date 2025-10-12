@@ -1,6 +1,4 @@
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
 using livemap.configuration;
 using livemap.layer.marker;
 using livemap.util;
@@ -8,14 +6,14 @@ using Vintagestory.API.Util;
 
 namespace livemap.layer.builtin;
 
-public class TranslocatorsLayer : Layer {
+public class TranslocatorsLayer() : Layer("translocators", "lang.translocators".ToLang()) {
     public override int? Interval => Config.UpdateInterval;
 
     public override bool? Hidden => !Config.DefaultShowLayer;
 
     public override List<Marker> Markers {
         get {
-            List<Marker> list = new();
+            List<Marker> list = [];
             _knownTranslocators.Values.Foreach(translocators => {
                 translocators.Foreach(translocator => {
                     // todo
@@ -30,8 +28,6 @@ public class TranslocatorsLayer : Layer {
     private static Translocators Config => LiveMap.Api.Config.Layers.Translocators;
 
     private readonly ConcurrentDictionary<ulong, HashSet<Translocator>> _knownTranslocators = new();
-
-    public TranslocatorsLayer() : base("translocators", "lang.translocators".ToLang()) { }
 
     public void SetTranslocators(ulong chunkIndex, HashSet<Translocator> translocator) {
         _knownTranslocators[chunkIndex] = translocator;

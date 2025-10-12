@@ -3,13 +3,11 @@ using livemap.layer.builtin;
 
 namespace livemap.registry;
 
-public class LayerRegistry : Registry<Layer> {
+public class LayerRegistry() : Registry<Layer>("layers") {
     public PlayersLayer? Players { get; private set; }
     public SpawnLayer? Spawn { get; private set; }
     public TradersLayer? Traders { get; private set; }
     public TranslocatorsLayer? Translocators { get; private set; }
-
-    public LayerRegistry() : base("layers") { }
 
     public void RegisterBuiltIns() {
         Register(Players = new PlayersLayer());

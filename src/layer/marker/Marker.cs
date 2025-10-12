@@ -1,4 +1,3 @@
-using System;
 using livemap.layer.marker.options;
 using livemap.util;
 using Newtonsoft.Json;
@@ -62,7 +61,8 @@ public class Marker {
     public static T FromJson<T>(string json) {
         try {
             return JsonConvert.DeserializeObject<T>(json) ?? throw new NullReferenceException("null");
-        } catch (Exception) {
+        }
+        catch (Exception) {
             Console.Error.WriteLine($"Error deserializing marker json ({json})");
             throw;
         }

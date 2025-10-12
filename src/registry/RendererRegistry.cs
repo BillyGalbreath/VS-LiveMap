@@ -2,11 +2,9 @@ using livemap.render;
 
 namespace livemap.registry;
 
-public class RendererRegistry : Registry<Renderer> {
+public class RendererRegistry() : Registry<Renderer>("renderers") {
     public static BasicRenderer? Basic { get; private set; }
     public static SepiaRenderer? Sepia { get; private set; }
-
-    public RendererRegistry() : base("renderers") { }
 
     public void RegisterBuiltIns() {
         Register(Basic = new BasicRenderer());

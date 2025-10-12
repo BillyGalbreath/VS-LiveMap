@@ -1,29 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using livemap.render;
 using livemap.util;
 using Newtonsoft.Json;
 
 namespace livemap.task;
 
-public sealed class SettingsTask : AsyncTask {
+public sealed class SettingsTask(LiveMap server) : AsyncTask(server) {
     private const int _interval = 30;
 
     private long _lastUpdate;
-
-    public SettingsTask(LiveMap server) : base(server) { }
 
     protected override async Task TickAsync(CancellationToken cancellationToken) {
         long now = DateTimeOffset.Now.ToUnixTimeSeconds();
         if (now - _lastUpdate < _interval) {
             return;
         }
+
         _lastUpdate = now;
 
-        Dictionary<string, object?> dict = new();
+        Dictionary<string, object?> dict = [];
         dict.TryAdd("friendlyUrls", _server.Config.Web.FriendlyUrls);
         dict.TryAdd("playerList", _server.Config.Layers.Players.Enabled);
         dict.TryAdd("playerMarkers", _server.Config.Layers.Players.Enabled);
@@ -79,24 +73,26 @@ public sealed class SettingsTask : AsyncTask {
             }
 
             await Files.WriteJsonAsync(Path.Combine(Files.JsonDir, "settings.json"), json, cancellationToken);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             await Console.Error.WriteLineAsync(e.ToString());
         }
     }
 
     private Dictionary<string, string>[] Renderers(CancellationToken cancellationToken) {
-        List<Dictionary<string, string>> dict = new();
+        List<Dictionary<string, string>> dict = [];
         List<Renderer> renderers = new(_server.RendererRegistry.Values);
         foreach (Renderer renderer in renderers) {
             if (cancellationToken.IsCancellationRequested) {
                 break;
             }
 
-            Dictionary<string, string> obj = new();
+            Dictionary<string, string> obj = [];
             obj.TryAdd("id", renderer.Id);
             obj.TryAdd("icon", "" /*renderer.Icon*/); // todo
             dict.AddIfNotExists(obj);
         }
-        return dict.ToArray();
+
+        return [.. dict];
     }
 }

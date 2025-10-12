@@ -6,4 +6,5 @@ namespace livemap.layer.marker.options;
 /// <remarks>
 /// Do not use it directly
 /// </remarks>
-public interface BaseOptions { }
+public interface BaseOptions {
+}

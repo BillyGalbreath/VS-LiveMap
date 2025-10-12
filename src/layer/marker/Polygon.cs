@@ -1,4 +1,3 @@
-using System;
 using livemap.data;
 using livemap.layer.marker.options.type;
 using Newtonsoft.Json;
@@ -26,7 +25,8 @@ public class Polygon : Marker {
     /// <summary>
     /// Create a new polygon at 0,0 with a random id
     /// </summary>
-    public Polygon() : this(Guid.NewGuid().ToString(), new Point(0, 0)) { }
+    public Polygon() : this(Guid.NewGuid().ToString(), new Point(0, 0)) {
+    }
 
     /// <summary>
     /// Create a new polygon
@@ -34,7 +34,8 @@ public class Polygon : Marker {
     /// <param name="id">Unique identifying key</param>
     /// <param name="points">Absolute (not relative to spawn) world coordinates for the polygon's points</param>
     /// <param name="options">Optional settings for the polygon</param>
-    public Polygon(string id, Point points, PolygonOptions? options = null) : this(id, new[] { points }, options) { }
+    public Polygon(string id, Point points, PolygonOptions? options = null) : this(id, [points], options) {
+    }
 
     /// <summary>
     /// Create a new polygon
@@ -42,7 +43,8 @@ public class Polygon : Marker {
     /// <param name="id">Unique identifying key</param>
     /// <param name="points">Absolute (not relative to spawn) world coordinates for the polygon's points</param>
     /// <param name="options">Optional settings for the polygon</param>
-    public Polygon(string id, Point[] points, PolygonOptions? options = null) : this(id, new[] { points }, options) { }
+    public Polygon(string id, Point[] points, PolygonOptions? options = null) : this(id, [points], options) {
+    }
 
     /// <summary>
     /// Create a new polygon
@@ -50,7 +52,8 @@ public class Polygon : Marker {
     /// <param name="id">Unique identifying key</param>
     /// <param name="points">Absolute (not relative to spawn) world coordinates for the polygon's points</param>
     /// <param name="options">Optional settings for the polygon</param>
-    public Polygon(string id, Point[][] points, PolygonOptions? options = null) : this(id, new[] { points }, options) { }
+    public Polygon(string id, Point[][] points, PolygonOptions? options = null) : this(id, [points], options) {
+    }
 
     /// <summary>
     /// Create a new polygon

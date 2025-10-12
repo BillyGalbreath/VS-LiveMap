@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Reflection;
 using livemap.data;
 using livemap.layer.marker.options;
@@ -66,7 +64,7 @@ public static class Extensions {
     }
 
     public static void UnregisterCommand(this IChatCommandApi api, string name) {
-        ((ChatCommandApi)api).GetType().GetMethod("UnregisterCommand", _flags)?.Invoke(api, new object?[] { name });
+        ((ChatCommandApi)api).GetType().GetMethod("UnregisterCommand", _flags)?.Invoke(api, [name]);
     }
 
     public static void AutoSaveNow(this ICoreServerAPI api) {
@@ -78,7 +76,7 @@ public static class Extensions {
                 SubCmdCode = "autosavenow",
                 Caller = new Caller {
                     Type = EnumCallerType.Console,
-                    CallerPrivileges = new[] { "*" },
+                    CallerPrivileges = ["*"],
                     CallerRole = "admin",
                     FromChatGroupId = 0
                 },

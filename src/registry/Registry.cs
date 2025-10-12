@@ -2,12 +2,9 @@ using Vintagestory.API.Datastructures;
 
 namespace livemap.registry;
 
-public abstract class Registry<T> : OrderedDictionary<string, T>, Keyed where T : Keyed {
-    public string Id { get; }
-
-    protected Registry(string id) {
-        Id = $"{LiveMap.Api.ModId}:{id}";
-    }
+public abstract class Registry<T>(string id) : OrderedDictionary<string, T>, Keyed
+    where T : Keyed {
+    public string Id { get; } = $"{LiveMap.Api.ModId}:{id}";
 
     public virtual int Register(T value) {
         return Register(value.Id, value);

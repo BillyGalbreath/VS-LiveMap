@@ -1,4 +1,3 @@
-using System;
 using livemap.tile;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,6 +15,7 @@ public class TileTypeJsonConverter : JsonConverter {
         if (reader.TokenType != JsonToken.String) {
             return null;
         }
+
         string? str = JToken.Load(reader).ToObject<string>();
         return str == null ? null : TileType.Types.TryGetValue(str);
     }

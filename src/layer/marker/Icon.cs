@@ -1,4 +1,3 @@
-using System;
 using livemap.data;
 using livemap.layer.marker.options.type;
 using Newtonsoft.Json;
@@ -26,7 +25,8 @@ public class Icon : Marker {
     /// <summary>
     /// Create a new icon at 0,0 with a random id
     /// </summary>
-    public Icon() : this(Guid.NewGuid().ToString(), new Point(0, 0)) { }
+    public Icon() : this(Guid.NewGuid().ToString(), new Point(0, 0)) {
+    }
 
     /// <summary>
     /// Create a new icon

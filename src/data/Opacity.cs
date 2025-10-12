@@ -1,4 +1,3 @@
-using System;
 using livemap.json;
 using Newtonsoft.Json;
 
@@ -8,7 +7,9 @@ namespace livemap.data;
 public readonly struct Opacity {
     private readonly byte _value;
 
-    public Opacity(double value) : this((byte)(0xFF * value)) { }
+    public Opacity(double value) : this((byte)(0xFF * value)) {
+    }
+
     public Opacity(byte value) => _value = value;
 
     public byte ToByte() => _value;

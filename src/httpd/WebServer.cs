@@ -1,29 +1,20 @@
-using System;
-using System.IO;
 using System.Net;
 using System.Net.Mime;
 using System.Text.RegularExpressions;
-using System.Threading;
 using livemap.util;
 using MimeTypes;
 
 namespace livemap.httpd;
 
-public partial class WebServer {
+public partial class WebServer(LiveMap server) {
     [GeneratedRegex(@"^(.*\/)?(.+)\/([+-]?\d+)\/([+-]?\d+)\/([+-]?\d+)(\/.*)?")]
     private static partial Regex FriendlyUrlRegex();
-
-    private readonly LiveMap _server;
 
     private HttpListener? _listener;
     private Thread? _thread;
     private bool _running;
     private bool _stopped;
     private bool _reload;
-
-    public WebServer(LiveMap server) {
-        _server = server;
-    }
 
     public void Reload() {
         _reload = true;
@@ -32,7 +23,7 @@ public partial class WebServer {
     }
 
     public void Run() {
-        if (!_server.Config.Httpd.Enabled) {
+        if (!server.Config.Httpd.Enabled) {
             return;
         }
 
@@ -45,7 +36,7 @@ public partial class WebServer {
         _running = true;
 
         (_thread = new Thread(_ => {
-            int port = _server.Config.Httpd.Port;
+            int port = server.Config.Httpd.Port;
 
             if (_listener == null) {
                 Logger.Info($"Internal webserver starting on port {port}");
@@ -53,11 +44,13 @@ public partial class WebServer {
 
             try {
                 (_listener = new HttpListener { Prefixes = { $"http://*:{port}/" } }).Start();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 Logger.Error("Internal webserver has failed to start");
                 if (e is HttpListenerException { ErrorCode: 5 }) {
                     Logger.Error("Check LiveMap Wiki for possible fixes: https://vs.pl3x.net/livemap-access-denied");
                 }
+
                 Logger.Error(e.ToString());
                 _running = false;
                 _stopped = true;
@@ -68,7 +61,8 @@ public partial class WebServer {
             while (_running) {
                 try {
                     HandleRequest(_listener!.GetContext());
-                } catch (Exception) {
+                }
+                catch (Exception) {
                     if (_stopped) {
                         Logger.Info("Internal webserver has stopped");
                         if (_reload) {
@@ -79,7 +73,8 @@ public partial class WebServer {
 
                     try {
                         _listener?.Stop();
-                    } catch (Exception) {
+                    }
+                    catch (Exception) {
                         // ignore
                     }
 
@@ -103,9 +98,11 @@ public partial class WebServer {
                     context.Response.Close();
                     return;
                 }
+
                 urlLoc = group6[1..];
             }
-        } catch (Exception) {
+        }
+        catch (Exception) {
             // ignore
         }
 
@@ -121,7 +118,8 @@ public partial class WebServer {
             response.ContentType = MimeTypeMap.GetMimeType(new FileInfo(filePath).Extension) ?? MediaTypeNames.Text.Plain;
             buffer = File.ReadAllBytes(filePath);
             response.StatusCode = 200;
-        } else {
+        }
+        else {
             response.ContentType = MediaTypeNames.Text.Html;
             buffer = File.ReadAllBytes(Path.Combine(Files.WebDir, "404.html"));
             response.StatusCode = 404;
@@ -134,7 +132,8 @@ public partial class WebServer {
         try {
             TimeSpan time = File.GetLastWriteTimeUtc(filePath) - DateTime.UnixEpoch;
             response.AddHeader("ETag", ((long)time.TotalMilliseconds).ToString());
-        } catch (Exception) {
+        }
+        catch (Exception) {
             // ignore
         }
 
@@ -148,7 +147,10 @@ public partial class WebServer {
 
         try {
             _listener?.Stop();
-        } catch (ObjectDisposedException) { }
+        }
+        catch (ObjectDisposedException) {
+        }
+
         _listener = null;
 
         _thread?.Interrupt();

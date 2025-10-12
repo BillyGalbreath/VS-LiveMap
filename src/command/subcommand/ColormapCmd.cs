@@ -4,13 +4,7 @@ using Vintagestory.API.Common;
 
 namespace livemap.command.subcommand;
 
-public class ColormapCmd : AbstractCommand {
-    public ColormapCmd(LiveMap server) : base(
-        server,
-        new[] { "colormap" },
-        requiresPlayer: true
-    ) { }
-
+public class ColormapCmd(LiveMap server) : AbstractCommand(server, ["colormap"], requiresPlayer: true) {
     public override TextCommandResult Execute(TextCommandCallingArgs args) {
         _server.SendPacket(new ColormapPacket(), args.Caller.Player);
 

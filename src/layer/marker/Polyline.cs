@@ -1,4 +1,3 @@
-using System;
 using livemap.data;
 using livemap.layer.marker.options.type;
 using Newtonsoft.Json;
@@ -25,7 +24,8 @@ public class Polyline : Marker {
     /// <summary>
     /// Create a new polyline at 0,0 with a random id
     /// </summary>
-    public Polyline() : this(Guid.NewGuid().ToString(), new Point(0, 0)) { }
+    public Polyline() : this(Guid.NewGuid().ToString(), new Point(0, 0)) {
+    }
 
     /// <summary>
     /// Create a new polyline
@@ -33,7 +33,8 @@ public class Polyline : Marker {
     /// <param name="id">Unique identifying key</param>
     /// <param name="points">Absolute (not relative to spawn) world coordinates for the polyline's points</param>
     /// <param name="options">Optional settings for the polyline</param>
-    public Polyline(string id, Point points, PolylineOptions? options = null) : this(id, new[] { points }, options) { }
+    public Polyline(string id, Point points, PolylineOptions? options = null) : this(id, [points], options) {
+    }
 
     /// <summary>
     /// Create a new polyline
@@ -41,7 +42,8 @@ public class Polyline : Marker {
     /// <param name="id">Unique identifying key</param>
     /// <param name="points">Absolute (not relative to spawn) world coordinates for the polyline's points</param>
     /// <param name="options">Optional settings for the polyline</param>
-    public Polyline(string id, Point[] points, PolylineOptions? options = null) : this(id, new[] { points }, options) { }
+    public Polyline(string id, Point[] points, PolylineOptions? options = null) : this(id, [points], options) {
+    }
 
     /// <summary>
     /// Create a new polyline
@@ -49,7 +51,8 @@ public class Polyline : Marker {
     /// <param name="id">Unique identifying key</param>
     /// <param name="points">Absolute (not relative to spawn) world coordinates for the polyline's points</param>
     /// <param name="options">Optional settings for the polyline</param>
-    public Polyline(string id, Point[][] points, PolylineOptions? options = null) : this(id, new[] { points }, options) { }
+    public Polyline(string id, Point[][] points, PolylineOptions? options = null) : this(id, [points], options) {
+    }
 
     /// <summary>
     /// Create a new polyline

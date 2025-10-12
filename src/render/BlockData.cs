@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace livemap.render;
 
 public class BlockData {
@@ -10,6 +8,7 @@ public class BlockData {
             // todo - i really want to get the edge data from the neighbor regions..
             return null;
         }
+
         return _data.GetValue(Index(x, z)) as Data;
     }
 
@@ -21,16 +20,10 @@ public class BlockData {
         return ((z & 511) * 512) + (x & 511);
     }
 
-    public class Data {
-        public int Y { get; }
-        public int Top { get; }
-        public int Under { get; }
-        public Dictionary<string, object?> Custom = new();
-
-        public Data(int y, int top, int under) {
-            Y = y;
-            Top = top;
-            Under = under;
-        }
+    public class Data(int y, int top, int under) {
+        public int Y { get; } = y;
+        public int Top { get; } = top;
+        public int Under { get; } = under;
+        public Dictionary<string, object?> Custom = [];
     }
 }

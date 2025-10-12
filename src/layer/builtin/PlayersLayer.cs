@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using livemap.configuration;
 using livemap.data;
 using livemap.layer.marker;
@@ -15,12 +9,12 @@ using Vintagestory.API.Server;
 
 namespace livemap.layer.builtin;
 
-public class PlayersLayer : Layer {
+public class PlayersLayer() : Layer("players", "lang.players".ToLang()) {
     public override int? Interval => Config.UpdateInterval;
 
     public override bool? Hidden => !Config.DefaultShowLayer;
 
-    public override List<Marker> Markers { get; } = new();
+    public override List<Marker> Markers { get; } = [];
 
     public override string Filename => Path.Combine(Files.JsonDir, "players.json");
 
@@ -28,10 +22,8 @@ public class PlayersLayer : Layer {
 
     private static Players Config => LiveMap.Api.Config.Layers.Players;
 
-    public PlayersLayer() : base("players", "lang.players".ToLang()) { }
-
     public override async Task WriteToDisk(CancellationToken cancellationToken) {
-        List<Dictionary<string, object?>> players = new();
+        List<Dictionary<string, object?>> players = [];
 
         if (Config.Enabled) {
             List<IServerPlayer> onlinePlayers = new(LiveMap.Api.Sapi.World.AllOnlinePlayers.Cast<IServerPlayer>());
@@ -84,7 +76,7 @@ public class PlayersLayer : Layer {
             color = new Color(arr);
         }
 
-        Dictionary<string, object?> dict = new();
+        Dictionary<string, object?> dict = [];
         dict.TryAdd("id", player.PlayerUID);
         dict.TryAdd("name", player.PlayerName);
         dict.TryAdd("avatar", entity.GetAvatar());

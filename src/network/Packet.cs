@@ -1,3 +1,4 @@
 ﻿namespace livemap.network;
 
-public abstract class Packet { }
+public abstract class Packet {
+}

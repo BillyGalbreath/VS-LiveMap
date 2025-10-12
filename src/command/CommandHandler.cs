@@ -1,4 +1,3 @@
-using System;
 using livemap.command.subcommand;
 using livemap.util;
 using Vintagestory.API.Common;
@@ -26,7 +25,7 @@ public class CommandHandler {
         RegisterSubCommand(new StatusCmd(server));
     }
 
-    public void RegisterSubCommand(AbstractCommand command) {
+    private void RegisterSubCommand(AbstractCommand command) {
         _chatCommand
             .BeginSubCommands(command.Name)
             .WithDescription(command.Description)
@@ -35,12 +34,15 @@ public class CommandHandler {
                 if (!args.Caller.HasPrivilege(command.Privilege)) {
                     return "error.no-privilege".CommandError();
                 }
+
                 if (command.RequiresPlayer && args.Caller.Player == null) {
                     return "error.player-only-command".CommandError();
                 }
+
                 try {
                     return command.Execute(args);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     return TextCommandResult.Error(e.Message);
                 }
             })

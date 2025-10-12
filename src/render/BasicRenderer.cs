@@ -2,9 +2,7 @@
 
 namespace livemap.render;
 
-public class BasicRenderer : Renderer {
-    public BasicRenderer() : base("basic") { }
-
+public class BasicRenderer() : Renderer("basic") {
     public override void ProcessBlockData(int regionX, int regionZ, BlockData blockData) {
         if (TileImage == null) {
             return;

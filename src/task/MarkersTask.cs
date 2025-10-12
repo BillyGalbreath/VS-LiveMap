@@ -1,21 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using livemap.layer;
 using livemap.util;
 using Newtonsoft.Json;
 
 namespace livemap.task;
 
-public class MarkersTask : AsyncTask {
-    private readonly Dictionary<string, long> _lastUpdate = new();
-
-    public MarkersTask(LiveMap server) : base(server) { }
+public class MarkersTask(LiveMap server) : AsyncTask(server) {
+    private readonly Dictionary<string, long> _lastUpdate = [];
 
     protected override async Task TickAsync(CancellationToken cancellationToken) {
-        List<string> layerIds = new();
+        List<string> layerIds = [];
 
         long now = DateTimeOffset.Now.ToUnixTimeSeconds();
 
@@ -36,12 +29,14 @@ public class MarkersTask : AsyncTask {
             if (now - lastUpdate < Math.Max(layer.Interval ?? 0, 0)) {
                 continue;
             }
+
             _lastUpdate[layer.Id] = now;
 
             // finally write to disk
             try {
                 await layer.WriteToDisk(cancellationToken);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 await Console.Error.WriteLineAsync(e.ToString());
             }
         }

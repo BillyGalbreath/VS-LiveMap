@@ -1,4 +1,3 @@
-using System;
 using livemap.data;
 using livemap.layer.marker.options.type;
 using Newtonsoft.Json;
@@ -25,7 +24,8 @@ public class Ellipse : Marker {
     /// <summary>
     /// Create a new ellipse at 0,0 with a random id
     /// </summary>
-    public Ellipse() : this(Guid.NewGuid().ToString(), new Point(0, 0)) { }
+    public Ellipse() : this(Guid.NewGuid().ToString(), new Point(0, 0)) {
+    }
 
     /// <summary>
     /// Create a new ellipse

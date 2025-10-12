@@ -1,4 +1,3 @@
-using System;
 using livemap.data;
 using livemap.layer.marker.options.type;
 using Newtonsoft.Json;
@@ -26,7 +25,8 @@ public class Rectangle : Marker {
     /// <summary>
     /// Create a new rectangle at 0,0 with a random id
     /// </summary>
-    public Rectangle() : this(Guid.NewGuid().ToString(), new[] { new Point(0, 0), new Point(0, 0) }) { }
+    public Rectangle() : this(Guid.NewGuid().ToString(), [new Point(0, 0), new Point(0, 0)]) {
+    }
 
     /// <summary>
     /// Create a new rectangle

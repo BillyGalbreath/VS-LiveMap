@@ -1,10 +1,8 @@
-using System.Linq;
-
 namespace livemap.util;
 
 public abstract class Mathf {
     public static long AsLong(int x, int z) {
-        return (x & 0xFFFFFFFF) | (z & 0xFFFFFFFF) << 32;
+        return (x & 0xFFFFFFFF) | ((z & 0xFFFFFFFF) << 32);
     }
 
     public static int LongToX(long index) {

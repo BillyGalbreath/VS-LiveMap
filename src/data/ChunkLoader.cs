@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using livemap.util;
@@ -84,7 +82,8 @@ public class ChunkLoader {
         try {
             _chunkDataPool.SlowDispose();
             _sqliteConn.Close();
-        } catch (Exception) {
+        }
+        catch (Exception) {
             // ignore
         }
     }

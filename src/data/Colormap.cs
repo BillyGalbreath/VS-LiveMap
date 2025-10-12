@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using System.Threading;
 using livemap.network;
 using livemap.util;
 using Newtonsoft.Json;
@@ -12,9 +8,9 @@ using Vintagestory.API.Common;
 namespace livemap.data;
 
 public sealed class Colormap {
-    private readonly Dictionary<string, uint[]> _colorsByName = new();
+    private readonly Dictionary<string, uint[]> _colorsByName = [];
 
-    private readonly Dictionary<int, uint[]> _colorsById = new();
+    private readonly Dictionary<int, uint[]> _colorsById = [];
 
     public void Add(string block, uint[] toAdd) {
         _colorsByName.TryAdd(block, toAdd);
@@ -42,8 +38,10 @@ public sealed class Colormap {
             foreach ((string? key, uint[]? colors) in data) {
                 _colorsByName.TryAdd(key, colors);
             }
+
             return true;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Logger.Error(e.ToString());
             return false;
         }
@@ -55,7 +53,8 @@ public sealed class Colormap {
                 SaveToDisk();
                 RefreshIds(world);
                 Logger.Info("Colormap saved to disk");
-            } else {
+            }
+            else {
                 Logger.Warn("Could not save colormap to disk");
             }
         }).Start();
@@ -67,10 +66,12 @@ public sealed class Colormap {
             if (File.Exists(Files.ColormapFile)) {
                 json = File.ReadAllText(Files.ColormapFile, Encoding.UTF8);
             }
+
             if (Deserialize(json)) {
                 RefreshIds(world);
                 Logger.Info("Colormap loaded from disk");
-            } else {
+            }
+            else {
                 Logger.Warn("Could not load colormap from disk.");
                 Logger.Warn("An admin needs to send the colormap from their client.");
             }

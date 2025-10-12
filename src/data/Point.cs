@@ -1,4 +1,3 @@
-using System;
 using livemap.json;
 using Newtonsoft.Json;
 
@@ -23,7 +22,8 @@ public readonly struct Point {
     /// Create a new point from a coordinate array
     /// </summary>
     /// <param name="arr"></param>
-    public Point(double[] arr) : this(arr[0], arr[1]) { }
+    public Point(double[] arr) : this(arr[0], arr[1]) {
+    }
 
     /// <summary>
     /// Create a new point from coordinates

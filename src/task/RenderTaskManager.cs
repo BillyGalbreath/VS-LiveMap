@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+﻿using System.Collections.Concurrent;
 using livemap.data;
 using livemap.util;
 using Vintagestory.API.Common;
@@ -20,7 +16,7 @@ public sealed class RenderTaskManager {
     public int LandBlock { get; }
 
     private readonly ConcurrentQueue<long> _bufferQueue = new();
-    private readonly BlockingCollection<long> _processQueue = new();
+    private readonly BlockingCollection<long> _processQueue = [];
 
     private Thread? _thread;
     private bool _running;
@@ -111,7 +107,8 @@ public sealed class RenderTaskManager {
                     long end = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                     Logger.Debug($"Region {regionX},{regionZ} finished ({end - start}ms) - Regions remaining: {_processQueue.Count}");
                 }
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 // ignore
             }
 
@@ -128,7 +125,8 @@ public sealed class RenderTaskManager {
         _thread = null;
 
         _bufferQueue.Clear();
-        while (_processQueue.TryTake(out _)) { }
+        while (_processQueue.TryTake(out _)) {
+        }
 
         if (cancelled) {
             Logger.Warn("Render task cancelled");
