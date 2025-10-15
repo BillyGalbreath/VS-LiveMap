@@ -31,8 +31,11 @@ A live demo of LiveMap can be accessed at:
 Prerequisites:
 
 * [.NET SDK 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-* [npm](https://www.npmjs.com/)
 * [Node.js](https://nodejs.org/en)
+
+Environmental variables:
+
+`VINTAGE_STORY` = the full path to your Vintage Story installation directory (on Windows this is usually `C:\Users\YourName\AppData\Roaming\Vintagestory`)
 
 To build the project run the following command:
 

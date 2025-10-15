@@ -1,11 +1,11 @@
+using Vintagestory.API.Common;
+
 namespace livemap.common;
 
-public abstract class LiveMap : IDisposable {
-    private readonly LiveMapModSystem _mod;
+public abstract class LiveMap(LiveMapModSystem mod) : IDisposable {
+    protected readonly LiveMapModSystem _mod = mod;
 
-    protected LiveMap(LiveMapModSystem mod) {
-        _mod = mod;
-    }
+    public ILogger Logger => _mod.Mod.Logger;
 
     public abstract void Dispose();
 }
