@@ -2,19 +2,10 @@ const path = require('path');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   devServer: {
-    headers: {
-      'Cache-Control': 'no-store'
-    },
-    static: {
-      directory: path.join(__dirname, 'public'),
-      watch: {
-        ignored: '**/*.json',
-        usePolling: false
-      }
-    },
     historyApiFallback: {
       publicPath: '/',
       rewrites: [
@@ -29,16 +20,12 @@ module.exports = {
       ]
     }
   },
-  devtool: 'source-map',
-  entry: [
-    './src/LiveMap.ts',
-    './src/lib/L.ellipse.js',
-    './src/lib/L.rotated.js'
-  ],
+  devtool: 'source-map', // comment out for production
+  entry: './src/LiveMap.ts',
   externals: {
     "leaflet": "L"
   },
-  mode: 'development',
+  mode: 'production',
   module: {
     rules: [
       {
@@ -47,9 +34,8 @@ module.exports = {
         include: [path.resolve(__dirname, 'src')]
       },
       {
-        test: /\.s?css$/i,
+        test: /\.css$/i,
         use: [
-          'style-loader',
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
@@ -62,14 +48,6 @@ module.exports = {
               sourceMap: true,
               url: false
             }
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sassOptions: {
-                outputStyle: 'expanded'
-              }
-            }
           }
         ]
       },
@@ -77,13 +55,13 @@ module.exports = {
         test: /\.svg$/,
         loader: 'svg-sprite-loader',
         options: {
-          symbolId: (filePath) => `svg-${path.basename(filePath, '.svg')}`
+          symbolId: (filePath) => `icon-${path.basename(filePath, '.svg')}`
         }
       }
     ]
   },
   optimization: {
-    minimize: true,
+    minimize: false, // enable for production
     minimizer: [
       new CssMinimizerPlugin(),
       new TerserPlugin({
@@ -99,16 +77,26 @@ module.exports = {
   output: {
     publicPath: '/',
     filename: 'livemap.js',
-    path: path.resolve(__dirname, 'public')
+    path: path.resolve(__dirname, 'dist')
   },
   performance: {
-    maxEntrypointSize: 512000,
-    maxAssetSize: 512000
+    maxEntrypointSize: 1024000,
+    maxAssetSize: 1024000
   },
   resolve: {
-    extensions: ['.ts', '.js', '.scss', '.css']
+    extensions: ['.ts', '.js', '.css']
   },
   plugins: [
+    new CopyPlugin({
+      patterns: [
+        {
+          from: "public",
+          globOptions: {
+            ignore: ["**/tiles/**"]
+          }
+        }
+      ]
+    }),
     new MiniCssExtractPlugin({
       filename: 'livemap.css'
     })

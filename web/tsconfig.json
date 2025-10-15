@@ -2,10 +2,13 @@
   "compilerOptions": {
     "target": "es6",
     "module": "es2015",
+    "rootDir": "./src",
     "sourceMap": true,
+    "outDir": "./public",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true
-  }
+  },
+  "include": ["src"]
 }
